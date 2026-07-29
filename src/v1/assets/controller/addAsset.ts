@@ -97,9 +97,20 @@ export default new Hono().post(
          return c.json(
             {
                success: true,
-               ...asset,
-               data: assetPaths,
-               json,
+               id: asset.id,
+               rackId: asset.rackId,
+               name: asset.name,
+               position: asset.position,
+               size: asset.size,
+               data: assetPaths.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.name
+               })),
+               json: {
+                  text: json.text,
+                  filename: json.filename
+               },
                pagination: {
                   position: 0,
                   total: 0

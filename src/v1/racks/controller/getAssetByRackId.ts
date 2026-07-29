@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { internalServerError, invalidParametersError } from '../../../lib/errorMessages';
+import { getValueFromJson } from '../../../lib/util';
 
 export default new Hono().get(
    '/:id/assets',
@@ -58,9 +59,26 @@ export default new Hono().get(
                   }
                });
 
+               // Get the values for the asset paths from the json
+               const assetPathsWithData = assetPaths.map((path) => {
+                  return {
+                     ...path,
+                     value: getValueFromJson<string>(latestJsonHistory, path.path)
+                  };
+               });
+
                return {
-                  ...asset,
-                  data: assetPaths.map((assetId, ...rest) => ({ ...rest })),
+                  id: asset.id,
+                  name: asset.name,
+                  position: asset.position,
+                  size: asset.size,
+                  rackId: asset.rackId,
+                  data: assetPathsWithData.map((path) => ({
+                     id: path.id,
+                     name: path.name,
+                     path: path.path,
+                     value: path.value
+                  })),
                   json: {
                      text: latestJsonHistory?.rawJson,
                      filename: latestJsonHistory?.filename

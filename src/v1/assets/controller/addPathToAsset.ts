@@ -82,7 +82,9 @@ export default new Hono().post(
          return c.json(
             {
                success: true,
-               ...newPath,
+               id: newPath.id,
+               path: newPath.path,
+               name: newPath.name,
                value: getValueFromJson<string>(latestJsonHistory, body.path)
             },
             201

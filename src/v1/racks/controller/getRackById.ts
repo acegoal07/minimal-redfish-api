@@ -43,7 +43,10 @@ export default new Hono().get(
          return c.json(
             {
                success: true,
-               ...rack
+               name: rack.name,
+               id: rack.id,
+               size: rack.size,
+               notes: rack.notes
             },
             200
          );

@@ -51,7 +51,7 @@ export default new Hono().get(
          // Get the latest json history for the asset
          const latestJsonHistory = await prisma.jsonHistory.findFirst({
             where: {
-               assetId: asset.id
+               assetId: id
             },
             orderBy: {
                uploadDate: 'desc'
@@ -61,7 +61,9 @@ export default new Hono().get(
          // Get the values for the asset paths from the json
          const assetPathsWithData = assetPaths.map((path) => {
             return {
-               ...path,
+               id: path.id,
+               name: path.name,
+               path: path.path,
                value: getValueFromJson<string>(latestJsonHistory, path.path)
             };
          });

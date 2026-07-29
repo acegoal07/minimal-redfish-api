@@ -43,8 +43,17 @@ export default new Hono().get('/', async (c) => {
             });
 
             return {
-               ...asset,
-               data: assetPathsWithData,
+               id: asset.id,
+               name: asset.name,
+               position: asset.position,
+               size: asset.size,
+               rackId: asset.rackId,
+               data: assetPathsWithData.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.path,
+                  value: path.value
+               })),
                json: {
                   text: latestJsonHistory?.rawJson,
                   filename: latestJsonHistory?.filename

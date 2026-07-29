@@ -32,10 +32,14 @@ export default new Hono().patch(
    ),
    zValidator(
       'json',
-      z.object({
-         name: z.string({ error: 'Name must be a string' }).trim().optional(),
-         path: z.string({ error: 'Path must be a string' }).trim().optional()
-      }),
+      z
+         .object({
+            name: z.string({ error: 'Name must be a string' }).trim().optional(),
+            path: z.string({ error: 'Path must be a string' }).trim().optional()
+         })
+         .refine((data) => Object.keys(data).length > 0, {
+            message: 'At least one field must be provided'
+         }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -85,7 +89,7 @@ export default new Hono().patch(
          // Get the latest json history for the asset
          const latestJsonHistory = await prisma.jsonHistory.findFirst({
             where: {
-               assetId: asset.id
+               assetId: id
             },
             orderBy: {
                uploadDate: 'desc'
@@ -95,7 +99,9 @@ export default new Hono().patch(
          return c.json(
             {
                success: true,
-               ...updatedPath,
+               id: updatedPath.id,
+               name: updatedPath.name,
+               path: updatedPath.path,
                value: getValueFromJson<string>(latestJsonHistory, updatedPath.path)
             },
             200

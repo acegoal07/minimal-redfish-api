@@ -6,7 +6,15 @@ export default new Hono().get('/', async (c) => {
    try {
       const racks = await prisma.rack.findMany();
 
-      return c.json(racks, 200);
+      return c.json(
+         racks.map((rack) => ({
+            id: rack.id,
+            name: rack.name,
+            size: rack.size,
+            notes: rack.notes
+         })),
+         200
+      );
    } catch (err) {
       return internalServerError(c, err);
    }

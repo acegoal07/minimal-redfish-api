@@ -27,14 +27,18 @@ export default new Hono().patch(
    ),
    zValidator(
       'json',
-      z.object({
-         name: z.string({ error: 'Name must be a string' }).trim().optional(),
-         size: z
-            .number({ error: 'Size must be a number' })
-            .min(1, { message: 'Size must be at least 1' })
-            .optional(),
-         notes: z.string({ error: 'Notes must be a string' }).trim().optional()
-      }),
+      z
+         .object({
+            name: z.string({ error: 'Name must be a string' }).trim().optional(),
+            size: z
+               .number({ error: 'Size must be a number' })
+               .min(1, { message: 'Size must be at least 1' })
+               .optional(),
+            notes: z.string({ error: 'Notes must be a string' }).trim().optional()
+         })
+         .refine((data) => Object.keys(data).length > 0, {
+            message: 'At least one field must be provided'
+         }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);

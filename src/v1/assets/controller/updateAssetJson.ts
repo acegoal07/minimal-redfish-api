@@ -8,6 +8,7 @@ import {
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { getValueFromJson } from '../../../lib/util';
 
 export default new Hono().post(
    '/:id',
@@ -85,11 +86,38 @@ export default new Hono().post(
             }
          });
 
+         // Get the latest json history for the asset
+         const latestJsonHistory = await prisma.jsonHistory.findFirst({
+            where: {
+               assetId: id
+            },
+            orderBy: {
+               uploadDate: 'desc'
+            }
+         });
+
+         // Get the values for the asset paths from the json
+         const assetPathsWithData = assetPaths.map((path) => {
+            return {
+               ...path,
+               value: getValueFromJson<string>(latestJsonHistory, path.path)
+            };
+         });
+
          return c.json(
             {
                success: true,
-               ...asset,
-               data: assetPaths.map((assetId, ...rest) => ({ ...rest })),
+               id: asset.id,
+               name: asset.name,
+               position: asset.position,
+               size: asset.size,
+               rackId: asset.rackId,
+               data: assetPathsWithData.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.path,
+                  value: path.value
+               })),
                json,
                pagination: {
                   position: 0,

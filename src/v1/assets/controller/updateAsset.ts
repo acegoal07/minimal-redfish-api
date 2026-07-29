@@ -28,21 +28,29 @@ export default new Hono().patch(
    ),
    zValidator(
       'json',
-      z.object({
-         rackId: z
-            .number({ error: 'Rack ID must be a number' })
-            .min(1, { message: 'Rack ID must be greater than 0' }),
-         name: z
-            .string({ error: 'Name must be a string' })
-            .trim()
-            .min(1, { message: 'Name cannot be empty' }),
-         size: z
-            .number({ error: 'Size must be a number' })
-            .min(1, { message: 'Size must be greater than 0' }),
-         position: z
-            .number({ error: 'Position must be a number' })
-            .min(1, { message: 'Position must be greater than 0' })
-      }),
+      z
+         .object({
+            rackId: z
+               .number({ error: 'Rack ID must be a number' })
+               .min(1, { message: 'Rack ID must be greater than 0' })
+               .optional(),
+            name: z
+               .string({ error: 'Name must be a string' })
+               .trim()
+               .min(1, { message: 'Name cannot be empty' })
+               .optional(),
+            size: z
+               .number({ error: 'Size must be a number' })
+               .min(1, { message: 'Size must be greater than 0' })
+               .optional(),
+            position: z
+               .number({ error: 'Position must be a number' })
+               .min(1, { message: 'Position must be greater than 0' })
+               .optional()
+         })
+         .refine((data) => Object.keys(data).length > 0, {
+            message: 'At least one field must be provided'
+         }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -126,8 +134,17 @@ export default new Hono().patch(
          return c.json(
             {
                success: true,
-               ...updatedAsset,
-               data: assetPathsWithData,
+               id: updatedAsset.id,
+               name: updatedAsset.name,
+               position: updatedAsset.position,
+               size: updatedAsset.size,
+               rackId: updatedAsset.rackId,
+               data: assetPathsWithData.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.path,
+                  value: path.value
+               })),
                json: {
                   text: latestJsonHistory?.rawJson,
                   filename: latestJsonHistory?.filename
