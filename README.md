@@ -3,4 +3,4 @@ The idea of this API is to provided all the functionality of the parser redfish 
 
 ## Quick Start:
 1. Clone the repository
-2. run `docker-compose up` to start the API and the database
+2. run `docker-compose up` to start the API and the mariadb database
