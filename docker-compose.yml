@@ -1,0 +1,29 @@
+services:
+   mariadb:
+      container_name: mariadb
+      image: mariadb:latest
+      restart: unless-stopped
+      environment:
+         MARIADB_ROOT_PASSWORD: rootpassword
+         MARIADB_DATABASE: redfish
+         MARIADB_USER: parser
+         MARIADB_PASSWORD: mypassword
+      ports:
+         - '3306:3306'
+      volumes:
+         - mariadb_data:/var/lib/mysql
+         - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+   api:
+      container_name: api
+      build:
+         context: ./
+      restart: unless-stopped
+      depends_on:
+         - mariadb
+      ports:
+         - "3000:3000"
+      env_file:
+         - ./.env
+
+volumes:
+   mariadb_data:

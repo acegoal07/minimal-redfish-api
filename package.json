@@ -1,0 +1,32 @@
+{
+   "name": "minimal-api",
+   "version": "1.0.0",
+   "main": "dist/index.js",
+   "scripts": {
+      "prod": "node index.js",
+      "prod:install": "npm i --omit=dev",
+      "build": "tsup src/index.ts && cp -r package.json .env prisma prisma.config.ts dist/",
+      "dev": "tsx watch src/index.ts",
+      "format": "prettier --write .",
+      "postinstall": "prisma generate"
+   },
+   "keywords": [],
+   "type": "module",
+   "dependencies": {
+      "@hono/node-server": "^2.0.12",
+      "@hono/zod-validator": "^0.9.0",
+      "@prisma/adapter-mariadb": "^7.9.1",
+      "@prisma/client": "^7.9.1",
+      "dotenv": "^17.4.2",
+      "hono": "^4.12.32",
+      "zod": "^4.4.3"
+   },
+   "devDependencies": {
+      "@types/node": "^26.1.2",
+      "prettier": "^3.9.6",
+      "prisma": "^7.9.1",
+      "tsup": "^8.5.1",
+      "tsx": "^4.23.1",
+      "typescript": "^7.0.2"
+   }
+}

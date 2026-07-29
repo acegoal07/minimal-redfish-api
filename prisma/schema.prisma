@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Rack {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(255)
+  size     Int?
+  notes    String? @db.VarChar(255)
+
+  Assets   Asset[]
+
+  @@map("Rack")
+}
+
+model Asset {
+  id       Int     @id @default(autoincrement())
+  rackId   Int
+  name     String  @db.VarChar(255)
+  size     Int?
+  position Int?
+
+  rack        Rack          @relation(fields: [rackId], references: [id], onDelete: Cascade)
+  paths       Path[]
+  JsonHistory JsonHistory[]
+
+  @@index([rackId])
+  @@map("Asset")
+}
+
+model Path {
+  id      Int     @id @default(autoincrement())
+  path    String  @db.Text
+  name    String? @db.VarChar(255)
+  assetId Int
+
+  Asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@map("Path")
+}
+
+model JsonHistory {
+  id        Int        @id @default(autoincrement())
+  rawJson    String    @db.LongText
+  uploadDate DateTime? @default(now())
+  filename   String?   @db.VarChar(255)
+  assetId    Int
+
+  Asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@map("JsonHistory")
+}
