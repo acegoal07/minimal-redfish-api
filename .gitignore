@@ -3,3 +3,4 @@ dist/
 /src/generated/prisma
 package-lock.json
 .vscode/
+*.DS_Store

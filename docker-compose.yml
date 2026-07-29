@@ -15,15 +15,16 @@ services:
          - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
    api:
       container_name: api
-      build:
-         context: ./
+      image: node:latest
       restart: unless-stopped
+      working_dir: /app/src
+      volumes:
+         - ./:/app/src
       depends_on:
          - mariadb
       ports:
          - "3000:3000"
-      env_file:
-         - ./.env
+      command: "./run.sh"
 
 volumes:
    mariadb_data:

@@ -2,11 +2,11 @@ import 'dotenv/config';
 
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
-import endpoints from './endpoints';
+import v1 from './v1';
 
 const app = new Hono();
 
-app.route('/api', endpoints);
+app.route('/api/v1', v1);
 
 serve({
    fetch: app.fetch,
