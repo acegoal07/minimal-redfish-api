@@ -1,5 +1,11 @@
 import type { Context } from 'hono';
 
+/**
+ * Responds with a internal server error message
+ * @param c
+ * @param err
+ * @returns
+ */
 function internalServerError(c: Context, err: unknown) {
    console.error(err);
 
@@ -12,6 +18,13 @@ function internalServerError(c: Context, err: unknown) {
    );
 }
 
+/**
+ * Responds with an invalid parameters error message populated with the issues from
+ * the validator
+ * @param c
+ * @param result
+ * @returns
+ */
 function invalidParametersError(c: Context, result: { error: { issues: unknown[] } }) {
    return c.json(
       {
@@ -23,6 +36,13 @@ function invalidParametersError(c: Context, result: { error: { issues: unknown[]
    );
 }
 
+/**
+ * Responds with an invalid body error message populated with the issues from
+ * the validator
+ * @param c
+ * @param result
+ * @returns
+ */
 function invalidBodyError(c: Context, result: { error: { issues: unknown[] } }) {
    return c.json(
       {
@@ -34,6 +54,11 @@ function invalidBodyError(c: Context, result: { error: { issues: unknown[] } }) 
    );
 }
 
+/**
+ * Responds with a not found error message
+ * @param c
+ * @returns
+ */
 function notFoundError(c: Context) {
    return c.json(
       {
