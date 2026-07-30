@@ -41,7 +41,7 @@ export default new Hono().get(
                      uploadDate: 'desc'
                   },
                   take: 1,
-                  skip: offset - 1
+                  skip: offset
                },
                paths: true,
                _count: {
