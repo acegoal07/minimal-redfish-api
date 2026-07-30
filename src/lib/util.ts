@@ -1,8 +1,8 @@
 /**
- * Retrieves the data from a json object using a path
+ * Retrieves the data from a JSON object using a path
  * @param obj
  * @param path
- * @returns
+ * @returns The value at the path or null if not found
  */
 function getValueFromJson<T = unknown>(obj: unknown, path: string): T | null {
    let current: any = obj;
@@ -21,7 +21,7 @@ function getValueFromJson<T = unknown>(obj: unknown, path: string): T | null {
       }
    }
 
-   return current as T | null;
+   return current ?? null;
 }
 
 export { getValueFromJson };
