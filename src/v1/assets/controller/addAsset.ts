@@ -72,7 +72,7 @@ export default new Hono().post(
             });
 
             // Add the json to the database
-            await tx.jsonHistory.create({
+            const jsonData = await tx.jsonHistory.create({
                data: {
                   assetId: asset.id,
                   rawJson: json.text,
@@ -99,7 +99,8 @@ export default new Hono().post(
 
             return {
                asset,
-               assetPaths
+               assetPaths,
+               jsonData
             };
          });
 
@@ -117,8 +118,9 @@ export default new Hono().post(
                   value: getValueFromJson<String>(JSON.parse(json.text), path.path)
                })),
                json: {
-                  text: json.text,
-                  filename: json.filename
+                  id: result.jsonData.id,
+                  text: result.jsonData.rawJson,
+                  filename: result.jsonData.filename
                },
                pagination: {
                   position: 0,

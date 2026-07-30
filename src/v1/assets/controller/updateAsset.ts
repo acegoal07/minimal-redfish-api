@@ -132,6 +132,7 @@ export default new Hono().patch(
                   )
                })),
                json: {
+                  id: asset.jsonHistory[0].id,
                   text: asset.jsonHistory[0].rawJson,
                   filename: asset.jsonHistory[0].filename
                },

@@ -49,6 +49,7 @@ export default new Hono().get(
 
          return c.json(
             asset.jsonHistory.map((json) => ({
+               id: json.id,
                text: json.rawJson,
                filename: json.filename
             })),

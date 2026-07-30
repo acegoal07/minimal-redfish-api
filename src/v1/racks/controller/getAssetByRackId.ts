@@ -76,8 +76,9 @@ export default new Hono().get(
                   )
                })),
                json: {
-                  text: asset.jsonHistory[0]?.rawJson,
-                  filename: asset.jsonHistory[0]?.filename
+                  id: asset.jsonHistory[0].id,
+                  text: asset.jsonHistory[0].rawJson,
+                  filename: asset.jsonHistory[0].filename
                },
                pagination: {
                   position: 0,

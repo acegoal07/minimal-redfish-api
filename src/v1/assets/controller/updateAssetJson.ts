@@ -72,7 +72,7 @@ export default new Hono().post(
          }
 
          // Add a new json to the history if a json is passed in
-         await prisma.jsonHistory.create({
+         const newJson = await prisma.jsonHistory.create({
             data: {
                assetId: id,
                rawJson: json.text,
@@ -95,7 +95,11 @@ export default new Hono().post(
                      value: getValueFromJson<string>(JSON.parse(json.text), path.path)
                   };
                }),
-               json,
+               json: {
+                  id: newJson.id,
+                  text: newJson.rawJson,
+                  filename: newJson.filename
+               },
                pagination: {
                   position: 0,
                   total: asset._count.jsonHistory + 1

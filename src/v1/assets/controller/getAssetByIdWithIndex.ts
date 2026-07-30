@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { json, z } from 'zod';
 import { getValueFromJson } from '../../../lib/util';
 import {
    internalServerError,
@@ -74,6 +74,7 @@ export default new Hono().get(
                   )
                })),
                json: {
+                  id: asset.jsonHistory[0].id,
                   text: asset.jsonHistory[0].rawJson,
                   filename: asset.jsonHistory[0].filename
                },

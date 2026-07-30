@@ -36,6 +36,7 @@ export default new Hono().get('/', async (c) => {
                value: getValueFromJson<string>(JSON.parse(asset.jsonHistory[0].rawJson), path.path)
             })),
             json: {
+               id: asset.jsonHistory[0].id,
                text: asset.jsonHistory[0]?.rawJson,
                filename: asset.jsonHistory[0]?.filename
             },
