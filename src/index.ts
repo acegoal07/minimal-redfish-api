@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
+import { compress } from 'hono/compress';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import v1 from './v1';
 
@@ -10,6 +11,7 @@ const app = new Hono();
 
 app.use('*', cors());
 app.use('*', trimTrailingSlash());
+app.use('*', compress())
 
 app.route('/api/v1', v1);
 
