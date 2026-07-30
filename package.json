@@ -2,6 +2,18 @@
    "name": "minimal-api",
    "version": "1.0.0",
    "main": "dist/index.js",
+   "tsup": {
+      "entry": [
+         "src/index.ts"
+      ],
+      "outDir": "dist",
+      "format": [
+         "esm"
+      ],
+      "target": "es2022",
+      "minify": true,
+      "clean": true
+   },
    "scripts": {
       "prod": "node index.js",
       "prod:install": "npm i --omit=dev",
