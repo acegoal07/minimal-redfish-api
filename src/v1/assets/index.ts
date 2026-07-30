@@ -11,7 +11,7 @@ import updateAssetPath from './controller/updateAssetPath';
 import deleteAssetPath from './controller/deleteAssetPath';
 import getAssetByIdWithIndex from './controller/getAssetByIdWithIndex';
 import addPathToAsset from './controller/addPathToAsset';
-import deleteAssetJson from './controller/deleteAssetHistory';
+import deleteAssetHistory from './controller/deleteAssetHistory';
 import getAssetHistory from './controller/getAssetHistory';
 
 export default new Hono()
@@ -22,7 +22,7 @@ export default new Hono()
    .route('/', getAssetHistory)
    .route('/', updateAssetPath)
    .route('/', deleteAssetPath)
-   .route('/', deleteAssetJson)
+   .route('/', deleteAssetHistory)
    .route('/', getAssetByIdWithIndex)
    .route('/', getAssetById)
    .route('/', updateAssetJson)
