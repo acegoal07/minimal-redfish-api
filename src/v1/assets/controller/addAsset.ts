@@ -6,7 +6,8 @@ import {
    internalServerError,
    invalidBodyError,
    notFoundError,
-   invalidJsonError
+   invalidJsonError,
+   existingResourceError
 } from '../../../lib/errorMessages';
 import { getValueFromJson, isValidJson } from '../../../lib/util';
 
@@ -56,6 +57,18 @@ export default new Hono().post(
    async (c) => {
       try {
          const { json, data, ...rest } = c.req.valid('json');
+
+         // Try and get any existing assets from the database
+         const existingAsset = await prisma.asset.findFirst({
+            where: {
+               name: rest.name
+            }
+         })
+
+         // Check if a rack already exists
+         if (existingAsset) {
+            return existingResourceError(c);
+         }
 
          // Try's to retrieve the rack from the database
          const rack = await prisma.rack.findUnique({

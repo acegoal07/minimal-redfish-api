@@ -84,10 +84,26 @@ function invalidJsonError(c: Context) {
    );
 }
 
+/**
+ * Responds with a existing resource error message
+ * @param c
+ * @returns
+ */
+function existingResourceError(c: Context) {
+   return c.json(
+      {
+         error: 'CONFLATING_RESOURCE',
+         message: 'There is already a resource in the database'
+      },
+      409
+   );
+}
+
 export {
    internalServerError,
    invalidParametersError,
    invalidBodyError,
    notFoundError,
-   invalidJsonError
+   invalidJsonError,
+   existingResourceError
 };
