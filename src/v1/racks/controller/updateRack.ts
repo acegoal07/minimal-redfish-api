@@ -54,6 +54,11 @@ export default new Hono().patch(
          const rack = await prisma.rack.findUnique({
             where: {
                id
+            },
+            select: {
+               name: true,
+               size: true,
+               notes: true
             }
          });
 

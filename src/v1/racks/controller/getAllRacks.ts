@@ -4,7 +4,14 @@ import { internalServerError } from '../../../lib/errorMessages';
 
 export default new Hono().get('/', async (c) => {
    try {
-      const racks = await prisma.rack.findMany();
+      const racks = await prisma.rack.findMany({
+         select: {
+            id: true,
+            name: true,
+            size: true,
+            notes: true
+         }
+      });
 
       return c.json(
          racks.map((rack) => ({

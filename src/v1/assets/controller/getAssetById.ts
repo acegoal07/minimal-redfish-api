@@ -39,6 +39,11 @@ export default new Hono().get(
                   orderBy: {
                      uploadDate: 'desc'
                   },
+                  select: {
+                     id: true,
+                     rawJson: true,
+                     filename: true
+                  },
                   take: 1
                },
                paths: true,

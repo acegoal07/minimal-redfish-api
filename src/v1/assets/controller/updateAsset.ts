@@ -72,9 +72,20 @@ export default new Hono().patch(
                   orderBy: {
                      uploadDate: 'desc'
                   },
+                  select: {
+                     id: true,
+                     rawJson: true,
+                     filename: true
+                  },
                   take: 1
                },
-               paths: true,
+               paths: {
+                  select: {
+                     id: true,
+                     name: true,
+                     path: true
+                  }
+               },
                _count: {
                   select: {
                      jsonHistory: true

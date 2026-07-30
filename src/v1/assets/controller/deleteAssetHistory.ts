@@ -37,6 +37,9 @@ export default new Hono().delete(
             where: {
                id: jsonId,
                assetId: id
+            },
+            select: {
+               id: true
             }
          });
 

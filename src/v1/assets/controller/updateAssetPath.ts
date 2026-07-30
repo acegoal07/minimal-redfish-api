@@ -61,11 +61,18 @@ export default new Hono().patch(
                   orderBy: {
                      uploadDate: 'desc'
                   },
+                  select: {
+                     rawJson: true
+                  },
                   take: 1
                },
                paths: {
                   where: {
                      id: pathId
+                  },
+                  select: {
+                     name: true,
+                     path: true
                   }
                }
             }

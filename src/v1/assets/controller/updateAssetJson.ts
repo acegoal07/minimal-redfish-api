@@ -63,7 +63,13 @@ export default new Hono().post(
                id: id
             },
             include: {
-               paths: true,
+               paths: {
+                  select: {
+                     id: true,
+                     name: true,
+                     path: true
+                  }
+               },
                _count: {
                   select: {
                      jsonHistory: true

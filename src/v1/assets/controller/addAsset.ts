@@ -62,8 +62,11 @@ export default new Hono().post(
          const existingAsset = await prisma.asset.findFirst({
             where: {
                name: rest.name
+            },
+            select: {
+               id: true
             }
-         })
+         });
 
          // Check if a rack already exists
          if (existingAsset) {
@@ -74,6 +77,9 @@ export default new Hono().post(
          const rack = await prisma.rack.findUnique({
             where: {
                id: rest.rackId
+            },
+            select: {
+               id: true
             }
          });
 

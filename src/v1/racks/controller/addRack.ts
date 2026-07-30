@@ -2,7 +2,11 @@ import { Hono } from 'hono';
 import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { existingResourceError, internalServerError, invalidBodyError } from '../../../lib/errorMessages';
+import {
+   existingResourceError,
+   internalServerError,
+   invalidBodyError
+} from '../../../lib/errorMessages';
 
 export default new Hono().post(
    '/',
@@ -32,6 +36,9 @@ export default new Hono().post(
          const existingRack = await prisma.rack.findFirst({
             where: {
                name: body.name
+            },
+            select: {
+               id: true
             }
          });
 
@@ -42,7 +49,11 @@ export default new Hono().post(
 
          // Create the rack in the database
          const rack = await prisma.rack.create({
-            data: body
+            data: {
+               name: body.name,
+               notes: body.notes,
+               size: body.size
+            }
          });
 
          return c.json(

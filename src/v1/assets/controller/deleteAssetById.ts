@@ -32,6 +32,9 @@ export default new Hono().delete(
          const asset = await prisma.asset.findUnique({
             where: {
                id
+            },
+            select: {
+               id: true
             }
          });
 

@@ -11,6 +11,11 @@ export default new Hono().get('/', async (c) => {
                orderBy: {
                   uploadDate: 'desc'
                },
+               select: {
+                  rawJson: true,
+                  id: true,
+                  filename: true
+               },
                take: 1
             },
             paths: true,

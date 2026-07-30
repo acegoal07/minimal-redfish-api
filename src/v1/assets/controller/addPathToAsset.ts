@@ -55,11 +55,15 @@ export default new Hono().post(
                id: id
             },
             include: {
+               id: true,
                jsonHistory: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
-                  take: 1
+                  take: 1,
+                  select: {
+                     rawJson: true
+                  }
                }
             }
          });
@@ -72,7 +76,8 @@ export default new Hono().post(
          // Add the new path to the database
          const newPath = await prisma.path.create({
             data: {
-               ...body,
+               name: body.name,
+               path: body.path,
                assetId: id
             }
          });

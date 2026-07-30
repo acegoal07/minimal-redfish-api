@@ -11,7 +11,7 @@ const app = new Hono();
 
 app.use('*', cors());
 app.use('*', trimTrailingSlash());
-app.use('*', compress())
+app.use('*', compress());
 
 app.route('/api/v1', v1);
 
