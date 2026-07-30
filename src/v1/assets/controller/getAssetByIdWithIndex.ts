@@ -69,14 +69,14 @@ export default new Hono().get(
                   name: path.name,
                   path: path.path,
                   value: getValueFromJson<string>(
-                     JSON.parse(asset.jsonHistory[0].rawJson),
+                     JSON.parse(asset.jsonHistory[0]?.rawJson),
                      path.path
                   )
                })),
                json: {
-                  id: asset.jsonHistory[0].id,
-                  text: asset.jsonHistory[0].rawJson,
-                  filename: asset.jsonHistory[0].filename
+                  id: asset.jsonHistory[0]?.id,
+                  text: asset.jsonHistory[0]?.rawJson,
+                  filename: asset.jsonHistory[0]?.filename
                },
                pagination: {
                   position: offset,

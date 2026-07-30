@@ -82,7 +82,7 @@ export default new Hono().post(
                id: newPath.id,
                path: newPath.path,
                name: newPath.name,
-               value: getValueFromJson<string>(JSON.parse(asset.jsonHistory[0].rawJson), body.path)
+               value: getValueFromJson<string>(JSON.parse(asset.jsonHistory[0]?.rawJson), body.path)
             },
             201
          );

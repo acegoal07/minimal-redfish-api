@@ -98,7 +98,7 @@ export default new Hono().patch(
                name: updatedPath.name,
                path: updatedPath.path,
                value: getValueFromJson<string>(
-                  JSON.parse(asset.jsonHistory[0].rawJson),
+                  JSON.parse(asset.jsonHistory[0]?.rawJson),
                   updatedPath.path
                )
             },
