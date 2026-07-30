@@ -96,7 +96,6 @@ export default new Hono().post(
 
          return c.json(
             {
-               success: true,
                id: asset.id,
                rackId: asset.rackId,
                name: asset.name,

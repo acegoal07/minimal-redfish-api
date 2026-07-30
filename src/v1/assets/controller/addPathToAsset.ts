@@ -81,7 +81,6 @@ export default new Hono().post(
 
          return c.json(
             {
-               success: true,
                id: newPath.id,
                path: newPath.path,
                name: newPath.name,

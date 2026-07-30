@@ -133,7 +133,6 @@ export default new Hono().patch(
 
          return c.json(
             {
-               success: true,
                id: updatedAsset.id,
                name: updatedAsset.name,
                position: updatedAsset.position,

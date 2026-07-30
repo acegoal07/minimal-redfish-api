@@ -76,8 +76,10 @@ export default new Hono().patch(
 
          return c.json(
             {
-               success: true,
-               ...updatedRack
+               id: updatedRack.id,
+               name: updatedRack.name,
+               notes: updatedRack.notes,
+               size: updatedRack.size
             },
             200
          );

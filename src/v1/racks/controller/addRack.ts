@@ -35,7 +35,6 @@ export default new Hono().post(
 
          return c.json(
             {
-               success: true,
                id: rack.id,
                name: rack.name,
                notes: rack.notes,

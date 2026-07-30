@@ -5,7 +5,6 @@ function internalServerError(c: Context, err: unknown) {
 
    return c.json(
       {
-         success: false,
          error: 'INTERNAL_SERVER_ERROR',
          message: 'An unexpected error occurred.'
       },
@@ -38,7 +37,6 @@ function invalidBodyError(c: Context, result: { error: { issues: unknown[] } }) 
 function notFoundError(c: Context) {
    return c.json(
       {
-         success: false,
          error: 'NOT_FOUND',
          message: 'The requested resource does not exist.'
       },

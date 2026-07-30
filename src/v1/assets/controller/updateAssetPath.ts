@@ -98,7 +98,6 @@ export default new Hono().patch(
 
          return c.json(
             {
-               success: true,
                id: updatedPath.id,
                name: updatedPath.name,
                path: updatedPath.path,

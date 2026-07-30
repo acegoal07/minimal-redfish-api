@@ -77,7 +77,6 @@ export default new Hono().get(
 
          return c.json(
             {
-               success: true,
                id: asset.id,
                name: asset.name,
                position: asset.position,
