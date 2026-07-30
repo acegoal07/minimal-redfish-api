@@ -7,7 +7,7 @@
 function getValueFromJson<T = unknown>(obj: unknown, path: string): T | undefined {
    let current: any = obj;
 
-   for (const part of path.split('/')) {
+   for (const part of path.split('/').filter(Boolean)) {
       if (current == null) return undefined;
 
       const arrayMatch = part.match(/^\[(\d+)\]$/);

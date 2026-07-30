@@ -22,31 +22,6 @@ export default new Hono().get('/', async (c) => {
          }
       });
 
-      // Go through each asset and gather the asset data
-      const assetsWithJson = assets.map(async (asset) => {
-         return {
-            id: asset.id,
-            name: asset.name,
-            position: asset.position,
-            size: asset.size,
-            rackId: asset.rackId,
-            data: asset.paths.map((path) => ({
-               id: path.id,
-               name: path.name,
-               path: path.path,
-               value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, path.path)
-            })),
-            json: {
-               text: asset.jsonHistory[0].rawJson,
-               filename: asset.jsonHistory[0].filename
-            },
-            pagination: {
-               position: 0,
-               total: asset._count.jsonHistory
-            }
-         };
-      });
-
       return c.json(
          assets.map((asset) => ({
             id: asset.id,
