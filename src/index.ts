@@ -13,6 +13,16 @@ app.use('*', trimTrailingSlash());
 
 app.route('/api/v1', v1);
 
+app.notFound((c) =>
+   c.json(
+      {
+         error: 'Not Found',
+         message: `well well well, what have we here then`
+      },
+      404
+   )
+);
+
 serve({
    fetch: app.fetch,
    port: Number(process.env.PORT) || 3000
