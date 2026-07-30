@@ -55,7 +55,6 @@ export default new Hono().post(
                id: id
             },
             include: {
-               id: true,
                jsonHistory: {
                   orderBy: {
                      uploadDate: 'desc'

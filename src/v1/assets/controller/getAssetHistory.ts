@@ -34,7 +34,6 @@ export default new Hono().get(
                id
             },
             include: {
-               id: true,
                jsonHistory: {
                   orderBy: {
                      uploadDate: 'desc'
