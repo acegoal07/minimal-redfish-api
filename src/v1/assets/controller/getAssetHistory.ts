@@ -1,16 +1,15 @@
 import { Hono } from 'hono';
 import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { json, z } from 'zod';
 import { getValueFromJson } from '../../../lib/util';
 import {
    internalServerError,
-   invalidBodyError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
 
-export default new Hono().post(
+export default new Hono().get(
    '/:id/path',
    zValidator(
       'param',
@@ -26,65 +25,35 @@ export default new Hono().post(
          }
       }
    ),
-   zValidator(
-      'json',
-      z.object({
-         name: z
-            .string({ error: 'Name must be a string' })
-            .trim()
-            .min(1, { message: 'Name cannot be empty' }),
-         path: z
-            .string({ error: 'Path must be a string' })
-            .trim()
-            .min(1, { message: 'Path cannot be empty' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
-   ),
    async (c) => {
       try {
          const { id } = c.req.valid('param');
-         const body = c.req.valid('json');
 
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id: id
+               id
             },
             include: {
                jsonHistory: {
                   orderBy: {
                      uploadDate: 'desc'
-                  },
-                  take: 1
+                  }
                }
             }
          });
 
-         // Check whether the asset exists
+         // Check to make sure the asset exists
          if (!asset) {
             return notFoundError(c);
          }
 
-         // Add the new path to the database
-         const newPath = await prisma.path.create({
-            data: {
-               ...body,
-               assetId: id
-            }
-         });
-
          return c.json(
-            {
-               id: newPath.id,
-               path: newPath.path,
-               name: newPath.name,
-               value: getValueFromJson<string>(JSON.parse(asset.jsonHistory[0].rawJson), body.path)
-            },
-            201
+            asset.jsonHistory.map((json) => ({
+               text: json.rawJson,
+               filename: json.filename
+            })),
+            200
          );
       } catch (err) {
          return internalServerError(c, err);

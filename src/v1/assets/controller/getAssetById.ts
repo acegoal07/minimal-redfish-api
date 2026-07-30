@@ -66,7 +66,10 @@ export default new Hono().get(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, path.path)
+                  value: getValueFromJson<string>(
+                     JSON.parse(asset.jsonHistory[0].rawJson),
+                     path.path
+                  )
                })),
                json: {
                   text: asset.jsonHistory[0].rawJson,

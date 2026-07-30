@@ -114,7 +114,7 @@ export default new Hono().post(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<String>(json.text, path.path)
+                  value: getValueFromJson<String>(JSON.parse(json.text), path.path)
                })),
                json: {
                   text: json.text,
