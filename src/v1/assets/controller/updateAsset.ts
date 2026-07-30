@@ -65,7 +65,7 @@ export default new Hono().patch(
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id: id
+               id
             },
             include: {
                jsonHistory: {
@@ -89,15 +89,17 @@ export default new Hono().patch(
          }
 
          // Try and get the new rack
-         const rack = await prisma.rack.findUnique({
-            where: {
-               id: body.rackId
-            }
-         });
+         if (body.rackId) {
+            const rack = await prisma.rack.findUnique({
+               where: {
+                  id: body.rackId
+               }
+            });
 
-         // Check if the rack exists
-         if (!rack) {
-            return notFoundError(c);
+            // Check if the rack exists
+            if (!rack) {
+               return notFoundError(c);
+            }
          }
 
          // Update asset in the database
@@ -109,7 +111,7 @@ export default new Hono().patch(
                position: body.position ?? asset.position
             },
             where: {
-               id: id
+               id
             }
          });
 
