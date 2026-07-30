@@ -30,31 +30,27 @@ export default new Hono().delete(
    ),
    async (c) => {
       try {
-         const { id } = c.req.valid('param');
+         const { id, pathId } = c.req.valid('param');
 
-         // Try and get the asset from the database
-         const asset = await prisma.asset.findUnique({
+         // Get the path checking that in matches the asset id and the path id
+         const path = await prisma.path.findFirst({
             where: {
-               id: id
+               id: pathId,
+               assetId: id
             }
          });
 
-         // Check whether the asset exists
-         if (!asset) {
-            return notFoundError(c);
-         }
-
-         // try and get the path from the database
-         const path = await prisma.path.findUnique({
-            where: {
-               id
-            }
-         });
-
-         // Check that the path exists
+         // Checks if the path exists
          if (!path) {
             return notFoundError(c);
          }
+
+         // Delete the path
+         await prisma.path.delete({
+            where: {
+               id: pathId
+            }
+         });
 
          return c.json(204);
       } catch (err) {

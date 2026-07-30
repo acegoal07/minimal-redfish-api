@@ -53,6 +53,14 @@ export default new Hono().post(
          const asset = await prisma.asset.findUnique({
             where: {
                id: id
+            },
+            include: {
+               jsonHistory: {
+                  orderBy: {
+                     uploadDate: 'desc'
+                  },
+                  take: 1
+               }
             }
          });
 
@@ -69,22 +77,12 @@ export default new Hono().post(
             }
          });
 
-         // Get the latest json history for the asset
-         const latestJsonHistory = await prisma.jsonHistory.findFirst({
-            where: {
-               assetId: asset.id
-            },
-            orderBy: {
-               uploadDate: 'desc'
-            }
-         });
-
          return c.json(
             {
                id: newPath.id,
                path: newPath.path,
                name: newPath.name,
-               value: getValueFromJson<string>(latestJsonHistory, body.path)
+               value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, body.path)
             },
             201
          );

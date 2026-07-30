@@ -48,13 +48,26 @@ export default new Hono().patch(
    ),
    async (c) => {
       try {
-         const { id } = c.req.valid('param');
+         const { id, pathId } = c.req.valid('param');
          const body = c.req.valid('json');
 
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
                id: id
+            },
+            include: {
+               jsonHistory: {
+                  orderBy: {
+                     uploadDate: 'desc'
+                  },
+                  take: 1
+               },
+               paths: {
+                  where: {
+                     id: pathId
+                  }
+               }
             }
          });
 
@@ -63,36 +76,19 @@ export default new Hono().patch(
             return notFoundError(c);
          }
 
-         // try and get the path from the database
-         const oldPath = await prisma.path.findUnique({
-            where: {
-               id
-            }
-         });
-
          // Check that the path exists
-         if (!oldPath) {
+         if (!asset.paths[0]) {
             return notFoundError(c);
          }
 
          // Update the path in the database
          const updatedPath = await prisma.path.update({
             data: {
-               name: body.name ?? oldPath?.name,
-               path: body.path ?? oldPath?.path
+               name: body.name ?? asset.paths[0]?.name,
+               path: body.path ?? asset.paths[0]?.path
             },
             where: {
                id
-            }
-         });
-
-         // Get the latest json history for the asset
-         const latestJsonHistory = await prisma.jsonHistory.findFirst({
-            where: {
-               assetId: id
-            },
-            orderBy: {
-               uploadDate: 'desc'
             }
          });
 
@@ -101,7 +97,7 @@ export default new Hono().patch(
                id: updatedPath.id,
                name: updatedPath.name,
                path: updatedPath.path,
-               value: getValueFromJson<string>(latestJsonHistory, updatedPath.path)
+               value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, updatedPath.path)
             },
             200
          );

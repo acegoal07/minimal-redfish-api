@@ -34,6 +34,21 @@ export default new Hono().get(
          const asset = await prisma.asset.findUnique({
             where: {
                id
+            },
+            include: {
+               jsonHistory: {
+                  orderBy: {
+                     uploadDate: 'desc'
+                  },
+                  take: 1,
+                  skip: offset - 1
+               },
+               paths: true,
+               _count: {
+                  select: {
+                     jsonHistory: true
+                  }
+               }
             }
          });
 
@@ -42,39 +57,6 @@ export default new Hono().get(
             return notFoundError(c);
          }
 
-         // Get all the data fields from the database
-         const assetPaths = await prisma.path.findMany({
-            where: {
-               assetId: id
-            }
-         });
-
-         // Get the total number of json history items in the database for the asset
-         const totalJsonHistory = await prisma.jsonHistory.count({
-            where: {
-               assetId: id
-            }
-         });
-
-         // Get the latest json for the asset from the database
-         const latestJsonHistory = await prisma.jsonHistory.findFirst({
-            where: {
-               assetId: id
-            },
-            orderBy: {
-               uploadDate: 'desc'
-            },
-            skip: offset
-         });
-
-         // Get the values for the asset paths from the json
-         const assetPathsWithData = assetPaths.map((path) => {
-            return {
-               ...path,
-               value: getValueFromJson<string>(latestJsonHistory, path.path)
-            };
-         });
-
          return c.json(
             {
                id: asset.id,
@@ -82,19 +64,19 @@ export default new Hono().get(
                position: asset.position,
                size: asset.size,
                rackId: asset.rackId,
-               data: assetPathsWithData.map((path) => ({
+               data: asset.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: path.value
+                  value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, path.path)
                })),
                json: {
-                  text: latestJsonHistory?.rawJson,
-                  filename: latestJsonHistory?.filename
+                  text: asset.jsonHistory[0].rawJson,
+                  filename: asset.jsonHistory[0].filename
                },
                pagination: {
-                  position: 0,
-                  total: totalJsonHistory
+                  position: offset,
+                  total: asset._count.jsonHistory
                }
             },
             200

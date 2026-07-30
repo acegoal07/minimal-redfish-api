@@ -3,6 +3,7 @@ import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { internalServerError, invalidBodyError, notFoundError } from '../../../lib/errorMessages';
+import { getValueFromJson } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -63,48 +64,57 @@ export default new Hono().post(
             return notFoundError(c);
          }
 
-         // Create asset in the database
-         const asset = await prisma.asset.create({
-            data: rest
-         });
-
-         // Create the first json history
-         await prisma.jsonHistory.create({
-            data: {
-               assetId: asset.id,
-               rawJson: json.text,
-               filename: json.filename
-            }
-         });
-
-         // If there are any data fields provided add them to the database
-         if (data) {
-            await prisma.path.createMany({
-               data: data.map((item) => ({
-                  assetId: asset.id,
-                  ...item
-               }))
+         // Handle all the adding to the database in one go
+         const result = await prisma.$transaction(async (tx) => {
+            // Add the asset to the database
+            const asset = await tx.asset.create({
+               data: rest
             });
-         }
 
-         // Get all the data fields in the database
-         const assetPaths = await prisma.path.findMany({
-            where: {
-               assetId: asset.id
+            // Add the json to the database
+            await tx.jsonHistory.create({
+               data: {
+                  assetId: asset.id,
+                  rawJson: json.text,
+                  filename: json.filename
+               }
+            });
+
+            // Add the data paths to the database if there are any
+            if (data && data?.length > 0) {
+               await tx.path.createMany({
+                  data: data.map((item) => ({
+                     assetId: asset.id,
+                     ...item
+                  }))
+               });
             }
+
+            // Get the ids of all the datafield in the database
+            const assetPaths = await tx.path.findMany({
+               where: {
+                  assetId: asset.id
+               }
+            });
+
+            return {
+               asset,
+               assetPaths
+            };
          });
 
          return c.json(
             {
-               id: asset.id,
-               rackId: asset.rackId,
-               name: asset.name,
-               position: asset.position,
-               size: asset.size,
-               data: assetPaths.map((path) => ({
+               id: result.asset.id,
+               rackId: result.asset.rackId,
+               name: result.asset.name,
+               position: result.asset.position,
+               size: result.asset.size,
+               data: result.assetPaths.map((path) => ({
                   id: path.id,
                   name: path.name,
-                  path: path.name
+                  path: path.path,
+                  value: getValueFromJson<String>(json.text, path.path)
                })),
                json: {
                   text: json.text,
@@ -112,7 +122,7 @@ export default new Hono().post(
                },
                pagination: {
                   position: 0,
-                  total: 0
+                  total: 1
                }
             },
             201

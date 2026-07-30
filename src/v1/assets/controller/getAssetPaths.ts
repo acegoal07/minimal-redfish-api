@@ -33,6 +33,15 @@ export default new Hono().get(
          const asset = await prisma.asset.findUnique({
             where: {
                id
+            },
+            include: {
+               jsonHistory: {
+                  orderBy: {
+                     uploadDate: 'desc'
+                  },
+                  take: 1
+               },
+               paths: true
             }
          });
 
@@ -41,34 +50,15 @@ export default new Hono().get(
             return notFoundError(c);
          }
 
-         // Get all the data fields from the database
-         const assetPaths = await prisma.path.findMany({
-            where: {
-               assetId: id
-            }
-         });
-
-         // Get the latest json history for the asset
-         const latestJsonHistory = await prisma.jsonHistory.findFirst({
-            where: {
-               assetId: id
-            },
-            orderBy: {
-               uploadDate: 'desc'
-            }
-         });
-
-         // Get the values for the asset paths from the json
-         const assetPathsWithData = assetPaths.map((path) => {
-            return {
+         return c.json(
+            asset.paths.map((path) => ({
                id: path.id,
                name: path.name,
                path: path.path,
-               value: getValueFromJson<string>(latestJsonHistory, path.path)
-            };
-         });
-
-         return c.json(assetPathsWithData, 200);
+               value: getValueFromJson<string>(asset.jsonHistory[0].rawJson, path.path)
+            })),
+            200
+         );
       } catch (err) {
          return internalServerError(c, err);
       }
