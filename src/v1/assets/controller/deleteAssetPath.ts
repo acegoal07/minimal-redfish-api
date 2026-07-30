@@ -9,7 +9,7 @@ import {
 } from '../../../lib/errorMessages';
 
 export default new Hono().delete(
-   '/:id/path/:pathId',
+   '/:id/paths/:pathId',
    zValidator(
       'param',
       z.object({

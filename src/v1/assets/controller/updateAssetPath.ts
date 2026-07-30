@@ -11,7 +11,7 @@ import {
 } from '../../../lib/errorMessages';
 
 export default new Hono().patch(
-   '/:id/path/:pathId',
+   '/:id/paths/:pathId',
    zValidator(
       'param',
       z.object({
