@@ -2,8 +2,13 @@ import { Hono } from 'hono';
 import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { internalServerError, invalidBodyError, notFoundError } from '../../../lib/errorMessages';
-import { getValueFromJson } from '../../../lib/util';
+import {
+   internalServerError,
+   invalidBodyError,
+   notFoundError,
+   invalidJsonError
+} from '../../../lib/errorMessages';
+import { getValueFromJson, isValidJson } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -62,6 +67,11 @@ export default new Hono().post(
          // Checks whether the rack exists
          if (!rack) {
             return notFoundError(c);
+         }
+
+         // Check if json is valid
+         if (!isValidJson(json.text)) {
+            return invalidJsonError(c);
          }
 
          // Handle all the adding to the database in one go

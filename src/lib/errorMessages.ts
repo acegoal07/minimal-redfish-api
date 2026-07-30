@@ -69,4 +69,25 @@ function notFoundError(c: Context) {
    );
 }
 
-export { internalServerError, invalidParametersError, invalidBodyError, notFoundError };
+/**
+ * Responds with a not found error message
+ * @param c
+ * @returns
+ */
+function invalidJsonError(c: Context) {
+   return c.json(
+      {
+         error: 'BAD_REQUEST',
+         message: 'The JSON sent to the server was invalid.'
+      },
+      404
+   );
+}
+
+export {
+   internalServerError,
+   invalidParametersError,
+   invalidBodyError,
+   notFoundError,
+   invalidJsonError
+};

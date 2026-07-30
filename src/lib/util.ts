@@ -24,4 +24,18 @@ function getValueFromJson<T = unknown>(obj: unknown, path: string): T | null {
    return current ?? null;
 }
 
-export { getValueFromJson };
+/**
+ * Checks to see if a string can be made into valid json
+ * @param value
+ * @returns
+ */
+function isValidJson(value: string) {
+   try {
+      JSON.parse(value);
+      return true;
+   } catch {
+      return false;
+   }
+}
+
+export { getValueFromJson, isValidJson };

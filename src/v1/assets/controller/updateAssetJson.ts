@@ -5,10 +5,11 @@ import { z } from 'zod';
 import {
    internalServerError,
    invalidBodyError,
+   invalidJsonError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
-import { getValueFromJson } from '../../../lib/util';
+import { getValueFromJson, isValidJson } from '../../../lib/util';
 
 export default new Hono().post(
    '/:id',
@@ -50,6 +51,11 @@ export default new Hono().post(
       try {
          const { id } = c.req.valid('param');
          const { json } = c.req.valid('json');
+
+         // Check if json is valid
+         if (!isValidJson(json.text)) {
+            return invalidJsonError(c);
+         }
 
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
