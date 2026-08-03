@@ -104,7 +104,7 @@ export default new Hono().post(
             const jsonData = await tx.jsonHistory.create({
                data: {
                   assetId: asset.id,
-                  rawJson: json.text,
+                  rawJson: JSON.stringify(JSON.parse(json.text)),
                   filename: json.filename
                }
             });
@@ -145,7 +145,7 @@ export default new Hono().post(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<String>(JSON.parse(json.text), path.path)
+                  value: getValueFromJson<String>(JSON.parse(result.jsonData.rawJson), path.path)
                })),
                json: {
                   id: result.jsonData.id,

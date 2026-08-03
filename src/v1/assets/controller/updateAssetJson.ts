@@ -87,7 +87,7 @@ export default new Hono().post(
          const newJson = await prisma.jsonHistory.create({
             data: {
                assetId: id,
-               rawJson: json.text,
+               rawJson: JSON.stringify(JSON.parse(json.text)),
                filename: json.filename
             }
          });
@@ -104,7 +104,7 @@ export default new Hono().post(
                      id: path.id,
                      name: path.name,
                      path: path.path,
-                     value: getValueFromJson<string>(JSON.parse(json.text), path.path)
+                     value: getValueFromJson<string>(JSON.parse(newJson.rawJson), path.path)
                   };
                }),
                json: {
