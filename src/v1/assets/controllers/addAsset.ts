@@ -25,9 +25,11 @@ export default new Hono().post(
             .min(1, { message: 'Name is required' }),
          size: z
             .number({ error: 'Size must be a number' })
+            .int({ message: 'Size must be a whole number' })
             .min(1, { message: 'Size must be greater than 0' }),
          position: z
             .number({ error: 'Position must be a number' })
+            .int({ message: 'Position must be a whole number' })
             .min(1, { message: 'Position must be greater than 0' }),
          data: z
             .array(

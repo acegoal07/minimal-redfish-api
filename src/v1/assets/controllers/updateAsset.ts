@@ -32,6 +32,7 @@ export default new Hono().patch(
          .object({
             rackId: z
                .number({ error: 'Rack ID must be a number' })
+               .int({ message: 'Rack ID must be a whole number' })
                .min(1, { message: 'Rack ID must be greater than 0' })
                .optional(),
             name: z
@@ -41,10 +42,12 @@ export default new Hono().patch(
                .optional(),
             size: z
                .number({ error: 'Size must be a number' })
+               .int({ message: 'Size must be a whole number' })
                .min(1, { message: 'Size must be greater than 0' })
                .optional(),
             position: z
                .number({ error: 'Position must be a number' })
+               .int({ message: 'Position must be a whole number' })
                .min(1, { message: 'Position must be greater than 0' })
                .optional()
          })

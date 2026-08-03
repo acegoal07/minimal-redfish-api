@@ -99,11 +99,43 @@ function existingResourceError(c: Context) {
    );
 }
 
+/**
+ * Responds with a forbidden error message
+ * @param c
+ * @returns
+ */
+function forbiddenError(c: Context) {
+   return c.json(
+      {
+         error: 'FORBIDDEN',
+         message: 'Access denied, you do not have permission to perform this action'
+      },
+      403
+   );
+}
+
+/**
+ * Responds with a forbidden error message
+ * @param c
+ * @returns
+ */
+function unauthorisedError(c: Context) {
+   return c.json(
+      {
+         error: 'UNAUTHORISED',
+         message: 'You need to login to perform this action'
+      },
+      401
+   );
+}
+
 export {
    internalServerError,
    invalidParametersError,
    invalidBodyError,
    notFoundError,
    invalidJsonError,
-   existingResourceError
+   existingResourceError,
+   forbiddenError,
+   unauthorisedError
 };

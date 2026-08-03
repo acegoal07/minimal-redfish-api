@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
 
-import getAllRacks from './controller/getAllRacks';
-import getRackById from './controller/getRackById';
-import deleteRackById from './controller/deleteRackById';
-import addRack from './controller/addRack';
-import updateRack from './controller/updateRack';
-import getAllAssetsByRackId from './controller/getAssetByRackId';
-import searchRack from './controller/searchRack';
+import getAllRacks from './controllers/getAllRacks';
+import getRackById from './controllers/getRackById';
+import deleteRackById from './controllers/deleteRackById';
+import addRack from './controllers/addRack';
+import updateRack from './controllers/updateRack';
+import getAllAssetsByRackId from './controllers/getAssetByRackId';
+import searchRack from './controllers/searchRack';
 
 export default new Hono()
    .route('/search', searchRack)

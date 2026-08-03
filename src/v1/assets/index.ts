@@ -1,19 +1,19 @@
 import { Hono } from 'hono';
 
-import getAllAssets from './controller/getAllAssets';
-import getAssetById from './controller/getAssetById';
-import deleteAssetById from './controller/deleteAssetById';
-import addAsset from './controller/addAsset';
-import updateAssetJson from './controller/updateAssetJson';
-import updateAsset from './controller/updateAsset';
-import getAssetPaths from './controller/getAssetPaths';
-import updateAssetPath from './controller/updateAssetPath';
-import deleteAssetPath from './controller/deleteAssetPath';
-import getAssetByIdWithIndex from './controller/getAssetByIdWithIndex';
-import addPathToAsset from './controller/addPathToAsset';
-import deleteAssetHistory from './controller/deleteAssetHistory';
-import getAssetHistory from './controller/getAssetHistory';
-import searchAsset from './controller/searchAsset';
+import getAllAssets from './controllers/getAllAssets';
+import getAssetById from './controllers/getAssetById';
+import deleteAssetById from './controllers/deleteAssetById';
+import addAsset from './controllers/addAsset';
+import updateAssetJson from './controllers/updateAssetJson';
+import updateAsset from './controllers/updateAsset';
+import getAssetPaths from './controllers/getAssetPaths';
+import updateAssetPath from './controllers/updateAssetPath';
+import deleteAssetPath from './controllers/deleteAssetPath';
+import getAssetByIdWithIndex from './controllers/getAssetByIdWithIndex';
+import addPathToAsset from './controllers/addPathToAsset';
+import deleteAssetHistory from './controllers/deleteAssetHistory';
+import getAssetHistory from './controllers/getAssetHistory';
+import searchAsset from './controllers/searchAsset';
 
 export default new Hono()
    .route('/search', searchAsset)

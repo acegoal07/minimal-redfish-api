@@ -27,18 +27,9 @@ export default new Hono().patch(
    ),
    zValidator(
       'json',
-      z
-         .object({
-            name: z.string({ error: 'Name must be a string' }).trim().optional(),
-            size: z
-               .number({ error: 'Size must be a number' })
-               .min(1, { message: 'Size must be at least 1' })
-               .optional(),
-            notes: z.string({ error: 'Notes must be a string' }).trim().optional()
-         })
-         .refine((data) => Object.keys(data).length > 0, {
-            message: 'At least one field must be provided'
-         }),
+      z.object({
+         name: z.string().trim().min(1)
+      }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -51,40 +42,42 @@ export default new Hono().patch(
          const body = c.req.valid('json');
 
          // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const template = await prisma.template.findUnique({
             where: {
                id
             },
             select: {
-               name: true,
-               size: true,
-               notes: true
+               id: true
             }
          });
 
          // Check if the rack exists
-         if (!rack) {
+         if (!template) {
             return notFoundError(c);
          }
 
-         // Update the rack in the database
-         const updatedRack = await prisma.rack.update({
-            data: {
-               name: body.name ?? rack.name,
-               size: body.size ?? rack.size,
-               notes: body.notes ?? rack.notes
-            },
+         // Update the template in the database
+         const updatedTemplate = await prisma.template.update({
             where: {
                id
+            },
+            data: {
+               name: body.name
+            },
+            include: {
+               templatePaths: true
             }
          });
 
          return c.json(
             {
-               id: updatedRack.id,
-               name: updatedRack.name,
-               notes: updatedRack.notes,
-               size: updatedRack.size
+               id: updatedTemplate.id,
+               name: updatedTemplate.name,
+               paths: updatedTemplate.templatePaths.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.path
+               }))
             },
             200
          );

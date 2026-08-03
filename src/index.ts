@@ -4,8 +4,9 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import { compress } from 'hono/compress';
-import { internalServerError } from './lib/errorMessages';
+import { internalServerError, unauthorisedError } from './lib/errorMessages';
 import { trimTrailingSlash } from 'hono/trailing-slash';
+import { jwt } from 'hono/jwt';
 import v1 from './v1';
 
 const app = new Hono();
@@ -16,8 +17,21 @@ app.use(
       allowMethods: ['POST', 'GET', 'DELETE', 'PATCH', 'PUT', 'OPTIONS']
    })
 );
+
 app.use('*', trimTrailingSlash());
 app.use('*', compress());
+
+const publicRoutes = new Set(['/api/v1/users/login']);
+// app.use('/api/*', async (c, next) => {
+//    if (publicRoutes.has(c.req.path)) {
+//       return next();
+//    }
+
+//    return jwt({
+//       secret: process.env.JWT_SECRET!,
+//       alg: 'HS256'
+//    })(c, next);
+// });
 
 app.route('/api/v1', v1);
 
@@ -32,6 +46,10 @@ app.notFound((c) =>
 );
 
 app.onError((err, c) => {
+   if (err.res?.status === 401) {
+      return unauthorisedError(c);
+   }
+
    return internalServerError(c, err);
 });
 
