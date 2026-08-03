@@ -10,7 +10,7 @@ import {
 import { getValueFromJson } from '../../../lib/util';
 
 export default new Hono().get(
-   '/:id/assets',
+   '/',
    zValidator(
       'param',
       z.object({

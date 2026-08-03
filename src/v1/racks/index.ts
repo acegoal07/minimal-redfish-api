@@ -8,9 +8,9 @@ import updateRack from './controller/updateRack';
 import getAllAssetsByRackId from './controller/getAssetByRackId';
 
 export default new Hono()
+   .route('/:id/assets', getAllAssetsByRackId)
+   .route('/:id', getRackById)
+   .route('/:id', updateRack)
+   .route('/:id', deleteRackById)
    .route('/', getAllRacks)
-   .route('/', addRack)
-   .route('/', getAllAssetsByRackId)
-   .route('/', getRackById)
-   .route('/', updateRack)
-   .route('/', deleteRackById);
+   .route('/', addRack);

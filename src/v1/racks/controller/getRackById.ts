@@ -9,7 +9,7 @@ import {
 } from '../../../lib/errorMessages';
 
 export default new Hono().get(
-   '/:id',
+   '/',
    zValidator(
       'param',
       z.object({

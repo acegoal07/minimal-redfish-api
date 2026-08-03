@@ -15,16 +15,16 @@ import deleteAssetHistory from './controller/deleteAssetHistory';
 import getAssetHistory from './controller/getAssetHistory';
 
 export default new Hono()
+   .route('/:id/paths/:pathId', updateAssetPath)
+   .route('/:id/paths/:pathId', deleteAssetPath)
+   .route('/:id/history/:jsonId', deleteAssetHistory)
+   .route('/:id/paths', getAssetPaths)
+   .route('/:id/paths', addPathToAsset)
+   .route('/:id/history', getAssetHistory)
+   .route('/:id/:offset', getAssetByIdWithIndex)
+   .route('/:id', getAssetById)
+   .route('/:id', updateAssetJson)
+   .route('/:id', updateAsset)
+   .route('/:id', deleteAssetById)
    .route('/', getAllAssets)
-   .route('/', addAsset)
-   .route('/', getAssetPaths)
-   .route('/', addPathToAsset)
-   .route('/', getAssetHistory)
-   .route('/', updateAssetPath)
-   .route('/', deleteAssetPath)
-   .route('/', deleteAssetHistory)
-   .route('/', getAssetByIdWithIndex)
-   .route('/', getAssetById)
-   .route('/', updateAssetJson)
-   .route('/', updateAsset)
-   .route('/', deleteAssetById);
+   .route('/', addAsset);

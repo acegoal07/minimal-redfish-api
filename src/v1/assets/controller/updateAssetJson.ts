@@ -12,7 +12,7 @@ import {
 import { getValueFromJson, isValidJson } from '../../../lib/util';
 
 export default new Hono().post(
-   '/:id',
+   '/',
    zValidator(
       'param',
       z.object({
