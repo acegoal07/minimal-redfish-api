@@ -56,3 +56,45 @@ model JsonHistory {
   @@index([assetId])
   @@map("JsonHistory")
 }
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(255)
+
+  users User[]
+
+  @@map("Role")
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique @db.VarChar(255)
+  passwordHash String? @db.Char(64)
+  roleId       Int
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@index([roleId])
+  @@map("User")
+}
+
+model Template {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(255)
+
+  templatePaths TemplatePath[]
+
+  @@map("Template")
+}
+
+model TemplatePath {
+  id          Int     @id @default(autoincrement())
+  path        String  @db.Text
+  name        String? @db.VarChar(255)
+  templateId  Int
+
+  template Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@map("TemplatePath")
+}

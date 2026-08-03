@@ -40,3 +40,47 @@ CREATE TABLE
       assetId INT NOT NULL,
       CONSTRAINT fk_jsonhistory_asset FOREIGN KEY (assetId) REFERENCES Asset (id) ON DELETE CASCADE
    );
+
+CREATE TABLE
+   IF NOT EXISTS Role (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+   );
+
+CREATE TABLE
+   IF NOT EXISTS User (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      passwordHash CHAR(64),
+      roleId INT NOT NULL,
+      CONSTRAINT fk_user_role FOREIGN KEY (roleId) REFERENCES Role (id) ON DELETE CASCADE
+   );
+
+CREATE TABLE
+   IF NOT EXISTS Template (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+   );
+
+CREATE TABLE
+   IF NOT EXISTS TemplatePath (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      path TEXT NOT NULL,
+      name VARCHAR(255),
+      templateId INT NOT NULL,
+      CONSTRAINT fk_templatepath_template FOREIGN KEY (templateId) REFERENCES Template (id) ON DELETE CASCADE
+   );
+
+INSERT IGNORE INTO Role (name)
+VALUES
+   ('admin');
+
+INSERT IGNORE INTO User (username, passwordHash, roleId)
+SELECT
+   'admin',
+   SHA2 ('admin', 256),
+   id
+FROM
+   Role
+WHERE
+   name = 'admin';
