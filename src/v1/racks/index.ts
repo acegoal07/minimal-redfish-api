@@ -6,8 +6,10 @@ import deleteRackById from './controller/deleteRackById';
 import addRack from './controller/addRack';
 import updateRack from './controller/updateRack';
 import getAllAssetsByRackId from './controller/getAssetByRackId';
+import searchRack from './controller/searchRack';
 
 export default new Hono()
+   .route('/search', searchRack)
    .route('/:id/assets', getAllAssetsByRackId)
    .route('/:id', getRackById)
    .route('/:id', updateRack)
