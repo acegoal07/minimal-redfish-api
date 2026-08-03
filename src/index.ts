@@ -6,6 +6,7 @@ import { serve } from '@hono/node-server';
 import { compress } from 'hono/compress';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import v1 from './v1';
+import { internalServerError } from './lib/errorMessages';
 
 const app = new Hono();
 
@@ -24,6 +25,10 @@ app.notFound((c) =>
       404
    )
 );
+
+app.onError((err, c) => {
+   return internalServerError(c, err);
+});
 
 serve({
    fetch: app.fetch,
