@@ -114,7 +114,8 @@ export default new Hono().post(
                await tx.path.createMany({
                   data: data.map((item) => ({
                      assetId: asset.id,
-                     ...item
+                     path: item.path,
+                     name: item.name
                   }))
                });
             }
