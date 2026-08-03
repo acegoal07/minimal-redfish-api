@@ -4,13 +4,15 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import { compress } from 'hono/compress';
+import { internalServerError } from './lib/errorMessages';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import v1 from './v1';
-import { internalServerError } from './lib/errorMessages';
 
 const app = new Hono();
 
-app.use('*', cors());
+app.use('*', cors({
+   allowMethods: ['POST', 'GET', 'DELETE', 'PATCH', 'PUT', 'OPTIONS']
+}));
 app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
