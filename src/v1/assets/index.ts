@@ -17,6 +17,8 @@ import searchAsset from './controller/searchAsset';
 
 export default new Hono()
    .route('/search', searchAsset)
+   .route('/', getAllAssets)
+   .route('/', addAsset)
    .route('/:id/paths/:pathId', updateAssetPath)
    .route('/:id/paths/:pathId', deleteAssetPath)
    .route('/:id/history/:jsonId', deleteAssetHistory)
@@ -27,6 +29,4 @@ export default new Hono()
    .route('/:id', getAssetById)
    .route('/:id', updateAssetJson)
    .route('/:id', updateAsset)
-   .route('/:id', deleteAssetById)
-   .route('/', getAllAssets)
-   .route('/', addAsset);
+   .route('/:id', deleteAssetById);

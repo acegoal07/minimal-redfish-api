@@ -9,10 +9,10 @@ import getAllAssetsByRackId from './controller/getAssetByRackId';
 import searchRack from './controller/searchRack';
 
 export default new Hono()
-   .route('/search', searchRack)
+   .route('/search', searchRack)   
+   .route('/', getAllRacks)
+   .route('/', addRack)
    .route('/:id/assets', getAllAssetsByRackId)
    .route('/:id', getRackById)
    .route('/:id', updateRack)
-   .route('/:id', deleteRackById)
-   .route('/', getAllRacks)
-   .route('/', addRack);
+   .route('/:id', deleteRackById);
