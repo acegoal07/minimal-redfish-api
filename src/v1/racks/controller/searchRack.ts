@@ -31,8 +31,7 @@ export default new Hono().get(
                   ...(Number.isInteger(id) ? [{ id }] : []),
                   {
                      name: {
-                        contains: query,
-                        mode: 'insensitive'
+                        contains: query
                      }
                   }
                ]

@@ -4,7 +4,7 @@ info:
    description: API for managing racks and assets.
    version: 1.0.2
 servers:
-   - url: "http://localhost:3000/api/v1"
+   - url: 'http://localhost:3000/api/v1'
      description: Local development server for v1
 tags:
    - name: Assets
@@ -20,16 +20,16 @@ paths:
          operationId: listAssets
          summary: List all assets
          responses:
-            "200":
+            '200':
                description: List of assets
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/Asset"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                           $ref: '#/components/schemas/Asset'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       post:
          tags:
             - Assets
@@ -40,20 +40,20 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetCreate"
+                     $ref: '#/components/schemas/AssetCreate'
          responses:
-            "201":
+            '201':
                description: Asset created
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Asset"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "409":
-               $ref: "#/components/responses/Conflict"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Asset'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '409':
+               $ref: '#/components/responses/Conflict'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}:
       get:
@@ -62,86 +62,86 @@ paths:
          operationId: getAsset
          summary: Get asset by ID
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "200":
+            '200':
                description: Asset details
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Asset"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Asset'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       put:
          tags:
             - Assets
          operationId: replaceAssetJson
          summary: Replace an asset's JSON payload
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          requestBody:
             required: true
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetJsonUpdate"
+                     $ref: '#/components/schemas/AssetJsonUpdate'
          responses:
-            "200":
+            '200':
                description: Asset updated
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Asset"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Asset'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       patch:
          tags:
             - Assets
          operationId: updateAsset
          summary: Partially update an asset
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          requestBody:
             required: true
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetUpdate"
+                     $ref: '#/components/schemas/AssetUpdate'
          responses:
-            "200":
+            '200':
                description: Asset updated
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Asset"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "409":
-               $ref: "#/components/responses/Conflict"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Asset'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '409':
+               $ref: '#/components/responses/Conflict'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       delete:
          tags:
             - Assets
          operationId: deleteAsset
          summary: Delete an asset
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "204":
+            '204':
                description: Asset deleted
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}/paths:
       get:
@@ -150,48 +150,48 @@ paths:
          operationId: listAssetPaths
          summary: List asset paths
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "200":
+            '200':
                description: Asset paths
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/AssetData"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                           $ref: '#/components/schemas/AssetData'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       post:
          tags:
             - Assets
          operationId: createAssetPath
          summary: Add a path to an asset
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          requestBody:
             required: true
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetDataInput"
+                     $ref: '#/components/schemas/AssetDataInput'
          responses:
-            "201":
+            '201':
                description: Path added
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/AssetData"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "409":
-               $ref: "#/components/responses/Conflict"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/AssetData'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '409':
+               $ref: '#/components/responses/Conflict'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}/paths/{pathId}:
       patch:
@@ -200,7 +200,7 @@ paths:
          operationId: updateAssetPath
          summary: Update an asset path
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
             - name: pathId
               in: path
               required: true
@@ -213,20 +213,20 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetDataInput"
+                     $ref: '#/components/schemas/AssetDataInput'
          responses:
-            "200":
+            '200':
                description: Path updated
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/AssetData"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/AssetData'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}/history:
       get:
@@ -235,20 +235,20 @@ paths:
          operationId: listAssetHistory
          summary: Get asset history
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "200":
+            '200':
                description: Asset history
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/AssetJson"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                           $ref: '#/components/schemas/AssetJson'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}/history/{historyId}:
       delete:
@@ -257,7 +257,7 @@ paths:
          operationId: deleteAssetHistory
          summary: Delete an asset history entry
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
             - name: historyId
               in: path
               required: true
@@ -266,12 +266,12 @@ paths:
                  type: integer
                  format: int32
          responses:
-            "204":
+            '204':
                description: History deleted
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/{id}/{index}:
       get:
@@ -280,7 +280,7 @@ paths:
          operationId: getAssetByIndex
          summary: Get asset by ID and index
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
             - name: index
               in: path
               required: true
@@ -289,16 +289,16 @@ paths:
                  type: integer
                  format: int32
          responses:
-            "200":
+            '200':
                description: Asset details
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Asset"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Asset'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /assets/search:
       get:
@@ -316,17 +316,17 @@ paths:
               description: The search query.
               schema:
                  type: string
-                 example: "Server"
+                 example: 'Server'
          responses:
-            "200":
+            '200':
                description: A list of matching assets
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/Asset"
-            "500":
+                           $ref: '#/components/schemas/Asset'
+            '500':
                description: Internal server error
 
    /racks:
@@ -336,16 +336,16 @@ paths:
          operationId: listRacks
          summary: List all racks
          responses:
-            "200":
+            '200':
                description: List of racks
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/Rack"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                           $ref: '#/components/schemas/Rack'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       post:
          tags:
             - Racks
@@ -356,20 +356,20 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/RackCreate"
+                     $ref: '#/components/schemas/RackCreate'
          responses:
-            "201":
+            '201':
                description: Rack created
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Rack"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "409":
-               $ref: "#/components/responses/Conflict"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Rack'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '409':
+               $ref: '#/components/responses/Conflict'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /racks/{id}:
       get:
@@ -378,60 +378,60 @@ paths:
          operationId: getRack
          summary: Get rack by ID
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "200":
+            '200':
                description: Rack details
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Rack"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Rack'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       patch:
          tags:
             - Racks
          operationId: updateRack
          summary: Partially update a rack
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          requestBody:
             required: true
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/RackUpdate"
+                     $ref: '#/components/schemas/RackUpdate'
          responses:
-            "200":
+            '200':
                description: Rack updated
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/Rack"
-            "400":
-               $ref: "#/components/responses/BadRequest"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "409":
-               $ref: "#/components/responses/Conflict"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                        $ref: '#/components/schemas/Rack'
+            '400':
+               $ref: '#/components/responses/BadRequest'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '409':
+               $ref: '#/components/responses/Conflict'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
       delete:
          tags:
             - Racks
          operationId: deleteRack
          summary: Delete a rack
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "204":
+            '204':
                description: Rack deleted
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /racks/{id}/assets:
       get:
@@ -440,20 +440,20 @@ paths:
          operationId: listRackAssets
          summary: List assets in a rack
          parameters:
-            - $ref: "#/components/parameters/Id"
+            - $ref: '#/components/parameters/Id'
          responses:
-            "200":
+            '200':
                description: Assets belonging to the rack
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/Asset"
-            "404":
-               $ref: "#/components/responses/NotFound"
-            "500":
-               $ref: "#/components/responses/InternalServerError"
+                           $ref: '#/components/schemas/Asset'
+            '404':
+               $ref: '#/components/responses/NotFound'
+            '500':
+               $ref: '#/components/responses/InternalServerError'
 
    /racks/search:
       get:
@@ -471,17 +471,17 @@ paths:
               description: The search query.
               schema:
                  type: string
-                 example: "Rack"
+                 example: 'Rack'
          responses:
-            "200":
+            '200':
                description: A list of matching racks
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: "#/components/schemas/Rack"
-            "500":
+                           $ref: '#/components/schemas/Rack'
+            '500':
                description: Internal server error
 
 components:
@@ -529,11 +529,11 @@ components:
                type: array
                description: Asset path data.
                items:
-                  $ref: "#/components/schemas/AssetData"
+                  $ref: '#/components/schemas/AssetData'
             json:
-               $ref: "#/components/schemas/AssetJson"
+               $ref: '#/components/schemas/AssetJson'
             pagination:
-               $ref: "#/components/schemas/Pagination"
+               $ref: '#/components/schemas/Pagination'
       AssetCreate:
          type: object
          description: Request body for creating an asset.
@@ -557,9 +557,9 @@ components:
             data:
                type: array
                items:
-                  $ref: "#/components/schemas/AssetDataInput"
+                  $ref: '#/components/schemas/AssetDataInput'
             json:
-               $ref: "#/components/schemas/AssetJson"
+               $ref: '#/components/schemas/AssetJson'
       AssetUpdate:
          type: object
          description: Fields that may be updated on an asset.
@@ -582,7 +582,7 @@ components:
             - json
          properties:
             json:
-               $ref: "#/components/schemas/AssetJson"
+               $ref: '#/components/schemas/AssetJson'
       AssetJson:
          type: object
          description: JSON payload associated with an asset.
@@ -708,7 +708,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: "#/components/schemas/Error"
+                  $ref: '#/components/schemas/Error'
                example:
                   error: INVALID_REQUEST
                   message: One or more request fields are invalid.
@@ -717,7 +717,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: "#/components/schemas/Error"
+                  $ref: '#/components/schemas/Error'
                example:
                   error: NOT_FOUND
                   message: The requested resource does not exist.
@@ -726,7 +726,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: "#/components/schemas/Error"
+                  $ref: '#/components/schemas/Error'
                example:
                   error: CONFLICT
                   message: An asset already exists at the requested position.
@@ -735,7 +735,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: "#/components/schemas/Error"
+                  $ref: '#/components/schemas/Error'
                example:
                   error: INTERNAL_SERVER_ERROR
                   message: An unexpected error occurred.

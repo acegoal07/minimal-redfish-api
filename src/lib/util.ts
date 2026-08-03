@@ -21,7 +21,12 @@ function getValueFromJson<T = unknown>(obj: unknown, path: string): T | null {
       }
    }
 
-   if (current === null || current === undefined || typeof current === 'object' || typeof current === 'function') {
+   if (
+      current === null ||
+      current === undefined ||
+      typeof current === 'object' ||
+      typeof current === 'function'
+   ) {
       return null;
    }
 
