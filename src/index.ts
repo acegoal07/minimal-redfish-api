@@ -10,9 +10,12 @@ import v1 from './v1';
 
 const app = new Hono();
 
-app.use('*', cors({
-   allowMethods: ['POST', 'GET', 'DELETE', 'PATCH', 'PUT', 'OPTIONS']
-}));
+app.use(
+   '*',
+   cors({
+      allowMethods: ['POST', 'GET', 'DELETE', 'PATCH', 'PUT', 'OPTIONS']
+   })
+);
 app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
