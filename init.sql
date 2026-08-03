@@ -7,7 +7,7 @@ USE redfish;
 CREATE TABLE
    IF NOT EXISTS Rack (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
+      name VARCHAR(255) UNIQUE NOT NULL,
       size INT,
       notes VARCHAR(255)
    );
@@ -16,7 +16,7 @@ CREATE TABLE
    IF NOT EXISTS Asset (
       id INT AUTO_INCREMENT PRIMARY KEY,
       rackId INT NOT NULL,
-      name VARCHAR(255) NOT NULL,
+      name VARCHAR(255) UNIQUE NOT NULL,
       size INT,
       position INT,
       CONSTRAINT fk_asset_rack FOREIGN KEY (rackId) REFERENCES Rack (id) ON DELETE CASCADE
