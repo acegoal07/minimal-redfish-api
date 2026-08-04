@@ -49,6 +49,9 @@ function isValidJson(value: string) {
    }
 }
 
+/**
+ * The permissions available 
+ */
 type Permission =
    | 'template.read'
    | 'template.write'
