@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { xid, z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
@@ -19,7 +19,21 @@ export default new Hono().post(
          name: z
             .string({ error: 'Name must be a string' })
             .trim()
-            .min(1, { message: 'Name cannot be empty' })
+            .min(1, { message: 'Name cannot be empty' }),
+         paths: z
+            .array(
+               z.object({
+                  name: z
+                     .string({ error: 'Name must be a string' })
+                     .trim()
+                     .min(1, { message: 'Name cannot be empty' }),
+                  path: z
+                     .string({ error: 'Path must be a string' })
+                     .trim()
+                     .min(1, { message: 'Path cannot be empty' })
+               })
+            )
+            .optional()
       }),
       (result, c) => {
          if (!result.success) {
@@ -35,7 +49,7 @@ export default new Hono().post(
          }
 
          // Get request information
-         const { name } = c.req.valid('json');
+         const { name, paths } = c.req.valid('json');
 
          // Try and get a template with the name
          const existingTemplate = await prisma.template.findUnique({
@@ -54,16 +68,30 @@ export default new Hono().post(
             data: {
                name
             },
-            include: {
-               paths: true
+            select: {
+               name: true,
+               id: true
             }
          });
+
+         // Add all the new paths to the template
+         const addedPaths = await prisma.$transaction(
+            (paths ?? []).map((path) =>
+               prisma.templatePath.create({
+                  data: {
+                     name: path.name,
+                     path: path.path,
+                     templateId: template.id
+                  }
+               })
+            )
+         );
 
          return c.json(
             {
                id: template.id,
                name: template.id,
-               paths: template.paths.map((path) => ({
+               paths: addedPaths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path

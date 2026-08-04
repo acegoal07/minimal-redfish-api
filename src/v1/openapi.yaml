@@ -659,6 +659,10 @@ paths:
                      properties:
                         name:
                            type: string
+                        paths:
+                           type: array
+                           items:
+                              $ref: "#/components/schemas/TemplatePathInput"
          responses:
             "201":
                description: Template created
@@ -791,15 +795,7 @@ paths:
                   schema:
                      type: array
                      items:
-                        type: object
-                        required:
-                           - name
-                           - path
-                        properties:
-                           name:
-                              type: string
-                           path:
-                              type: string
+                        $ref: "#/components/schemas/TemplatePathInput"
          responses:
             "201":
                description: Template path created
@@ -1170,6 +1166,17 @@ components:
                type: array
                items:
                   $ref: "#/components/schemas/TemplatePath"
+      
+      TemplatePathInput:
+         type: object
+         required:
+            - path
+            - name
+         properties:
+            path:
+               type: string
+            name:
+               type: string
 
       TemplatePath:
          type: object

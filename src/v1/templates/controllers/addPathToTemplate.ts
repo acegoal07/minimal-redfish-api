@@ -78,7 +78,7 @@ export default new Hono().post(
             return notFoundError(c);
          }
 
-         // Add all the new paths to the asset
+         // Add all the new paths to the template
          const newPaths = await prisma.$transaction(
             body.map((path) =>
                prisma.templatePath.create({
