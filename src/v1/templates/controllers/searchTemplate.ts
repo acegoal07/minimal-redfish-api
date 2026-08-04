@@ -21,7 +21,7 @@ export default new Hono().get(
    ),
    async (c) => {
       // Check users permissions
-      if (!validatePermissions(['rack.read'], c)) {
+      if (!validatePermissions(['template.read'], c)) {
          return forbiddenError(c);
       }
 
@@ -33,9 +33,9 @@ export default new Hono().get(
          return c.json([], 200);
       }
 
-      // Search for racks
+      // Search for templates
       try {
-         const racks = await prisma.rack.findMany({
+         const templates = await prisma.template.findMany({
             where: {
                OR: [
                   ...(Number.isInteger(id) ? [{ id }] : []),
@@ -45,15 +45,21 @@ export default new Hono().get(
                      }
                   }
                ]
+            },
+            include: {
+               paths: true
             }
          });
 
          return c.json(
-            racks.map((rack) => ({
-               id: rack.id,
-               name: rack.name,
-               size: rack.size,
-               notes: rack.notes
+            templates.map((template) => ({
+               id: template.id,
+               name: template.name,
+               paths: template.paths.map((path) => ({
+                  id: path.id,
+                  name: path.name,
+                  path: path.name
+               }))
             })),
             200
          );

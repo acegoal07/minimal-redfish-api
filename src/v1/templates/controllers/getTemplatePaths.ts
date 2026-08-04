@@ -43,7 +43,7 @@ export default new Hono().get(
                id
             },
             include: {
-               templatePaths: true
+               paths: true
             }
          });
 
@@ -53,7 +53,7 @@ export default new Hono().get(
          }
 
          return c.json(
-            template.templatePaths.map((path) => ({
+            template.paths.map((path) => ({
                id: path.id,
                name: path.name,
                path: path.path

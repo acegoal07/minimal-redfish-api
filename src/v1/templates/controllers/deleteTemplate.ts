@@ -43,7 +43,7 @@ export default new Hono().delete(
                id
             },
             include: {
-               templatePaths: true
+               paths: true
             }
          });
 

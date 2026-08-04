@@ -55,7 +55,7 @@ export default new Hono().post(
                name
             },
             include: {
-               templatePaths: true
+               paths: true
             }
          });
 
@@ -63,7 +63,7 @@ export default new Hono().post(
             {
                id: template.id,
                name: template.id,
-               paths: template.templatePaths.map((path) => ({
+               paths: template.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path

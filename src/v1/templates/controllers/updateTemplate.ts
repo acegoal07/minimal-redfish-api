@@ -77,7 +77,7 @@ export default new Hono().patch(
                name: body.name
             },
             include: {
-               templatePaths: true
+               paths: true
             }
          });
 
@@ -85,7 +85,7 @@ export default new Hono().patch(
             {
                id: updatedTemplate.id,
                name: updatedTemplate.name,
-               paths: updatedTemplate.templatePaths.map((path) => ({
+               paths: updatedTemplate.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path

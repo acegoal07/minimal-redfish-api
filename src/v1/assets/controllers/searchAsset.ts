@@ -28,10 +28,12 @@ export default new Hono().get(
       // Get request information
       const { query, id } = c.req.valid('query');
 
+      // Returns blank if there is no query
       if (!query) {
          return c.json([], 200);
       }
 
+      // Search for assets
       try {
          const assets = await prisma.asset.findMany({
             where: {

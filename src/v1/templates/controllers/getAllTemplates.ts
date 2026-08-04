@@ -14,7 +14,7 @@ export default new Hono().get('/', async (c) => {
       // Get all the templates
       const templates = await prisma.template.findMany({
          include: {
-            templatePaths: true
+            paths: true
          }
       });
 
@@ -22,7 +22,7 @@ export default new Hono().get('/', async (c) => {
          templates.map((template) => ({
             id: template.id,
             name: template.name,
-            paths: template.templatePaths.map((path) => ({
+            paths: template.paths.map((path) => ({
                id: path.id,
                name: path.name,
                path: path.path

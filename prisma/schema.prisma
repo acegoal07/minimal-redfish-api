@@ -93,7 +93,7 @@ model Template {
   id    Int    @id @default(autoincrement())
   name  String @unique @db.VarChar(255)
 
-  templatePaths TemplatePath[]
+  paths TemplatePath[]
 
   @@map("Template")
 }
