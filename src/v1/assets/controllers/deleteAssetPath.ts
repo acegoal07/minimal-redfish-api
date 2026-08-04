@@ -18,12 +18,12 @@ export default new Hono().delete(
       z.object({
          id: z.coerce
             .number({ error: 'Asset ID must be a number' })
-            .int({ message: 'Asset ID must be a whole number' })
-            .positive({ message: 'Asset ID must be greater than 0' }),
+            .int({ error: 'Asset ID must be a whole number' })
+            .positive({ error: 'Asset ID must be greater than 0' }),
          pathId: z.coerce
             .number({ error: 'Path ID must be a number' })
-            .int({ message: 'Path ID must be a whole number' })
-            .positive({ message: 'Path ID must be greater than 0' })
+            .int({ error: 'Path ID must be a whole number' })
+            .positive({ error: 'Path ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {

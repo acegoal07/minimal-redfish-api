@@ -27,8 +27,8 @@ export default new Hono().post(
             .min(1, { error: 'Password cannot be empty' }),
          roleId: z.coerce
             .number({ error: 'Role ID must be a number' })
-            .int({ message: 'Role ID must be a whole number' })
-            .positive({ message: 'Role ID must be greater than 0' })
+            .int({ error: 'Role ID must be a whole number' })
+            .positive({ error: 'Role ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {

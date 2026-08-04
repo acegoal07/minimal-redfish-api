@@ -65,7 +65,7 @@ paths:
                         position:
                            type: integer
                            format: int32
-                        data:
+                        paths:
                            type: array
                            items:
                               $ref: "#/components/schemas/AssetData"
@@ -249,9 +249,12 @@ paths:
             content:
                application/json:
                   schema:
-                     type: array
-                     items:
-                        $ref: "#/components/schemas/AssetDataInput"
+                     type: object
+                     properties:
+                        paths:
+                           type: array
+                           items:
+                              $ref: "#/components/schemas/AssetDataInput"
          responses:
             "201":
                description: Path added
@@ -793,9 +796,12 @@ paths:
             content:
                application/json:
                   schema:
-                     type: array
-                     items:
-                        $ref: "#/components/schemas/TemplatePathInput"
+                     type: object
+                     properties:
+                        paths:
+                           type: array
+                           items:
+                              $ref: "#/components/schemas/TemplatePathInput"
          responses:
             "201":
                description: Template path created
@@ -1166,7 +1172,7 @@ components:
                type: array
                items:
                   $ref: "#/components/schemas/TemplatePath"
-      
+
       TemplatePathInput:
          type: object
          required:

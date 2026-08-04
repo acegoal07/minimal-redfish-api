@@ -15,12 +15,11 @@ export default new Hono().post(
          username: z
             .string({ error: 'Username must be a string' })
             .trim()
-            .min(1, { message: 'Username cannot be empty' }),
-
+            .min(1, { error: 'Username cannot be empty' }),
          password: z
             .string({ error: 'Password must be a string' })
             .trim()
-            .min(1, { message: 'Password cannot be empty' })
+            .min(1, { error: 'Password cannot be empty' })
       }),
       (result, c) => {
          if (!result.success) {

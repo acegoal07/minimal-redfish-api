@@ -19,8 +19,8 @@ export default new Hono().patch(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -34,7 +34,7 @@ export default new Hono().patch(
          name: z
             .string({ error: 'Name must be a string' })
             .trim()
-            .min(1, { message: 'Name cannot be empty' })
+            .min(1, { error: 'Name cannot be empty' })
       }),
       (result, c) => {
          if (!result.success) {

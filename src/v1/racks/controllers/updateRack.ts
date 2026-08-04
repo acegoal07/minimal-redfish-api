@@ -19,8 +19,8 @@ export default new Hono().patch(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -35,13 +35,13 @@ export default new Hono().patch(
             name: z.string({ error: 'Name must be a string' }).trim().optional(),
             size: z
                .number({ error: 'Size must be a number' })
-               .min(1, { message: 'Size must be at least 1' })
-               .int({ message: 'Size must be a whole number' })
+               .min(1, { error: 'Size must be at least 1' })
+               .int({ error: 'Size must be a whole number' })
                .optional(),
             notes: z.string({ error: 'Notes must be a string' }).trim().optional()
          })
          .refine((data) => Object.keys(data).length > 0, {
-            message: 'At least one field must be provided'
+            error: 'At least one field must be provided'
          }),
       (result, c) => {
          if (!result.success) {

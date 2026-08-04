@@ -18,8 +18,8 @@ export default new Hono().get(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' }),
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' }),
          offset: z.coerce.number({ error: 'Offset must be a number' }).optional().default(0)
       }),
       (result, c) => {

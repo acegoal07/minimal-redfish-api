@@ -20,20 +20,20 @@ export default new Hono().post(
       z.object({
          rackId: z
             .number({ error: 'Rack ID must be a number' })
-            .min(1, { message: 'Rack ID must be greater than 0' }),
+            .min(1, { error: 'Rack ID must be greater than 0' }),
          name: z
             .string({ error: 'Name must be a string' })
             .trim()
-            .min(1, { message: 'Name is required' }),
+            .min(1, { error: 'Name is required' }),
          size: z
             .number({ error: 'Size must be a number' })
-            .int({ message: 'Size must be a whole number' })
-            .min(1, { message: 'Size must be greater than 0' }),
+            .int({ error: 'Size must be a whole number' })
+            .min(1, { error: 'Size must be greater than 0' }),
          position: z
             .number({ error: 'Position must be a number' })
-            .int({ message: 'Position must be a whole number' })
-            .min(1, { message: 'Position must be greater than 0' }),
-         data: z
+            .int({ error: 'Position must be a whole number' })
+            .min(1, { error: 'Position must be greater than 0' }),
+         paths: z
             .array(
                z.object({
                   path: z.string({ error: 'Path must be a string' }).trim(),
@@ -45,11 +45,11 @@ export default new Hono().post(
             text: z
                .string({ error: 'Text must be a string' })
                .trim()
-               .min(1, { message: 'Text is required' }),
+               .min(1, { error: 'Text is required' }),
             filename: z
                .string({ error: 'Filename must be a string' })
                .trim()
-               .min(1, { message: 'Filename is required' })
+               .min(1, { error: 'Filename is required' })
          })
       }),
       (result, c) => {
@@ -66,7 +66,7 @@ export default new Hono().post(
          }
 
          // Get request information
-         const { json, data, ...rest } = c.req.valid('json');
+         const { json, paths, ...rest } = c.req.valid('json');
 
          // Try and get any existing assets from the database
          const existingAsset = await prisma.asset.findFirst({
@@ -120,9 +120,9 @@ export default new Hono().post(
             });
 
             // Add the data paths to the database if there are any
-            if (data && data?.length > 0) {
+            if (paths && paths?.length > 0) {
                await tx.assetPath.createMany({
-                  data: data.map((item) => ({
+                  data: paths.map((item) => ({
                      assetId: asset.id,
                      path: item.path,
                      name: item.name

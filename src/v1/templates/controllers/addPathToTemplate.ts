@@ -19,8 +19,8 @@ export default new Hono().post(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -30,22 +30,24 @@ export default new Hono().post(
    ),
    zValidator(
       'json',
-      z
-         .array(
-            z.object({
-               name: z
-                  .string({ error: 'Name must be a string' })
-                  .trim()
-                  .min(1, { message: 'Name cannot be empty' }),
-               path: z
-                  .string({ error: 'Path must be a string' })
-                  .trim()
-                  .min(1, { message: 'Path cannot be empty' })
+      z.object({
+         paths: z
+            .array(
+               z.object({
+                  name: z
+                     .string({ error: 'Name must be a string' })
+                     .trim()
+                     .min(1, { error: 'Name cannot be empty' }),
+                  path: z
+                     .string({ error: 'Path must be a string' })
+                     .trim()
+                     .min(1, { error: 'Path cannot be empty' })
+               })
+            )
+            .min(1, {
+               error: 'At least one path is required'
             })
-         )
-         .min(1, {
-            message: 'At least one path is required'
-         }),
+      }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -80,7 +82,7 @@ export default new Hono().post(
 
          // Add all the new paths to the template
          const newPaths = await prisma.$transaction(
-            body.map((path) =>
+            body.paths.map((path) =>
                prisma.templatePath.create({
                   data: {
                      name: path.name,

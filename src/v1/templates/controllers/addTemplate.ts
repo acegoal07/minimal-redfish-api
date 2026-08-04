@@ -19,18 +19,18 @@ export default new Hono().post(
          name: z
             .string({ error: 'Name must be a string' })
             .trim()
-            .min(1, { message: 'Name cannot be empty' }),
+            .min(1, { error: 'Name cannot be empty' }),
          paths: z
             .array(
                z.object({
                   name: z
                      .string({ error: 'Name must be a string' })
                      .trim()
-                     .min(1, { message: 'Name cannot be empty' }),
+                     .min(1, { error: 'Name cannot be empty' }),
                   path: z
                      .string({ error: 'Path must be a string' })
                      .trim()
-                     .min(1, { message: 'Path cannot be empty' })
+                     .min(1, { error: 'Path cannot be empty' })
                })
             )
             .optional()

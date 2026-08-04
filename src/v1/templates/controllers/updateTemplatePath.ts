@@ -19,12 +19,12 @@ export default new Hono().patch(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' }),
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' }),
          pathId: z.coerce
             .number({ error: 'Path ID must be a number' })
-            .int({ message: 'Path ID must be a whole number' })
-            .positive({ message: 'Path ID must be greater than 0' })
+            .int({ error: 'Path ID must be a whole number' })
+            .positive({ error: 'Path ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -40,7 +40,7 @@ export default new Hono().patch(
             path: z.string({ error: 'Path must be a string' }).trim().optional()
          })
          .refine((data) => Object.keys(data).length > 0, {
-            message: 'At least one field must be provided'
+            error: 'At least one field must be provided'
          }),
       (result, c) => {
          if (!result.success) {

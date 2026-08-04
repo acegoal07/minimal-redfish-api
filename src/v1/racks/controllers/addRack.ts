@@ -19,11 +19,11 @@ export default new Hono().post(
          name: z
             .string({ error: 'Name must be a string' })
             .trim()
-            .min(1, { message: 'Name cannot be empty' }),
+            .min(1, { error: 'Name cannot be empty' }),
          size: z
             .number({ error: 'Size must be a number' })
-            .int({ message: 'Size must be a whole number' })
-            .min(1, { message: 'Size must be greater than 0' }),
+            .int({ error: 'Size must be a whole number' })
+            .min(1, { error: 'Size must be greater than 0' }),
          notes: z.string({ error: 'Notes must be a string' }).trim().optional()
       }),
       (result, c) => {

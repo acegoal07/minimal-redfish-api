@@ -19,8 +19,8 @@ export default new Hono().patch(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -34,23 +34,23 @@ export default new Hono().patch(
          .object({
             rackId: z
                .number({ error: 'Rack ID must be a number' })
-               .int({ message: 'Rack ID must be a whole number' })
-               .min(1, { message: 'Rack ID must be greater than 0' })
+               .int({ error: 'Rack ID must be a whole number' })
+               .min(1, { error: 'Rack ID must be greater than 0' })
                .optional(),
             name: z
                .string({ error: 'Name must be a string' })
                .trim()
-               .min(1, { message: 'Name cannot be empty' })
+               .min(1, { error: 'Name cannot be empty' })
                .optional(),
             size: z
                .number({ error: 'Size must be a number' })
-               .int({ message: 'Size must be a whole number' })
-               .min(1, { message: 'Size must be greater than 0' })
+               .int({ error: 'Size must be a whole number' })
+               .min(1, { error: 'Size must be greater than 0' })
                .optional(),
             position: z
                .number({ error: 'Position must be a number' })
-               .int({ message: 'Position must be a whole number' })
-               .min(1, { message: 'Position must be greater than 0' })
+               .int({ error: 'Position must be a whole number' })
+               .min(1, { error: 'Position must be greater than 0' })
                .optional()
          })
          .refine((data) => Object.keys(data).length > 0, {

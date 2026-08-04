@@ -20,8 +20,8 @@ export default new Hono().post(
       z.object({
          id: z.coerce
             .number({ error: 'ID must be a number' })
-            .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .int({ error: 'ID must be a whole number' })
+            .positive({ error: 'ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -36,11 +36,11 @@ export default new Hono().post(
             text: z
                .string({ error: 'Text must be a string' })
                .trim()
-               .min(1, { message: 'Text cannot be empty' }),
+               .min(1, { error: 'Text cannot be empty' }),
             filename: z
                .string({ error: 'Filename must be a string' })
                .trim()
-               .min(1, { message: 'Filename cannot be empty' })
+               .min(1, { error: 'Filename cannot be empty' })
          })
       }),
       (result, c) => {
