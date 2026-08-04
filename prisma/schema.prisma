@@ -24,9 +24,10 @@ model Asset {
   size     Int?
   position Int?
 
-  rack        Rack          @relation(fields: [rackId], references: [id], onDelete: Cascade)
-  paths       AssetPath[]
-  json        AssetJson[]
+  rack Rack @relation(fields: [rackId], references: [id], onDelete: Cascade)
+
+  paths AssetPath[]
+  json  AssetJson[]
 
   @@index([rackId])
   @@map("Asset")
@@ -45,10 +46,10 @@ model AssetPath {
 }
 
 model AssetJson {
-  id         Int       @id @default(autoincrement())
-  rawJson    String    @db.LongText
-  uploadDate DateTime  @default(now())
-  filename   String?   @db.VarChar(255)
+  id         Int      @id @default(autoincrement())
+  rawJson    String   @db.LongText
+  uploadDate DateTime @default(now())
+  filename   String?  @db.VarChar(255)
   assetId    Int
 
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
@@ -77,9 +78,9 @@ model Permission {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  username     String  @unique @db.VarChar(255)
-  passwordHash String  @db.Char(64)
+  id           Int    @id @default(autoincrement())
+  username     String @unique @db.VarChar(255)
+  passwordHash String @db.Char(64)
   roleId       Int
 
   role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
@@ -98,8 +99,8 @@ model Template {
 }
 
 model TemplatePath {
-  id         Int     @id @default(autoincrement())
-  path       String  @db.Text
+  id         Int    @id @default(autoincrement())
+  path       String @db.Text
   name       String? @db.VarChar(255)
   templateId Int
 
