@@ -4,7 +4,7 @@ info:
    description: API for managing racks and assets.
    version: 1.0.2
 servers:
-   - url: 'http://localhost:3000/api/v1'
+   - url: "http://localhost:3000/api/v1"
      description: Local development server for v1
 security:
    - bearerAuth: []
@@ -22,20 +22,20 @@ paths:
          operationId: listAssets
          summary: List all assets
          responses:
-            '200':
+            "200":
                description: List of assets
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Asset'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/Asset"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       post:
          tags:
             - Assets
@@ -68,26 +68,26 @@ paths:
                         data:
                            type: array
                            items:
-                              $ref: '#/components/schemas/AssetData'
+                              $ref: "#/components/schemas/AssetData"
                         json:
-                           $ref: '#/components/schemas/AssetJson'
+                           $ref: "#/components/schemas/AssetJson"
          responses:
-            '201':
+            "201":
                description: Asset created
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Asset'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Asset"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}:
       get:
@@ -96,29 +96,29 @@ paths:
          operationId: getAsset
          summary: Get asset by ID
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Asset details
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Asset'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Asset"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       put:
          tags:
             - Assets
          operationId: replaceAssetJson
          summary: Replace an asset's JSON payload
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
@@ -130,31 +130,31 @@ paths:
                         - json
                      properties:
                         json:
-                           $ref: '#/components/schemas/AssetJson'
+                           $ref: "#/components/schemas/AssetJson"
          responses:
-            '200':
+            "200":
                description: Asset updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Asset'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Asset"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       patch:
          tags:
             - Assets
          operationId: updateAsset
          summary: Partially update an asset
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
@@ -175,42 +175,42 @@ paths:
                            type: integer
                            format: int32
          responses:
-            '200':
+            "200":
                description: Asset updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Asset'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Asset"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       delete:
          tags:
             - Assets
          operationId: deleteAsset
          summary: Delete an asset
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '204':
+            "204":
                description: Asset deleted
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/paths:
       get:
@@ -219,56 +219,56 @@ paths:
          operationId: listAssetPaths
          summary: List asset paths
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Asset paths
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/AssetData'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/AssetData"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       post:
          tags:
             - Assets
          operationId: createAssetPath
          summary: Add a path to an asset
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/AssetDataInput'
+                     $ref: "#/components/schemas/AssetDataInput"
          responses:
-            '201':
+            "201":
                description: Path added
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/AssetData'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/AssetData"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/paths/{pathId}:
       patch:
@@ -277,7 +277,7 @@ paths:
          operationId: updateAssetPath
          summary: Update an asset path
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
             - name: pathId
               in: path
               required: true
@@ -290,24 +290,24 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/AssetDataInput'
+                     $ref: "#/components/schemas/AssetDataInput"
          responses:
-            '200':
+            "200":
                description: Path updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/AssetData'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/AssetData"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/history:
       get:
@@ -316,24 +316,24 @@ paths:
          operationId: listAssetHistory
          summary: Get asset history
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Asset history
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/AssetJson'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/AssetJson"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/history/{historyId}:
       delete:
@@ -342,7 +342,7 @@ paths:
          operationId: deleteAssetHistory
          summary: Delete an asset history entry
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
             - name: historyId
               in: path
               required: true
@@ -351,16 +351,16 @@ paths:
                  type: integer
                  format: int32
          responses:
-            '204':
+            "204":
                description: History deleted
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/{index}:
       get:
@@ -369,7 +369,7 @@ paths:
          operationId: getAssetByIndex
          summary: Get asset by ID and index
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
             - name: index
               in: path
               required: true
@@ -378,20 +378,20 @@ paths:
                  type: integer
                  format: int32
          responses:
-            '200':
+            "200":
                description: Asset details
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Asset'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Asset"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/search:
       get:
@@ -403,21 +403,21 @@ paths:
             Searches assets using a query string. If the query is a number, it will
             search by asset ID as well as asset name. Name searches are case-insensitive.
          parameters:
-            - $ref: '#/components/parameters/Query'
+            - $ref: "#/components/parameters/Query"
          responses:
-            '200':
+            "200":
                description: A list of matching assets
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Asset'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '500':
+                           $ref: "#/components/schemas/Asset"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "500":
                description: Internal server error
 
    /racks:
@@ -427,20 +427,20 @@ paths:
          operationId: listRacks
          summary: List all racks
          responses:
-            '200':
+            "200":
                description: List of racks
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Rack'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/Rack"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       post:
          tags:
             - Racks
@@ -465,22 +465,22 @@ paths:
                         notes:
                            type: string
          responses:
-            '201':
+            "201":
                description: Rack created
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Rack'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Rack"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /racks/{id}:
       get:
@@ -489,29 +489,29 @@ paths:
          operationId: getRack
          summary: Get rack by ID
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Rack details
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Rack'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Rack"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       patch:
          tags:
             - Racks
          operationId: updateRack
          summary: Partially update a rack
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
@@ -528,42 +528,42 @@ paths:
                         notes:
                            type: string
          responses:
-            '200':
+            "200":
                description: Rack updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Rack'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Rack"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       delete:
          tags:
             - Racks
          operationId: deleteRack
          summary: Delete a rack
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '204':
+            "204":
                description: Rack deleted
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /racks/{id}/assets:
       get:
@@ -572,24 +572,24 @@ paths:
          operationId: listRackAssets
          summary: List assets in a rack
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Assets belonging to the rack
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Asset'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/Asset"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /racks/search:
       get:
@@ -601,21 +601,21 @@ paths:
             Searches racks using a query string. If the query is a number, it will
             search by rack ID as well as rack name. Name searches are case-insensitive.
          parameters:
-            - $ref: '#/components/parameters/Query'
+            - $ref: "#/components/parameters/Query"
          responses:
-            '200':
+            "200":
                description: A list of matching racks
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Rack'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '500':
+                           $ref: "#/components/schemas/Rack"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "500":
                description: Internal server error
 
    /templates:
@@ -625,20 +625,20 @@ paths:
          operationId: listTemplates
          summary: List all templates
          responses:
-            '200':
+            "200":
                description: List of templates
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Template'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/Template"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       post:
          tags:
             - Templates
@@ -656,22 +656,22 @@ paths:
                         name:
                            type: string
          responses:
-            '201':
+            "201":
                description: Template created
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Template'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Template"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /templates/{id}:
       get:
@@ -680,27 +680,27 @@ paths:
          operationId: getTemplate
          summary: Get template by ID
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Template details
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Template'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Template"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       patch:
          tags:
             - Templates
          operationId: updateTemplate
          summary: Partially update a template
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
@@ -711,42 +711,42 @@ paths:
                         name:
                            type: string
          responses:
-            '200':
+            "200":
                description: Template updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Template'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/Template"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       delete:
          tags:
             - Templates
          operationId: deleteTemplate
          summary: Delete a template
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '204':
+            "204":
                description: Template deleted
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /templates/{id}/paths:
       get:
@@ -755,31 +755,31 @@ paths:
          operationId: listTemplatePaths
          summary: List template paths
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          responses:
-            '200':
+            "200":
                description: Template paths
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/TemplatePath'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                           $ref: "#/components/schemas/TemplatePath"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
       post:
          tags:
             - Templates
          operationId: createTemplatePath
          summary: Add a path to a template
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
          requestBody:
             required: true
             content:
@@ -795,24 +795,24 @@ paths:
                         path:
                            type: string
          responses:
-            '201':
+            "201":
                description: Template path created
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/TemplatePath'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/TemplatePath"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /templates/{id}/paths/{pathId}:
       patch:
@@ -821,7 +821,7 @@ paths:
          operationId: updateTemplatePath
          summary: Update a template path
          parameters:
-            - $ref: '#/components/parameters/ID'
+            - $ref: "#/components/parameters/ID"
             - name: pathId
               in: path
               required: true
@@ -841,22 +841,22 @@ paths:
                         path:
                            type: string
          responses:
-            '200':
+            "200":
                description: Template path updated
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/TemplatePath'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '404':
-               $ref: '#/components/responses/NotFound'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+                        $ref: "#/components/schemas/TemplatePath"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /users:
       post:
@@ -884,18 +884,18 @@ paths:
                            type: integer
                            format: int32
          responses:
-            '201':
-               $ref: '#/components/schemas/User'
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "201":
+               $ref: "#/components/schemas/User"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /users/{userId}:
       delete:
@@ -910,18 +910,18 @@ paths:
               schema:
                  type: string
          responses:
-            '204':
+            "204":
                description: User deleted
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '401':
-               $ref: '#/components/responses/Unauthorised'
-            '403':
-               $ref: '#/components/responses/Forbidden'
-            '409':
-               $ref: '#/components/responses/Conflict'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /users/login:
       post:
@@ -944,7 +944,7 @@ paths:
                         password:
                            type: string
          responses:
-            '200':
+            "200":
                description: The user has been logged in successfully
                content:
                   application/json:
@@ -956,10 +956,12 @@ paths:
                               type: number
                            issuedAt:
                               type: number
-            '400':
-               $ref: '#/components/responses/BadRequest'
-            '500':
-               $ref: '#/components/responses/InternalServerError'
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
 components:
    securitySchemes:
@@ -1020,11 +1022,11 @@ components:
                type: array
                description: Asset path data.
                items:
-                  $ref: '#/components/schemas/AssetData'
+                  $ref: "#/components/schemas/AssetData"
             json:
-               $ref: '#/components/schemas/AssetJson'
+               $ref: "#/components/schemas/AssetJson"
             pagination:
-               $ref: '#/components/schemas/Pagination'
+               $ref: "#/components/schemas/Pagination"
 
       AssetJson:
          type: object
@@ -1132,7 +1134,7 @@ components:
             paths:
                type: array
                items:
-                  $ref: '#/components/schemas/TemplatePath'
+                  $ref: "#/components/schemas/TemplatePath"
 
       TemplatePath:
          type: object
@@ -1172,7 +1174,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: INVALID_REQUEST
                   message: One or more request fields are invalid.
@@ -1182,7 +1184,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: NOT_FOUND
                   message: The requested resource does not exist.
@@ -1192,7 +1194,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: CONFLICT
                   message: An asset already exists at the requested position.
@@ -1202,7 +1204,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: INTERNAL_SERVER_ERROR
                   message: An unexpected error occurred.
@@ -1212,7 +1214,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: FORBIDDEN
                   message: Access denied, you do not have permission to perform this action.
@@ -1222,7 +1224,7 @@ components:
          content:
             application/json:
                schema:
-                  $ref: '#/components/schemas/Error'
+                  $ref: "#/components/schemas/Error"
                example:
                   error: UNAUTHORISED
                   message: You need to login to perform this action.
