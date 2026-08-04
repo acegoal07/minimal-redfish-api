@@ -11,6 +11,7 @@ import v1 from './v1';
 
 const app = new Hono();
 
+// Load all the middleware
 app.use(
    '*',
    cors({
@@ -22,18 +23,16 @@ app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
 const publicRoutes = new Set(['/api/v1/users/login']);
-// app.use('/api/*', async (c, next) => {
-//    if (publicRoutes.has(c.req.path)) {
-//       return next();
-//    }
+app.use('/api/*', async (c, next) => {
+   if (publicRoutes.has(c.req.path)) {
+      return next();
+   }
 
-//    return jwt({
-//       secret: process.env.JWT_SECRET!,
-//       alg: 'HS256'
-//    })(c, next);
-// });
-
-app.route('/api/v1', v1);
+   return jwt({
+      secret: process.env.JWT_SECRET!,
+      alg: 'HS256'
+   })(c, next);
+});
 
 app.notFound((c) =>
    c.json(
@@ -53,6 +52,10 @@ app.onError((err, c) => {
    return internalServerError(c, err);
 });
 
+// Load endpoints
+app.route('/api/v1', v1);
+
+// Start listening to port
 serve({
    fetch: app.fetch,
    port: Number(process.env.PORT) || 3000

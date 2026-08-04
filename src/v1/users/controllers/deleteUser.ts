@@ -29,7 +29,7 @@ export default new Hono().delete(
    async (c) => {
       try {
          const { id } = c.req.valid('param');
-         // const jwtToken = c.get("jwtPayload");
+         const jwtToken = c.get('jwtPayload');
 
          // Try and get the user from the database
          const user = await prisma.user.findUnique({
@@ -42,14 +42,14 @@ export default new Hono().delete(
             }
          });
 
-         // Deny user if their token doesn't match the user that's being deleted
-         // if (user?.username != jwtToken.username) {
-         //    return forbiddenError(c);
-         // }
-
          // Check if the user exists
          if (!user) {
             return notFoundError(c);
+         }
+
+         // Deny user if their token doesn't match the user that's being deleted
+         if (user?.username != jwtToken.username) {
+            return forbiddenError(c);
          }
 
          // Delete the template from the database
