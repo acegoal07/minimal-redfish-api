@@ -5,12 +5,11 @@ import { z } from 'zod';
 import { prisma } from '../../../lib/prisma';
 import {
    internalServerError,
-   invalidBodyError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
 
-export default new Hono().patch(
+export default new Hono().get(
    '/',
    zValidator(
       'param',
@@ -26,32 +25,17 @@ export default new Hono().patch(
          }
       }
    ),
-   zValidator(
-      'json',
-      z.object({
-         name: z
-            .string({ error: 'Name must be a string' })
-            .trim()
-            .min(1, { message: 'Name cannot be empty' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
-   ),
    async (c) => {
       try {
          const { id } = c.req.valid('param');
-         const body = c.req.valid('json');
 
          // Try and get the rack from the database
          const template = await prisma.template.findUnique({
             where: {
                id
             },
-            select: {
-               id: true
+            include: {
+               templatePaths: true
             }
          });
 
@@ -60,29 +44,12 @@ export default new Hono().patch(
             return notFoundError(c);
          }
 
-         // Update the template in the database
-         const updatedTemplate = await prisma.template.update({
-            where: {
-               id
-            },
-            data: {
-               name: body.name
-            },
-            include: {
-               templatePaths: true
-            }
-         });
-
          return c.json(
-            {
-               id: updatedTemplate.id,
-               name: updatedTemplate.name,
-               paths: updatedTemplate.templatePaths.map((path) => ({
-                  id: path.id,
-                  name: path.name,
-                  path: path.path
-               }))
-            },
+            template.templatePaths.map((path) => ({
+               id: path.id,
+               name: path.name,
+               path: path.path
+            })),
             200
          );
       } catch (err) {

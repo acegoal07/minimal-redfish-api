@@ -18,7 +18,11 @@ export default new Hono().patch(
          id: z.coerce
             .number({ error: 'ID must be a number' })
             .int({ message: 'ID must be a whole number' })
-            .positive({ message: 'ID must be greater than 0' })
+            .positive({ message: 'ID must be greater than 0' }),
+         pathId: z.coerce
+            .number({ error: 'Path ID must be a number' })
+            .int({ message: 'Path ID must be a whole number' })
+            .positive({ message: 'Path ID must be greater than 0' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -31,12 +35,7 @@ export default new Hono().patch(
       z
          .object({
             name: z.string({ error: 'Name must be a string' }).trim().optional(),
-            size: z
-               .number({ error: 'Size must be a number' })
-               .min(1, { message: 'Size must be at least 1' })
-               .int({ message: 'Size must be a whole number' })
-               .optional(),
-            notes: z.string({ error: 'Notes must be a string' }).trim().optional()
+            path: z.string({ error: 'Path must be a string' }).trim().optional()
          })
          .refine((data) => Object.keys(data).length > 0, {
             message: 'At least one field must be provided'
@@ -49,44 +48,47 @@ export default new Hono().patch(
    ),
    async (c) => {
       try {
-         const { id } = c.req.valid('param');
+         const { id, pathId } = c.req.valid('param');
          const body = c.req.valid('json');
 
-         // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         // Try and get the path from the database
+         const path = await prisma.templatePath.findUnique({
             where: {
-               id
+               id: pathId,
+               templateId: id
             },
             select: {
                name: true,
-               size: true,
-               notes: true
+               path: true
             }
          });
 
          // Check if the rack exists
-         if (!rack) {
+         if (!path) {
             return notFoundError(c);
          }
 
-         // Update the rack in the database
-         const updatedRack = await prisma.rack.update({
+         // Update path in the database
+         const updatedPath = await prisma.templatePath.update({
             data: {
-               name: body.name ?? rack.name,
-               size: body.size ?? rack.size,
-               notes: body.notes ?? rack.notes
+               name: body.name ?? path.name,
+               path: body.path ?? path.path
             },
             where: {
-               id
+               id: pathId,
+               templateId: id
+            },
+            select: {
+               name: true,
+               path: true
             }
          });
 
          return c.json(
             {
-               id: updatedRack.id,
-               name: updatedRack.name,
-               notes: updatedRack.notes,
-               size: updatedRack.size
+               id: pathId,
+               name: updatedPath.name,
+               path: updatedPath.path
             },
             200
          );

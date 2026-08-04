@@ -10,7 +10,7 @@ import {
    notFoundError
 } from '../../../lib/errorMessages';
 
-export default new Hono().patch(
+export default new Hono().post(
    '/',
    zValidator(
       'param',
@@ -29,10 +29,8 @@ export default new Hono().patch(
    zValidator(
       'json',
       z.object({
-         name: z
-            .string({ error: 'Name must be a string' })
-            .trim()
-            .min(1, { message: 'Name cannot be empty' })
+         name: z.string().trim().min(1),
+         path: z.string().trim().min(1)
       }),
       (result, c) => {
          if (!result.success) {
@@ -60,28 +58,23 @@ export default new Hono().patch(
             return notFoundError(c);
          }
 
-         // Update the template in the database
-         const updatedTemplate = await prisma.template.update({
-            where: {
-               id
-            },
+         // Add path to database
+         const newPath = await prisma.templatePath.create({
             data: {
-               name: body.name
+               templateId: id,
+               name: body.name,
+               path: body.path
             },
-            include: {
-               templatePaths: true
+            select: {
+               id: true
             }
          });
 
          return c.json(
             {
-               id: updatedTemplate.id,
-               name: updatedTemplate.name,
-               paths: updatedTemplate.templatePaths.map((path) => ({
-                  id: path.id,
-                  name: path.name,
-                  path: path.path
-               }))
+               id: newPath.id,
+               name: body.name,
+               path: body.path
             },
             200
          );

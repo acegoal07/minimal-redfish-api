@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
-import { prisma } from '../../../lib/prisma';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
+
+import { prisma } from '../../../lib/prisma';
 import { getValueFromJson } from '../../../lib/util';
 import {
    internalServerError,
