@@ -49,19 +49,25 @@ export default new Hono().post(
          return unauthorisedError(c);
       }
 
+      // Get timestamps
+      const issuedAt = Math.floor(Date.now() / 1000);
+      const expiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
+
       // Generate JWT token
       const token = await sign(
          {
             sub: user.id.toString(),
-            iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
+            iat: issuedAt,
+            exp: expiresAt
          },
          process.env.JWT_SECRET!
       );
 
       return c.json(
          {
-            token
+            token,
+            issuedAt,
+            expiresAt
          },
          200
       );
