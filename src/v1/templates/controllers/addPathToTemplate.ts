@@ -30,10 +30,22 @@ export default new Hono().post(
    ),
    zValidator(
       'json',
-      z.object({
-         name: z.string().trim().min(1),
-         path: z.string().trim().min(1)
-      }),
+      z
+         .array(
+            z.object({
+               name: z
+                  .string({ error: 'Name must be a string' })
+                  .trim()
+                  .min(1, { message: 'Name cannot be empty' }),
+               path: z
+                  .string({ error: 'Path must be a string' })
+                  .trim()
+                  .min(1, { message: 'Path cannot be empty' })
+            })
+         )
+         .min(1, {
+            message: 'At least one path is required'
+         }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -66,25 +78,26 @@ export default new Hono().post(
             return notFoundError(c);
          }
 
-         // Add path to database
-         const newPath = await prisma.templatePath.create({
-            data: {
-               templateId: id,
-               name: body.name,
-               path: body.path
-            },
-            select: {
-               id: true
-            }
-         });
+         // Add all the new paths to the asset
+         const newPaths = await prisma.$transaction(
+            body.map((path) =>
+               prisma.templatePath.create({
+                  data: {
+                     name: path.name,
+                     path: path.path,
+                     templateId: id
+                  }
+               })
+            )
+         );
 
          return c.json(
-            {
-               id: newPath.id,
-               name: body.name,
-               path: body.path
-            },
-            200
+            newPaths.map((path) => ({
+               id: path.name,
+               name: path.name,
+               path: path.path
+            })),
+            201
          );
       } catch (err) {
          return internalServerError(c, err);

@@ -30,16 +30,22 @@ export default new Hono().post(
    ),
    zValidator(
       'json',
-      z.object({
-         name: z
-            .string({ error: 'Name must be a string' })
-            .trim()
-            .min(1, { message: 'Name cannot be empty' }),
-         path: z
-            .string({ error: 'Path must be a string' })
-            .trim()
-            .min(1, { message: 'Path cannot be empty' })
-      }),
+      z
+         .array(
+            z.object({
+               name: z
+                  .string({ error: 'Name must be a string' })
+                  .trim()
+                  .min(1, { message: 'Name cannot be empty' }),
+               path: z
+                  .string({ error: 'Path must be a string' })
+                  .trim()
+                  .min(1, { message: 'Path cannot be empty' })
+            })
+         )
+         .min(1, {
+            message: 'At least one path is required'
+         }),
       (result, c) => {
          if (!result.success) {
             return invalidBodyError(c, result);
@@ -80,22 +86,26 @@ export default new Hono().post(
             return notFoundError(c);
          }
 
-         // Add the new path to the database
-         const newPath = await prisma.assetPath.create({
-            data: {
-               name: body.name,
-               path: body.path,
-               assetId: id
-            }
-         });
+         // Add all the new paths to the asset
+         const newPaths = await prisma.$transaction(
+            body.map((path) =>
+               prisma.assetPath.create({
+                  data: {
+                     name: path.name,
+                     path: path.path,
+                     assetId: id
+                  }
+               })
+            )
+         );
 
          return c.json(
-            {
-               id: newPath.id,
-               path: newPath.path,
-               name: newPath.name,
-               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), body.path)
-            },
+            newPaths.map((path) => ({
+               id: path.id,
+               path: path.path,
+               name: path.name,
+               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+            })),
             201
          );
       } catch (err) {

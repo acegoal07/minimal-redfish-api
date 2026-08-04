@@ -50,7 +50,7 @@ function isValidJson(value: string) {
 }
 
 /**
- * The permissions available 
+ * The permissions available
  */
 type Permission =
    | 'template.read'
