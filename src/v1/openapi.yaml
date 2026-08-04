@@ -873,12 +873,12 @@ paths:
                      description: Request body for creating a user
                      required:
                         - username
-                        - passwordHash
+                        - password
                         - roleId
                      properties:
                         username:
                            type: string
-                        passwordHash:
+                        password:
                            type: string
                         roleId:
                            type: integer

@@ -1,0 +1,67 @@
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
+
+import { prisma } from '../../../lib/prisma';
+import {
+   forbiddenError,
+   internalServerError,
+   invalidParametersError,
+   notFoundError
+} from '../../../lib/errorMessages';
+
+export default new Hono().delete(
+   '/',
+   zValidator(
+      'param',
+      z.object({
+         id: z.coerce
+            .number({ error: 'ID must be a number' })
+            .int({ message: 'ID must be a whole number' })
+            .positive({ message: 'ID must be greater than 0' })
+      }),
+      (result, c) => {
+         if (!result.success) {
+            return invalidParametersError(c, result);
+         }
+      }
+   ),
+   async (c) => {
+      try {
+         const { id } = c.req.valid('param');
+         // const jwtToken = c.get("jwtPayload");
+
+         // Try and get the user from the database
+         const user = await prisma.user.findUnique({
+            where: {
+               id
+            },
+            select: {
+               id: true,
+               username: true
+            }
+         });
+
+         // Deny user if their token doesn't match the user that's being deleted
+         // if (user?.username != jwtToken.username) {
+         //    return forbiddenError(c);
+         // }
+
+         // Check if the user exists
+         if (!user) {
+            return notFoundError(c);
+         }
+
+         // Delete the template from the database
+         await prisma.user.delete({
+            where: {
+               id
+            }
+         });
+
+         return c.json(204);
+      } catch (err) {
+         return internalServerError(c, err);
+      }
+   }
+);

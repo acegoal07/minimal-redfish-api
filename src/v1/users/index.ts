@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
 
-import login from './controllers/login';
+import loginUser from './controllers/loginUser';
+import createUser from './controllers/createUser';
+import deleteUser from './controllers/deleteUser';
 
-export default new Hono().route('/login', login);
+export default new Hono().route('/login', loginUser).route('/', createUser).route('/', deleteUser);
