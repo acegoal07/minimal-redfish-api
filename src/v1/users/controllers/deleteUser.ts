@@ -9,6 +9,7 @@ import {
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().delete(
    '/',
@@ -29,7 +30,7 @@ export default new Hono().delete(
    async (c) => {
       try {
          const { id } = c.req.valid('param');
-         const jwtToken = c.get('jwtPayload');
+         const auth = c.get('user');
 
          // Try and get the user from the database
          const user = await prisma.user.findUnique({
@@ -48,7 +49,7 @@ export default new Hono().delete(
          }
 
          // Deny user if their token doesn't match the user that's being deleted
-         if (user?.username != jwtToken.username) {
+         if (user.id != auth.id && !validatePermissions(['user.delete'], c)) {
             return forbiddenError(c);
          }
 

@@ -3,13 +3,14 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson, isValidJson } from '../../../lib/util';
+import { getValueFromJson, isValidJson, validatePermissions } from '../../../lib/util';
 import {
    internalServerError,
    invalidBodyError,
    notFoundError,
    invalidJsonError,
-   existingResourceError
+   existingResourceError,
+   forbiddenError
 } from '../../../lib/errorMessages';
 
 export default new Hono().post(
@@ -59,6 +60,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { json, data, ...rest } = c.req.valid('json');
 
          // Try and get any existing assets from the database
@@ -104,7 +111,7 @@ export default new Hono().post(
             });
 
             // Add the json to the database
-            const jsonData = await tx.jsonHistory.create({
+            const jsonData = await tx.assetJson.create({
                data: {
                   assetId: asset.id,
                   rawJson: JSON.stringify(JSON.parse(json.text)),
@@ -114,7 +121,7 @@ export default new Hono().post(
 
             // Add the data paths to the database if there are any
             if (data && data?.length > 0) {
-               await tx.path.createMany({
+               await tx.assetPath.createMany({
                   data: data.map((item) => ({
                      assetId: asset.id,
                      path: item.path,
@@ -124,7 +131,7 @@ export default new Hono().post(
             }
 
             // Get the ids of all the datafield in the database
-            const assetPaths = await tx.path.findMany({
+            const assetPaths = await tx.assetPath.findMany({
                where: {
                   assetId: asset.id
                }

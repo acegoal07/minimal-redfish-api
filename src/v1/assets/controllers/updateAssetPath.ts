@@ -3,8 +3,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson } from '../../../lib/util';
+import { getValueFromJson, validatePermissions } from '../../../lib/util';
 import {
+   forbiddenError,
    internalServerError,
    invalidBodyError,
    invalidParametersError,
@@ -49,6 +50,12 @@ export default new Hono().patch(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id, pathId } = c.req.valid('param');
          const body = c.req.valid('json');
 
@@ -58,7 +65,7 @@ export default new Hono().patch(
                id: id
             },
             include: {
-               jsonHistory: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -90,7 +97,7 @@ export default new Hono().patch(
          }
 
          // Update the path in the database
-         const updatedPath = await prisma.path.update({
+         const updatedPath = await prisma.assetPath.update({
             data: {
                name: body.name ?? asset.paths[0]?.name,
                path: body.path ?? asset.paths[0]?.path
@@ -105,10 +112,7 @@ export default new Hono().patch(
                id: updatedPath.id,
                name: updatedPath.name,
                path: updatedPath.path,
-               value: getValueFromJson<string>(
-                  JSON.parse(asset.jsonHistory[0]?.rawJson),
-                  updatedPath.path
-               )
+               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), updatedPath.path)
             },
             200
          );

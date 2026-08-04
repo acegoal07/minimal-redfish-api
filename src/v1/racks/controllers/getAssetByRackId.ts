@@ -4,8 +4,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson } from '../../../lib/util';
+import { getValueFromJson, validatePermissions } from '../../../lib/util';
 import {
+   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
@@ -29,6 +30,12 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['rack.read'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database
@@ -39,7 +46,7 @@ export default new Hono().get(
             include: {
                assets: {
                   include: {
-                     jsonHistory: {
+                     json: {
                         orderBy: {
                            uploadDate: 'desc'
                         },
@@ -59,7 +66,7 @@ export default new Hono().get(
                      },
                      _count: {
                         select: {
-                           jsonHistory: true
+                           json: true
                         }
                      }
                   }
@@ -83,19 +90,16 @@ export default new Hono().get(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(
-                     JSON.parse(asset.jsonHistory[0]?.rawJson),
-                     path.path
-                  )
+                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.jsonHistory[0]?.id,
-                  text: asset.jsonHistory[0]?.rawJson,
-                  filename: asset.jsonHistory[0]?.filename
+                  id: asset.json[0]?.id,
+                  text: asset.json[0]?.rawJson,
+                  filename: asset.json[0]?.filename
                },
                pagination: {
                   position: 0,
-                  total: asset._count.jsonHistory
+                  total: asset._count.json
                }
             })),
             200

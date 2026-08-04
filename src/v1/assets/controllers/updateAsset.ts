@@ -3,8 +3,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson } from '../../../lib/util';
+import { getValueFromJson, validatePermissions } from '../../../lib/util';
 import {
+   forbiddenError,
    internalServerError,
    invalidBodyError,
    invalidParametersError,
@@ -63,6 +64,12 @@ export default new Hono().patch(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
          const body = c.req.valid('json');
 
@@ -72,7 +79,7 @@ export default new Hono().patch(
                id
             },
             include: {
-               jsonHistory: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -92,7 +99,7 @@ export default new Hono().patch(
                },
                _count: {
                   select: {
-                     jsonHistory: true
+                     json: true
                   }
                }
             }
@@ -141,19 +148,16 @@ export default new Hono().patch(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(
-                     JSON.parse(asset.jsonHistory[0]?.rawJson),
-                     path.path
-                  )
+                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.jsonHistory[0]?.id,
-                  text: asset.jsonHistory[0]?.rawJson,
-                  filename: asset.jsonHistory[0]?.filename
+                  id: asset.json[0]?.id,
+                  text: asset.json[0]?.rawJson,
+                  filename: asset.json[0]?.filename
                },
                pagination: {
                   position: 0,
-                  total: asset._count.jsonHistory
+                  total: asset._count.json
                }
             },
             200

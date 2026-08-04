@@ -4,10 +4,12 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
+   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().delete(
    '/',
@@ -27,6 +29,12 @@ export default new Hono().delete(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['template.read', 'template.delete'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database

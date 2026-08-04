@@ -6,9 +6,11 @@ import { createHash } from 'node:crypto';
 import { prisma } from '../../../lib/prisma';
 import {
    existingResourceError,
+   forbiddenError,
    internalServerError,
    invalidBodyError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -36,6 +38,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check user permissions
+         if (!validatePermissions(['user.create'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { username, password, roleId } = c.req.valid('json');
 
          // Try and get a user from the database with the same username

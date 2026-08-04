@@ -5,9 +5,11 @@ import { z } from 'zod';
 import { prisma } from '../../../lib/prisma';
 import {
    existingResourceError,
+   forbiddenError,
    internalServerError,
    invalidBodyError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -27,6 +29,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['template.read', 'template.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { name } = c.req.valid('json');
 
          // Try and get a template with the name

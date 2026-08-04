@@ -4,10 +4,12 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
+   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().delete(
    '/',
@@ -31,10 +33,16 @@ export default new Hono().delete(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read', 'asset.delete'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id, pathId } = c.req.valid('param');
 
          // Get the path checking that in matches the asset id and the path id
-         const path = await prisma.path.findFirst({
+         const path = await prisma.assetPath.findFirst({
             where: {
                id: pathId,
                assetId: id
@@ -50,7 +58,7 @@ export default new Hono().delete(
          }
 
          // Delete the path
-         await prisma.path.delete({
+         await prisma.assetPath.delete({
             where: {
                id: pathId
             }

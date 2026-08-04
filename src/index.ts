@@ -4,9 +4,12 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import { compress } from 'hono/compress';
-import { internalServerError, unauthorisedError } from './lib/errorMessages';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import { jwt } from 'hono/jwt';
+
+import { internalServerError, unauthorisedError } from './lib/errorMessages';
+import { prisma } from './lib/prisma';
+
 import v1 from './v1';
 
 const app = new Hono();
@@ -23,6 +26,7 @@ app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
 const publicRoutes = new Set(['/api/v1/users/login']);
+
 app.use('/api/*', async (c, next) => {
    if (publicRoutes.has(c.req.path)) {
       return next();
@@ -32,6 +36,39 @@ app.use('/api/*', async (c, next) => {
       secret: process.env.JWT_SECRET!,
       alg: 'HS256'
    })(c, next);
+});
+
+app.use('/api/*', async (c, next) => {
+   if (publicRoutes.has(c.req.path)) {
+      return next();
+   }
+
+   const payload = c.get('jwtPayload');
+
+   const user = await prisma.user.findUnique({
+      where: {
+         id: Number(payload.sub)
+      },
+      include: {
+         role: {
+            include: {
+               permissions: {
+                  select: {
+                     name: true
+                  }
+               }
+            }
+         }
+      }
+   });
+
+   if (!user) {
+      return c.json({ error: 'User not found' }, 404);
+   }
+
+   c.set('user', user);
+
+   await next();
 });
 
 app.notFound((c) =>

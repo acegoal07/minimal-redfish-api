@@ -4,11 +4,13 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
+   forbiddenError,
    internalServerError,
    invalidBodyError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -40,6 +42,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['template.read', 'template.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
          const body = c.req.valid('json');
 

@@ -1,3 +1,5 @@
+import { Context } from 'hono';
+
 /**
  * Retrieves the data from a JSON object using a path
  * @param obj
@@ -47,4 +49,31 @@ function isValidJson(value: string) {
    }
 }
 
-export { getValueFromJson, isValidJson };
+type Permission =
+   | 'template.read'
+   | 'template.write'
+   | 'template.delete'
+   | 'rack.read'
+   | 'rack.write'
+   | 'rack.delete'
+   | 'asset.read'
+   | 'asset.write'
+   | 'asset.delete'
+   | 'user.create'
+   | 'user.delete';
+
+/**
+ * Checks whether the user has the required permissions
+ * @param permissions
+ * @param c
+ * @returns
+ */
+function validatePermissions(permissions: Permission[], c: Context) {
+   const user = c.get('user');
+
+   return permissions.every((permission) =>
+      user.role.permissions.map((permission) => permission.name).includes(permission)
+   );
+}
+
+export { getValueFromJson, isValidJson, validatePermissions };

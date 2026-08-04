@@ -5,9 +5,11 @@ import { z } from 'zod';
 import { prisma } from '../../../lib/prisma';
 import {
    existingResourceError,
+   forbiddenError,
    internalServerError,
    invalidBodyError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -32,6 +34,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['rack.read', 'rack.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const body = c.req.valid('json');
 
          // Try and get a rack with the same name

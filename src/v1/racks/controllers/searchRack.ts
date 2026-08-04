@@ -3,7 +3,8 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { internalServerError } from '../../../lib/errorMessages';
+import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().get(
    '/',
@@ -19,6 +20,12 @@ export default new Hono().get(
          }))
    ),
    async (c) => {
+      // Check users permissions
+      if (!validatePermissions(['rack.read'], c)) {
+         return forbiddenError(c);
+      }
+
+      // Get request information
       const { query, id } = c.req.valid('query');
 
       if (!query) {

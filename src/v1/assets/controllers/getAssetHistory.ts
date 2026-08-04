@@ -4,10 +4,12 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
+   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().get(
    '/',
@@ -27,6 +29,12 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the asset from the database
@@ -35,7 +43,7 @@ export default new Hono().get(
                id
             },
             include: {
-               jsonHistory: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -54,7 +62,7 @@ export default new Hono().get(
          }
 
          return c.json(
-            asset.jsonHistory.map((json) => ({
+            asset.json.map((json) => ({
                id: json.id,
                text: json.rawJson,
                filename: json.filename

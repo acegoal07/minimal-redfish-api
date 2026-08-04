@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 
 import getAllTemplates from './controllers/getAllTemplates';
 import addTemplate from './controllers/addTemplate';
-import getRackById from '../racks/controllers/getRackById';
+import getRackById from './controllers/getTemplateById';
 import updateTemplate from './controllers/updateTemplate';
 import deleteTemplate from './controllers/deleteTemplate';
 import getTemplatePaths from './controllers/getTemplatePaths';

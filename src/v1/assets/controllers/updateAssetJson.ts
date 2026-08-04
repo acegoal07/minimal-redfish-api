@@ -3,8 +3,9 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson, isValidJson } from '../../../lib/util';
+import { getValueFromJson, isValidJson, validatePermissions } from '../../../lib/util';
 import {
+   forbiddenError,
    internalServerError,
    invalidBodyError,
    invalidJsonError,
@@ -50,6 +51,12 @@ export default new Hono().post(
    ),
    async (c) => {
       try {
+         // Check users permissions
+         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+            return forbiddenError(c);
+         }
+
+         // Get request information
          const { id } = c.req.valid('param');
          const { json } = c.req.valid('json');
 
@@ -73,7 +80,7 @@ export default new Hono().post(
                },
                _count: {
                   select: {
-                     jsonHistory: true
+                     json: true
                   }
                }
             }
@@ -85,7 +92,7 @@ export default new Hono().post(
          }
 
          // Add a new json to the history if a json is passed in
-         const newJson = await prisma.jsonHistory.create({
+         const newJson = await prisma.assetJson.create({
             data: {
                assetId: id,
                rawJson: JSON.stringify(JSON.parse(json.text)),
@@ -115,7 +122,7 @@ export default new Hono().post(
                },
                pagination: {
                   position: 0,
-                  total: asset._count.jsonHistory + 1
+                  total: asset._count.json + 1
                }
             },
             200

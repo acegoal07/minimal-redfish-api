@@ -52,9 +52,8 @@ export default new Hono().post(
       // Generate JWT token
       const token = await sign(
          {
-            sub: user.id,
-            username,
-            role: user.roleId,
+            sub: user.id.toString(),
+            iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
          },
          process.env.JWT_SECRET!
