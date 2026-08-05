@@ -54,7 +54,7 @@ export default new Hono().patch(
                .optional()
          })
          .refine((data) => Object.keys(data).length > 0, {
-            message: 'At least one field must be provided'
+            error: 'At least one field must be provided'
          }),
       (result, c) => {
          if (!result.success) {
