@@ -25,6 +25,7 @@ export default new Hono().post(
    ),
    async (c) => {
       const { refresh } = c.req.valid('json');
+
       console.log(c.req.valid('json'))
       const refreshTokenHash = createHash('sha256')
          .update(refresh)
@@ -80,37 +81,15 @@ export default new Hono().post(
          .digest('hex')
          .toLowerCase();
 
-      // See if the user already has a refresh token
-      const existingRefresh = await prisma.userRefreshToken.findUnique({
-         where: {
-            userId: userRefresh.user.id,
-            tokenHash: newRefreshTokenHash
+      await prisma.userRefreshToken.update({
+         data: {
+            tokenHash: newRefreshTokenHash,
+            expiresAt: new Date(refreshTokenExpiresAt * 1000)
          },
-         select: {
-            id: true
+         where: {
+            id: userRefresh.id
          }
       });
-
-      // Handle either updating the refresh token in the table or creating one
-      if (existingRefresh) {
-         await prisma.userRefreshToken.update({
-            data: {
-               tokenHash: newRefreshTokenHash,
-               expiresAt: new Date(refreshTokenExpiresAt * 1000)
-            },
-            where: {
-               id: existingRefresh.id
-            }
-         });
-      } else {
-         await prisma.userRefreshToken.create({
-            data: {
-               userId: userRefresh.user.id,
-               tokenHash: newRefreshTokenHash,
-               expiresAt: new Date(refreshTokenExpiresAt * 1000)
-            }
-         });
-      }
 
       return c.json(
          {
