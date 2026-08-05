@@ -986,13 +986,75 @@ paths:
                content:
                   application/json:
                      schema:
+                        type: object
                         properties:
-                           token:
-                              type: string
-                           expiresAt:
-                              type: number
                            issuedAt:
                               type: number
+                              description: Time the token was issued
+                           token:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+                           refresh:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
+   /users/refresh:
+      post:
+         tags:
+            - Users
+         operationId: refreshUser
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     description: Request body for login in a user
+                     required:
+                        - token
+                     properties:
+                        username:
+                           type: string
+
+         responses:
+            "200":
+               description: The user has been logged in successfully
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        properties:
+                           issuedAt:
+                              type: number
+                              description: Time the token was issued
+                           token:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+                           refresh:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
             "400":
                $ref: "#/components/responses/BadRequest"
             "401":

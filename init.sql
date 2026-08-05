@@ -87,6 +87,15 @@ CREATE TABLE
       CONSTRAINT fk_templatepath_template FOREIGN KEY (templateId) REFERENCES Template (id) ON DELETE CASCADE
    );
 
+CREATE TABLE
+   IF NOT EXISTS UserRefreshTokens (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      userId INT NOT NULL UNIQUE,
+      tokenHash CHAR(64) NOT NULL,
+      expiresAt DATETIME NOT NULL,
+      CONSTRAINT fk_refreshtokens_user FOREIGN KEY (userId) REFERENCES Users (id) ON DELETE CASCADE
+   );
+
 -- Create permissions
 INSERT IGNORE INTO Permission (name)
 VALUES
@@ -100,7 +109,11 @@ VALUES
    ('asset.write'),
    ('asset.delete'),
    ('user.create'),
-   ('user.delete');
+   ('user.update'),
+   ('user.delete'),
+   ('role.create'),
+   ('role.update'),
+   ('role.delete');
 
 -- Create admin role
 INSERT IGNORE INTO Role (name)

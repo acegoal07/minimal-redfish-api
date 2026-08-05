@@ -63,7 +63,11 @@ type Permission =
    | 'asset.write'
    | 'asset.delete'
    | 'user.create'
-   | 'user.delete';
+   | 'user.update'
+   | 'user.delete'
+   | 'role.create'
+   | 'role.update'
+   | 'role.delete';
 
 /**
  * Checks whether the user has the required permissions

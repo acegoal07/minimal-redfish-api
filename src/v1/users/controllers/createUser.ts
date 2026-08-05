@@ -8,7 +8,8 @@ import {
    existingResourceError,
    forbiddenError,
    internalServerError,
-   invalidBodyError
+   invalidBodyError,
+   notFoundError
 } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
 
@@ -50,12 +51,30 @@ export default new Hono().post(
          const existingUser = await prisma.user.findUnique({
             where: {
                username: username
+            },
+            select: {
+               id: true
             }
          });
 
          // Check if a user already exists
          if (existingUser) {
             return existingResourceError(c);
+         }
+
+         // Try and get the role from the database
+         const role = await prisma.role.findUnique({
+            where: {
+               id: roleId
+            },
+            select: {
+               id: true
+            }
+         });
+
+         // Check if role exists
+         if (!role) {
+            return notFoundError(c);
          }
 
          // Hash password

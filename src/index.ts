@@ -26,13 +26,14 @@ app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
 // Check JWT token is valid
-const publicRoutes = new Set(['/api/v1/users/login']);
+const publicRoutes = new Set(['/api/v1/users/login', '/api/v1/users/refresh']);
+
 app.use('/api/*', async (c, next) => {
    if (publicRoutes.has(c.req.path)) {
       return next();
    }
 
-   return jwt({
+   await jwt({
       secret: process.env.JWT_SECRET!,
       alg: 'HS256'
    })(c, next);
@@ -45,6 +46,10 @@ app.use('/api/*', async (c, next) => {
    }
 
    const payload = c.get('jwtPayload');
+
+   if (payload.type === 'refresh') {
+      return unauthorisedError(c);
+   }
 
    const user = await prisma.user.findUnique({
       where: {

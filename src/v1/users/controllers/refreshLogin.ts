@@ -12,14 +12,10 @@ export default new Hono().post(
    zValidator(
       'json',
       z.object({
-         username: z
-            .string({ error: 'Username must be a string' })
+         refreshToken: z
+            .string({ error: 'Refresh Token must be a string' })
             .trim()
-            .min(1, { error: 'Username cannot be empty' }),
-         password: z
-            .string({ error: 'Password must be a string' })
-            .trim()
-            .min(1, { error: 'Password cannot be empty' })
+            .min(1, { error: 'Refresh Token cannot be empty' })
       }),
       (result, c) => {
          if (!result.success) {
@@ -28,23 +24,24 @@ export default new Hono().post(
       }
    ),
    async (c) => {
-      const { username, password } = c.req.valid('json');
-      const passwordHash = createHash('sha256').update(password).digest('hex').toLowerCase();
+      const { refreshToken } = c.req.valid('json');
+      const refreshTokenHash = createHash('sha256')
+         .update(refreshToken)
+         .digest('hex')
+         .toLowerCase();
 
-      // Try and get the user from the database
-      const user = await prisma.user.findFirst({
+      // Try and find the refresh token in the database
+      const refresh = await prisma.userRefreshToken.findUnique({
          where: {
-            username,
-            passwordHash
+            tokenHash: refreshTokenHash
          },
-         select: {
-            id: true,
-            roleId: true
+         include: {
+            user: true
          }
       });
 
-      // Check if the user exists
-      if (!user) {
+      // Check if the refresh token exists
+      if (!refresh) {
          return unauthorisedError(c);
       }
 
@@ -54,9 +51,9 @@ export default new Hono().post(
       const refreshTokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
 
       // Generate JWT token
-      const token = await sign(
+      const newToken = await sign(
          {
-            sub: user.id.toString(),
+            sub: refresh.user.id.toString(),
             type: 'access',
             iat: tokenIssuedAt,
             exp: tokenExpiresAt
@@ -65,16 +62,16 @@ export default new Hono().post(
       );
 
       // Generate JWT refresh token
-      const refreshToken = await sign(
+      const newRefreshToken = await sign(
          {
-            sub: user.id.toString(),
+            sub: refresh.user.id.toString(),
             type: 'refresh',
             iat: tokenIssuedAt,
             exp: refreshTokenExpiresAt
          },
          process.env.JWT_REFRESH_SECRET!
       );
-      const refreshTokenHash = createHash('sha256')
+      const newRefreshTokenHash = createHash('sha256')
          .update(refreshToken)
          .digest('hex')
          .toLowerCase();
@@ -82,7 +79,8 @@ export default new Hono().post(
       // See if the user already has a refresh token
       const existingRefresh = await prisma.userRefreshToken.findUnique({
          where: {
-            userId: user.id
+            userId: refresh.user.id,
+            tokenHash: newRefreshTokenHash
          },
          select: {
             id: true
@@ -93,7 +91,7 @@ export default new Hono().post(
       if (existingRefresh) {
          await prisma.userRefreshToken.update({
             data: {
-               tokenHash: refreshTokenHash
+               tokenHash: newRefreshTokenHash
             },
             where: {
                id: existingRefresh.id
@@ -102,8 +100,8 @@ export default new Hono().post(
       } else {
          await prisma.userRefreshToken.create({
             data: {
-               userId: user.id,
-               tokenHash: refreshTokenHash,
+               userId: refresh.user.id,
+               tokenHash: newRefreshTokenHash,
                expiresAt: new Date(refreshTokenExpiresAt)
             }
          });
@@ -113,11 +111,11 @@ export default new Hono().post(
          {
             issuedAt: tokenIssuedAt,
             token: {
-               token,
+               token: newToken,
                expiresAt: tokenExpiresAt
             },
             refreshToken: {
-               token: refreshToken,
+               token: newRefreshToken,
                expiresAt: refreshTokenExpiresAt
             }
          },

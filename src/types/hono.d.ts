@@ -19,6 +19,7 @@ declare module 'hono' {
          sub: string;
          iat: number;
          exp: number;
+         type: string;
       };
    }
 }
