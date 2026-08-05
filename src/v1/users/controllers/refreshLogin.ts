@@ -12,7 +12,7 @@ export default new Hono().post(
    zValidator(
       'json',
       z.object({
-         refreshToken: z
+         refresh: z
             .string({ error: 'Refresh Token must be a string' })
             .trim()
             .min(1, { error: 'Refresh Token cannot be empty' })
@@ -24,14 +24,14 @@ export default new Hono().post(
       }
    ),
    async (c) => {
-      const { refreshToken } = c.req.valid('json');
+      const { refresh } = c.req.valid('json');
       const refreshTokenHash = createHash('sha256')
-         .update(refreshToken)
+         .update(refresh)
          .digest('hex')
          .toLowerCase();
 
       // Try and find the refresh token in the database
-      const refresh = await prisma.userRefreshToken.findUnique({
+      const userRefresh = await prisma.userRefreshToken.findUnique({
          where: {
             tokenHash: refreshTokenHash,
             expiresAt: {
@@ -44,7 +44,7 @@ export default new Hono().post(
       });
 
       // Check if the refresh token exists
-      if (!refresh) {
+      if (!userRefresh) {
          return unauthorisedError(c);
       }
 
@@ -56,7 +56,7 @@ export default new Hono().post(
       // Generate JWT token
       const newToken = await sign(
          {
-            sub: refresh.user.id.toString(),
+            sub: userRefresh.user.id.toString(),
             type: 'access',
             iat: tokenIssuedAt,
             exp: tokenExpiresAt
@@ -67,7 +67,7 @@ export default new Hono().post(
       // Generate JWT refresh token
       const newRefreshToken = await sign(
          {
-            sub: refresh.user.id.toString(),
+            sub: userRefresh.user.id.toString(),
             type: 'refresh',
             iat: tokenIssuedAt,
             exp: refreshTokenExpiresAt
@@ -75,14 +75,14 @@ export default new Hono().post(
          process.env.JWT_REFRESH_SECRET!
       );
       const newRefreshTokenHash = createHash('sha256')
-         .update(refreshToken)
+         .update(newRefreshToken)
          .digest('hex')
          .toLowerCase();
 
       // See if the user already has a refresh token
       const existingRefresh = await prisma.userRefreshToken.findUnique({
          where: {
-            userId: refresh.user.id,
+            userId: userRefresh.user.id,
             tokenHash: newRefreshTokenHash
          },
          select: {
@@ -104,7 +104,7 @@ export default new Hono().post(
       } else {
          await prisma.userRefreshToken.create({
             data: {
-               userId: refresh.user.id,
+               userId: userRefresh.user.id,
                tokenHash: newRefreshTokenHash,
                expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
@@ -118,7 +118,7 @@ export default new Hono().post(
                token: newToken,
                expiresAt: new Date(tokenExpiresAt * 1000)
             },
-            refreshToken: {
+            refresh: {
                token: newRefreshToken,
                expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }

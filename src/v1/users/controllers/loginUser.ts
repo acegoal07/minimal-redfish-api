@@ -117,7 +117,7 @@ export default new Hono().post(
                token,
                expiresAt: new Date(tokenExpiresAt * 1000)
             },
-            refreshToken: {
+            refresh: {
                token: refreshToken,
                expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
