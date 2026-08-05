@@ -33,7 +33,10 @@ export default new Hono().post(
       // Try and find the refresh token in the database
       const refresh = await prisma.userRefreshToken.findUnique({
          where: {
-            tokenHash: refreshTokenHash
+            tokenHash: refreshTokenHash,
+            expiresAt: {
+               gt: new Date()
+            }
          },
          include: {
             user: true
