@@ -49,17 +49,17 @@ export default new Hono().post(
       }
 
       // Get timestamps
-      const tokenIssuedAt = Math.floor(Date.now());
-      const tokenExpiresAt = Math.floor(Date.now()) + 60 * 15;
-      const refreshTokenExpiresAt = Math.floor(Date.now()) + 60 * 60 * 24 * 30;
+      const tokenIssuedAt = Math.floor(Date.now() / 100);
+      const tokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 15;
+      const refreshTokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
 
       // Generate JWT token
       const token = await sign(
          {
             sub: user.id.toString(),
             type: 'access',
-            iat: tokenIssuedAt / 1000,
-            exp: tokenExpiresAt / 1000
+            iat: tokenIssuedAt,
+            exp: tokenExpiresAt
          },
          process.env.JWT_SECRET!
       );
@@ -104,21 +104,21 @@ export default new Hono().post(
             data: {
                userId: user.id,
                tokenHash: refreshTokenHash,
-               expiresAt: new Date(refreshTokenExpiresAt)
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
          });
       }
 
       return c.json(
          {
-            issuedAt: tokenIssuedAt,
+            issuedAt: new Date(tokenIssuedAt * 1000),
             token: {
                token,
-               expiresAt: tokenExpiresAt
+               expiresAt: new Date(tokenExpiresAt * 1000)
             },
             refreshToken: {
                token: refreshToken,
-               expiresAt: refreshTokenExpiresAt
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
          },
          200

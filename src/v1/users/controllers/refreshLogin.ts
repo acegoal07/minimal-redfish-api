@@ -49,17 +49,17 @@ export default new Hono().post(
       }
 
       // Get timestamps
-      const tokenIssuedAt = Math.floor(Date.now());
-      const tokenExpiresAt = Math.floor(Date.now()) + 60 * 15;
-      const refreshTokenExpiresAt = Math.floor(Date.now()) + 60 * 60 * 24 * 30;
+      const tokenIssuedAt = Math.floor(Date.now() / 1000);
+      const tokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 15;
+      const refreshTokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
 
       // Generate JWT token
       const newToken = await sign(
          {
             sub: refresh.user.id.toString(),
             type: 'access',
-            iat: tokenIssuedAt / 1000,
-            exp: tokenExpiresAt / 1000
+            iat: tokenIssuedAt,
+            exp: tokenExpiresAt
          },
          process.env.JWT_SECRET!
       );
@@ -69,8 +69,8 @@ export default new Hono().post(
          {
             sub: refresh.user.id.toString(),
             type: 'refresh',
-            iat: tokenIssuedAt / 1000,
-            exp: refreshTokenExpiresAt / 1000
+            iat: tokenIssuedAt,
+            exp: refreshTokenExpiresAt
          },
          process.env.JWT_REFRESH_SECRET!
       );
@@ -105,21 +105,21 @@ export default new Hono().post(
             data: {
                userId: refresh.user.id,
                tokenHash: newRefreshTokenHash,
-               expiresAt: new Date(refreshTokenExpiresAt)
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
          });
       }
 
       return c.json(
          {
-            issuedAt: tokenIssuedAt,
+            issuedAt: new Date(tokenIssuedAt * 1000),
             token: {
                token: newToken,
-               expiresAt: tokenExpiresAt
+               expiresAt: new Date(tokenExpiresAt * 1000)
             },
             refreshToken: {
                token: newRefreshToken,
-               expiresAt: refreshTokenExpiresAt
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             }
          },
          200
