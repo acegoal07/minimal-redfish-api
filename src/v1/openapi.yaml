@@ -21,15 +21,52 @@ paths:
             - Assets
          operationId: listAssets
          summary: List all assets
+         parameters:
+            - name: page
+              in: query
+              required: false
+              description: Page number to return
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 1
+            - name: limit
+              in: query
+              required: false
+              description: Number of assets per page
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 25
          responses:
             "200":
                description: List of assets
                content:
                   application/json:
                      schema:
-                        type: array
-                        items:
-                           $ref: "#/components/schemas/Asset"
+                        type: object
+                        properties:
+                           page:
+                              type: integer
+                              description: Current page number
+                           limit:
+                              type: integer
+                              description: Number of assets per page
+                           total:
+                              type: integer
+                              description: Total number of assets returned
+                           totalPages:
+                              type: integer
+                              description: Total number of pages
+                           assets:
+                              type: array
+                              items:
+                                 $ref: "#/components/schemas/Asset"
+                        required:
+                           - page
+                           - limit
+                           - total
+                           - assets
             "401":
                $ref: "#/components/responses/Unauthorised"
             "403":
@@ -411,15 +448,46 @@ paths:
             search by asset ID as well as asset name. Name searches are case-insensitive.
          parameters:
             - $ref: "#/components/parameters/Query"
+            - name: page
+              in: query
+              required: false
+              description: Page number to return
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 1
+            - name: limit
+              in: query
+              required: false
+              description: Number of assets per page
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 25
          responses:
             "200":
                description: A list of matching assets
                content:
                   application/json:
                      schema:
-                        type: array
-                        items:
-                           $ref: "#/components/schemas/Asset"
+                        type: object
+                        properties:
+                           page:
+                              type: integer
+                              description: Current page number
+                           limit:
+                              type: integer
+                              description: Number of assets per page
+                           total:
+                              type: integer
+                              description: Total number of assets returned
+                           totalPages:
+                              type: integer
+                              description: Total number of pages
+                           assets:
+                              type: array
+                              items:
+                                 $ref: "#/components/schemas/Asset"
             "401":
                $ref: "#/components/responses/Unauthorised"
             "403":
@@ -433,15 +501,47 @@ paths:
             - Racks
          operationId: listRacks
          summary: List all racks
+         parameters:
+            - name: page
+              in: query
+              required: false
+              description: Page number to return
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 1
+            - name: limit
+              in: query
+              required: false
+              description: Number of assets per page
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 25
          responses:
             "200":
                description: List of racks
                content:
                   application/json:
                      schema:
-                        type: array
-                        items:
-                           $ref: "#/components/schemas/Rack"
+                        type: object
+                        properties:
+                           page:
+                              type: integer
+                              description: Current page number
+                           limit:
+                              type: integer
+                              description: Number of assets per page
+                           total:
+                              type: integer
+                              description: Total number of assets returned
+                           totalPages:
+                              type: integer
+                              description: Total number of pages
+                           racks:
+                              type: array
+                              items:
+                                 $ref: "#/components/schemas/Rack"
             "401":
                $ref: "#/components/responses/Unauthorised"
             "403":
@@ -609,15 +709,46 @@ paths:
             search by rack ID as well as rack name. Name searches are case-insensitive.
          parameters:
             - $ref: "#/components/parameters/Query"
+            - name: page
+              in: query
+              required: false
+              description: Page number to return
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 1
+            - name: limit
+              in: query
+              required: false
+              description: Number of assets per page
+              schema:
+                 type: integer
+                 minimum: 1
+                 default: 25
          responses:
             "200":
                description: A list of matching racks
                content:
                   application/json:
                      schema:
-                        type: array
-                        items:
-                           $ref: "#/components/schemas/Rack"
+                        type: object
+                        properties:
+                           page:
+                              type: integer
+                              description: Current page number
+                           limit:
+                              type: integer
+                              description: Number of assets per page
+                           total:
+                              type: integer
+                              description: Total number of assets returned
+                           totalPages:
+                              type: integer
+                              description: Total number of pages
+                           racks:
+                              type: array
+                              items:
+                                 $ref: "#/components/schemas/Rack"
             "401":
                $ref: "#/components/responses/Unauthorised"
             "403":
@@ -962,122 +1093,120 @@ paths:
 
    /users/login:
       post:
-        tags:
-           - Users
-        operationId: loginUser
-        requestBody:
-           required: true
-           content:
-              application/json:
-                 schema:
-                    type: object
-                    description: Request body for login in a user
-                    required:
-                       - username
-                       - password
-                    properties:
-                       username:
-                          type: string
-                       password:
-                          type: string
-        responses:
-           "200":
-              description: The user has been logged in successfully
-              content:
-                 application/json:
-                    schema:
-                       type: object
-                       properties:
-                          issuedAt:
-                             type: number
-                             description: Time the token was issued
-                          token:
-                             type: object
-                             properties:
-                                token:
-                                   type: string
-                                expiresAt:
-                                   type: number
-                          refresh:
-                             type: object
-                             properties:
-                                token:
-                                   type: string
-                                expiresAt:
-                                   type: number
-           "400":
-              $ref: "#/components/responses/BadRequest"
-           "401":
-              $ref: "#/components/responses/Unauthorised"
-           "500":
-              $ref: "#/components/responses/InternalServerError"
-              
+         tags:
+            - Users
+         operationId: loginUser
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     description: Request body for login in a user
+                     required:
+                        - username
+                        - password
+                     properties:
+                        username:
+                           type: string
+                        password:
+                           type: string
+         responses:
+            "200":
+               description: The user has been logged in successfully
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        properties:
+                           issuedAt:
+                              type: number
+                              description: Time the token was issued
+                           token:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+                           refresh:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
    /users/refresh:
       post:
-        tags:
-           - Users
-        operationId: refreshUser
-        requestBody:
-           required: true
-           content:
-              application/json:
-                 schema:
-                    type: object
-                    description: Request body for refreshing a user's token
-                    required:
-                       - token
-                    properties:
-                       refresh:
-                          type: string
+         tags:
+            - Users
+         operationId: refreshUser
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     description: Request body for refreshing a user's token
+                     required:
+                        - token
+                     properties:
+                        refresh:
+                           type: string
 
-        responses:
-           "200":
-              description: The user's token has been refreshed successfully
-              content:
-                 application/json:
-                    schema:
-                       type: object
-                       properties:
-                          issuedAt:
-                             type: number
-                             description: Time the token was issued
-                          token:
-                             type: object
-                             properties:
-                                token:
-                                   type: string
-                                expiresAt:
-                                   type: number
-                          refresh:
-                             type: object
-                             properties:
-                                token:
-                                   type: string
-                                expiresAt:
-                                   type: number
-           "400":
-              $ref: "#/components/responses/BadRequest"
-           "401":
-              $ref: "#/components/responses/Unauthorised"
-           "500":
-              $ref: "#/components/responses/InternalServerError"
+         responses:
+            "200":
+               description: The user's token has been refreshed successfully
+               content:
+                  application/json:
+                     schema:
+                        type: object
+                        properties:
+                           issuedAt:
+                              type: number
+                              description: Time the token was issued
+                           token:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+                           refresh:
+                              type: object
+                              properties:
+                                 token:
+                                    type: string
+                                 expiresAt:
+                                    type: number
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
    /users/logout:
       post:
-        tags:
-           - Users
-        operationId: logoutUser
+         tags:
+            - Users
+         operationId: logoutUser
 
-        responses:
-           "204":
-              description: The user has been logged out successfully
-           "400":
-              $ref: "#/components/responses/BadRequest"
-           "401":
-              $ref: "#/components/responses/Unauthorised"
-           "500":
-              $ref: "#/components/responses/InternalServerError"
-    
-         
+         responses:
+            "204":
+               description: The user has been logged out successfully
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
 components:
    securitySchemes:
@@ -1141,8 +1270,6 @@ components:
                   $ref: "#/components/schemas/AssetData"
             json:
                $ref: "#/components/schemas/AssetJson"
-            pagination:
-               $ref: "#/components/schemas/Pagination"
 
       AssetJson:
          type: object
@@ -1160,6 +1287,12 @@ components:
             filename:
                type: string
                description: Original filename.
+            position:
+               type: integer
+               format: int32
+            total:
+               type: integer
+               format: int32
 
       AssetData:
          type: object

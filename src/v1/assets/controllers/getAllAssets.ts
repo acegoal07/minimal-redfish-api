@@ -14,8 +14,8 @@ export default new Hono().get(
          page: z.coerce
             .number({ error: 'Page must be a number' })
             .int({ error: 'Page must be an integer' })
-            .nonnegative({ error: 'Page must be 0 or greater' })
-            .default(0),
+            .positive({ error: 'Page must be 1 or greater' })
+            .default(1),
          limit: z.coerce
             .number({ error: 'Limit must be a number' })
             .int({ error: 'Limit must be an integer' })
@@ -55,7 +55,7 @@ export default new Hono().get(
                      }
                   }
                },
-               skip: page * limit,
+               skip: (page - 1) * limit,
                take: limit
             }),
 
