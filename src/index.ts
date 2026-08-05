@@ -25,8 +25,8 @@ app.use(
 app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
+// Check JWT token is valid
 const publicRoutes = new Set(['/api/v1/users/login']);
-
 app.use('/api/*', async (c, next) => {
    if (publicRoutes.has(c.req.path)) {
       return next();
@@ -38,6 +38,7 @@ app.use('/api/*', async (c, next) => {
    })(c, next);
 });
 
+// Get user information is JWT token is valid
 app.use('/api/*', async (c, next) => {
    if (publicRoutes.has(c.req.path)) {
       return next();
@@ -71,6 +72,7 @@ app.use('/api/*', async (c, next) => {
    await next();
 });
 
+// 404 Error
 app.notFound((c) =>
    c.json(
       {
@@ -81,6 +83,7 @@ app.notFound((c) =>
    )
 );
 
+// Handle uncaught errors
 app.onError((err, c) => {
    if (err.res?.status === 401) {
       return unauthorisedError(c);
