@@ -25,10 +25,7 @@ export default new Hono().post(
    ),
    async (c) => {
       const { refresh } = c.req.valid('json');
-      const refreshTokenHash = createHash('sha256')
-         .update(refresh)
-         .digest('hex')
-         .toLowerCase();
+      const refreshTokenHash = createHash('sha256').update(refresh).digest('hex').toLowerCase();
 
       // Try and find the refresh token in the database
       const userRefresh = await prisma.userRefreshToken.findUnique({
@@ -79,7 +76,7 @@ export default new Hono().post(
          .digest('hex')
          .toLowerCase();
 
-      // Update the refresh token in the database 
+      // Update the refresh token in the database
       await prisma.userRefreshToken.update({
          data: {
             tokenHash: newRefreshTokenHash,
