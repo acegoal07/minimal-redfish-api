@@ -1345,20 +1345,6 @@ components:
                type: string
                nullable: true
 
-      Pagination:
-         type: object
-         description: Pagination metadata.
-         required:
-            - position
-            - total
-         properties:
-            position:
-               type: integer
-               format: int32
-            total:
-               type: integer
-               format: int32
-
       User:
          type: object
          description: The user response
