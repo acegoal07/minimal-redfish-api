@@ -160,9 +160,7 @@ export default new Hono().post(
                json: {
                   id: result.jsonData.id,
                   text: result.jsonData.rawJson,
-                  filename: result.jsonData.filename
-               },
-               pagination: {
+                  filename: result.jsonData.filename,
                   position: 0,
                   total: 1
                }

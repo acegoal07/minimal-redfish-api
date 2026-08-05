@@ -1,65 +1,98 @@
 import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { getValueFromJson, validatePermissions } from '../../../lib/util';
 import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
 
-export default new Hono().get('/', async (c) => {
-   try {
-      // Check users permissions
-      if (!validatePermissions(['asset.read'], c)) {
-         return forbiddenError(c);
-      }
+export default new Hono().get(
+   '/',
+   zValidator(
+      'query',
+      z.object({
+         page: z.coerce
+            .number({ error: 'Page must be a number' })
+            .int({ error: 'Page must be an integer' })
+            .nonnegative({ error: 'Page must be 0 or greater' })
+            .default(0),
+         limit: z.coerce
+            .number({ error: 'Limit must be a number' })
+            .int({ error: 'Limit must be an integer' })
+            .positive({ error: 'Limit must be greater than 0' })
+            .default(25)
+      })
+   ),
+   async (c) => {
+      try {
+         // Get request information
+         const { page, limit } = c.req.valid('query');
 
-      // Get all the assets
-      const assets = await prisma.asset.findMany({
-         include: {
-            json: {
-               orderBy: {
-                  uploadDate: 'desc'
-               },
-               select: {
-                  rawJson: true,
-                  id: true,
-                  filename: true
-               },
-               take: 1
-            },
-            paths: true,
-            _count: {
-               select: {
-                  json: true
-               }
-            }
+         // Check users permissions
+         if (!validatePermissions(['asset.read'], c)) {
+            return forbiddenError(c);
          }
-      });
 
-      return c.json(
-         assets.map((asset) => ({
-            id: asset.id,
-            name: asset.name,
-            position: asset.position,
-            size: asset.size,
-            rackId: asset.rackId,
-            data: asset.paths.map((path) => ({
-               id: path.id,
-               name: path.name,
-               path: path.path,
-               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
-            })),
-            json: {
-               id: asset.json[0]?.id,
-               text: asset.json[0]?.rawJson,
-               filename: asset.json[0]?.filename
+         // Search for assets
+         const [assets, total] = await prisma.$transaction([
+            prisma.asset.findMany({
+               include: {
+                  json: {
+                     orderBy: {
+                        uploadDate: 'desc'
+                     },
+                     select: {
+                        rawJson: true,
+                        id: true,
+                        filename: true
+                     },
+                     take: 1
+                  },
+                  paths: true,
+                  _count: {
+                     select: {
+                        json: true
+                     }
+                  }
+               },
+               skip: page * limit,
+               take: limit
+            }),
+
+            prisma.asset.count()
+         ]);
+
+         return c.json(
+            {
+               page,
+               limit,
+               total,
+               totalPage: Math.ceil(total / limit),
+               assets: assets.map((asset) => ({
+                  id: asset.id,
+                  name: asset.name,
+                  position: asset.position,
+                  size: asset.size,
+                  rackId: asset.rackId,
+                  data: asset.paths.map((path) => ({
+                     id: path.id,
+                     name: path.name,
+                     path: path.path,
+                     value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+                  })),
+                  json: {
+                     id: asset.json[0]?.id,
+                     text: asset.json[0]?.rawJson,
+                     filename: asset.json[0]?.filename,
+                     position: 0,
+                     total: asset._count.json
+                  }
+               }))
             },
-            pagination: {
-               position: 0,
-               total: asset._count.json
-            }
-         })),
-         200
-      );
-   } catch (err) {
-      return internalServerError(c, err);
+            200
+         );
+      } catch (err) {
+         return internalServerError(c, err);
+      }
    }
-});
+);

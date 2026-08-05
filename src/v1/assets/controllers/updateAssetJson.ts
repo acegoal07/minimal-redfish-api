@@ -118,9 +118,7 @@ export default new Hono().post(
                json: {
                   id: newJson.id,
                   text: newJson.rawJson,
-                  filename: newJson.filename
-               },
-               pagination: {
+                  filename: newJson.filename,
                   position: 0,
                   total: asset._count.json + 1
                }

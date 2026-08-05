@@ -153,9 +153,7 @@ export default new Hono().patch(
                json: {
                   id: asset.json[0]?.id,
                   text: asset.json[0]?.rawJson,
-                  filename: asset.json[0]?.filename
-               },
-               pagination: {
+                  filename: asset.json[0]?.filename,
                   position: 0,
                   total: asset._count.json
                }
