@@ -12,7 +12,7 @@ import {
 } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
 
-export default new Hono().delete(
+export default new Hono().post(
    '/',
    zValidator(
       'param',

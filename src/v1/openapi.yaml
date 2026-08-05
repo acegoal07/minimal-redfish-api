@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
    title: Asset Rack API
    description: API for managing racks and assets.
-   version: 1.0.2
+   version: 1.0.3
 servers:
    - url: "http://localhost:3000/api/v1"
      description: Local development server for v1
@@ -13,6 +13,14 @@ tags:
      description: Operations for managing assets.
    - name: Racks
      description: Operations for managing racks.
+   - name: Templates
+     description: Operations for managing templates.
+   - name: Users
+     description: Operations for managing users and authentication.
+   - name: Roles
+     description: Operations for managing roles and role permissions.
+   - name: Permissions
+     description: Read-only list of available permissions.
 
 paths:
    /assets:
@@ -352,6 +360,31 @@ paths:
                $ref: "#/components/responses/NotFound"
             "500":
                $ref: "#/components/responses/InternalServerError"
+      delete:
+         tags:
+            - Assets
+         operationId: deleteAssetPath
+         summary: Delete an asset path
+         parameters:
+            - $ref: "#/components/parameters/ID"
+            - name: pathId
+              in: path
+              required: true
+              description: Asset path identifier.
+              schema:
+                 type: integer
+                 format: int32
+         responses:
+            "204":
+               description: Asset path deleted
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
 
    /assets/{id}/history:
       get:
@@ -379,7 +412,7 @@ paths:
             "500":
                $ref: "#/components/responses/InternalServerError"
 
-   /assets/{id}/history/{historyId}:
+   /assets/{id}/history/{jsonId}:
       delete:
          tags:
             - Assets
@@ -387,7 +420,7 @@ paths:
          summary: Delete an asset history entry
          parameters:
             - $ref: "#/components/parameters/ID"
-            - name: historyId
+            - name: jsonId
               in: path
               required: true
               description: History entry identifier.
@@ -406,7 +439,7 @@ paths:
             "500":
                $ref: "#/components/responses/InternalServerError"
 
-   /assets/{id}/{index}:
+   /assets/{id}/{offset}:
       get:
          tags:
             - Assets
@@ -414,10 +447,10 @@ paths:
          summary: Get asset by ID and index
          parameters:
             - $ref: "#/components/parameters/ID"
-            - name: index
+            - name: offset
               in: path
               required: true
-              description: Asset index.
+              description: Asset offset.
               schema:
                  type: integer
                  format: int32
@@ -999,7 +1032,7 @@ paths:
             "500":
                $ref: "#/components/responses/InternalServerError"
 
-   /template/search:
+   /templates/search:
       get:
          tags:
             - Templates
@@ -1208,6 +1241,172 @@ paths:
             "500":
                $ref: "#/components/responses/InternalServerError"
 
+   /permissions:
+      get:
+         tags:
+            - Permissions
+         operationId: listPermissions
+         summary: List all permissions
+         responses:
+            "200":
+               description: List of permissions
+               content:
+                  application/json:
+                     schema:
+                        type: array
+                        items:
+                           $ref: "#/components/schemas/Permission"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
+   /roles:
+      post:
+         tags:
+            - Roles
+         operationId: createRole
+         summary: Create a role
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     required:
+                        - name
+                     properties:
+                        name:
+                           type: string
+                        permissions:
+                           type: array
+                           items:
+                              type: integer
+         responses:
+            "201":
+               description: Role created
+               content:
+                  application/json:
+                     schema:
+                        $ref: "#/components/schemas/Role"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "409":
+               $ref: "#/components/responses/Conflict"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
+   /roles/{id}:
+      delete:
+         tags:
+            - Roles
+         operationId: deleteRole
+         summary: Delete a role
+         parameters:
+            - $ref: "#/components/parameters/ID"
+         responses:
+            "204":
+               description: Role deleted
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
+   /roles/permissions/{id}/add:
+      post:
+         tags:
+            - Roles
+         operationId: addPermissionToRole
+         summary: Add permissions to a role
+         parameters:
+            - name: id
+              in: path
+              required: true
+              description: Role identifier.
+              schema:
+                 type: integer
+                 format: int32
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     required:
+                        - permissions
+                     properties:
+                        permissions:
+                           type: array
+                           items:
+                              type: integer
+         responses:
+            "200":
+               description: Role updated
+               content:
+                  application/json:
+                     schema:
+                        $ref: "#/components/schemas/Role"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+   /roles/permissions/{id}/remove:
+      post:
+         tags:
+            - Roles
+         operationId: removePermissionFromRole
+         summary: Remove permissions from a role
+         parameters:
+            - name: id
+              in: path
+              required: true
+              description: Role identifier.
+              schema:
+                 type: integer
+                 format: int32
+         requestBody:
+            required: true
+            content:
+               application/json:
+                  schema:
+                     type: object
+                     required:
+                        - permissions
+                     properties:
+                        permissions:
+                           type: array
+                           items:
+                              type: integer
+         responses:
+            "200":
+               description: Role updated
+               content:
+                  application/json:
+                     schema:
+                        $ref: "#/components/schemas/Role"
+            "400":
+               $ref: "#/components/responses/BadRequest"
+            "401":
+               $ref: "#/components/responses/Unauthorised"
+            "403":
+               $ref: "#/components/responses/Forbidden"
+            "404":
+               $ref: "#/components/responses/NotFound"
+            "500":
+               $ref: "#/components/responses/InternalServerError"
+
 components:
    securitySchemes:
       bearerAuth:
@@ -1396,6 +1595,34 @@ components:
                type: string
             name:
                type: string
+
+      Permission:
+         type: object
+         required:
+            - id
+            - name
+         properties:
+            id:
+               type: integer
+               format: int32
+            name:
+               type: string
+
+      Role:
+         type: object
+         required:
+            - id
+            - name
+         properties:
+            id:
+               type: integer
+               format: int32
+            name:
+               type: string
+            permissions:
+               type: array
+               items:
+                  $ref: "#/components/schemas/Permission"
 
       Error:
          type: object

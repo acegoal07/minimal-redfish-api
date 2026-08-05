@@ -6,7 +6,7 @@ import addPermissionToRole from './controllers/addPermissionToRole';
 import removePermissionFromRole from './controllers/removePermissionFromRole';
 
 export default new Hono()
-   .route('/permissions/:id', addPermissionToRole)
-   .route('/permissions/:id', removePermissionFromRole)
+   .route('/permissions/:id/add', addPermissionToRole)
+   .route('/permissions/:id/remove', removePermissionFromRole)
    .route('/', createRole)
    .route('/', deleteRole);
