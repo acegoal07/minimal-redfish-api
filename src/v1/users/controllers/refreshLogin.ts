@@ -94,7 +94,8 @@ export default new Hono().post(
       if (existingRefresh) {
          await prisma.userRefreshToken.update({
             data: {
-               tokenHash: newRefreshTokenHash
+               tokenHash: newRefreshTokenHash,
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             },
             where: {
                id: existingRefresh.id

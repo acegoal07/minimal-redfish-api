@@ -49,7 +49,7 @@ export default new Hono().post(
       }
 
       // Get timestamps
-      const tokenIssuedAt = Math.floor(Date.now() / 100);
+      const tokenIssuedAt = Math.floor(Date.now() / 1000);
       const tokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 15;
       const refreshTokenExpiresAt = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
 
@@ -93,7 +93,8 @@ export default new Hono().post(
       if (existingRefresh) {
          await prisma.userRefreshToken.update({
             data: {
-               tokenHash: refreshTokenHash
+               tokenHash: refreshTokenHash,
+               expiresAt: new Date(refreshTokenExpiresAt * 1000)
             },
             where: {
                id: existingRefresh.id
