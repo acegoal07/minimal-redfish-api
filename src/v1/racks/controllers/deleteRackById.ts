@@ -41,7 +41,7 @@ export default new Hono().delete(
          const rack = await prisma.asset.findFirst({
             where: {
                id,
-               storage: {
+               storageType: {
                   isNot: null
                }
             },

@@ -64,12 +64,12 @@ export default new Hono().patch(
          const rack = await prisma.asset.findFirst({
             where: {
                id,
-               storage: {
+               storageType: {
                   isNot: null
                }
             },
             include: {
-               storage: true
+               storageType: true
             }
          });
 
@@ -88,12 +88,12 @@ export default new Hono().patch(
                notes: body.notes ?? rack.notes,
                storage: {
                   update: {
-                     size: body.size ?? rack.storage?.size
+                     size: body.size ?? rack.storageType?.size
                   }
                }
             },
             include: {
-               storage: true
+               storageType: true
             }
          });
 
@@ -102,7 +102,7 @@ export default new Hono().patch(
                id: updatedRack.id,
                name: updatedRack.name,
                notes: updatedRack.notes,
-               size: updatedRack.storage?.size
+               size: updatedRack.storageType?.size
             },
             200
          );

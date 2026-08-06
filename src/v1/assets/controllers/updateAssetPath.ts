@@ -68,7 +68,7 @@ export default new Hono().patch(
                }
             },
             include: {
-               jsons: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -112,7 +112,7 @@ export default new Hono().patch(
                name: updatedPath.name,
                path: updatedPath.path,
                value: getValueFromJson<string>(
-                  JSON.parse(asset.jsons[0]?.rawJson),
+                  JSON.parse(asset.json[0]?.rawJson),
                   updatedPath.path
                )
             },

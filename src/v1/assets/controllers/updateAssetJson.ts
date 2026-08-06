@@ -74,7 +74,7 @@ export default new Hono().post(
                paths: true,
                _count: {
                   select: {
-                     jsons: true
+                     json: true
                   }
                }
             }
@@ -112,7 +112,7 @@ export default new Hono().post(
                   id: newJson.id,
                   text: newJson.rawJson,
                   position: 0,
-                  total: asset._count.jsons + 1
+                  total: asset._count.json + 1
                }
             },
             200

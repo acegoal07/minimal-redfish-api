@@ -65,14 +65,14 @@ export default new Hono().post(
             data: {
                name: body.name,
                notes: body.notes,
-               storage: {
+               storageType: {
                   create: {
                      size: body.size
                   }
                }
             },
             include: {
-               storage: {
+               storageType: {
                   select: {
                      size: true
                   }
@@ -85,7 +85,7 @@ export default new Hono().post(
                id: rack.id,
                name: rack.name,
                notes: rack.notes,
-               size: rack.storage?.size
+               size: rack.storageType?.size
             },
             201
          );

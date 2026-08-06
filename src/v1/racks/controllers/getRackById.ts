@@ -43,15 +43,6 @@ export default new Hono().get(
             }
          });
 
-         const test = await prisma.storage.findUnique({
-            where: {
-               id: id
-            }
-         });
-
-         console.log(rack);
-         console.log(test);
-
          // Check if the rack exists
          if (!rack) {
             return notFoundError(c);

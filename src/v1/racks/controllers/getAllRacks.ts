@@ -36,7 +36,7 @@ export default new Hono().get(
                   }
                },
                include: {
-                  storage: true
+                  storageType: true
                },
                skip: (page - 1) * limit,
                take: limit
@@ -59,7 +59,7 @@ export default new Hono().get(
                racks: racks.map((rack) => ({
                   id: rack.id,
                   name: rack.name,
-                  size: rack.storage?.size,
+                  size: rack.storageType?.size,
                   notes: rack.notes
                }))
             },

@@ -74,7 +74,7 @@ export default new Hono().post(
                }
             },
             include: {
-               jsons: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -120,7 +120,7 @@ export default new Hono().post(
                id: path.id,
                path: path.path,
                name: path.name,
-               value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson ?? {}), path.path)
+               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson ?? {}), path.path)
             })),
             201
          );

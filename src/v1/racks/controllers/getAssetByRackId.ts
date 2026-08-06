@@ -41,7 +41,7 @@ export default new Hono().get(
                }
             },
             include: {
-               jsons: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -54,10 +54,10 @@ export default new Hono().get(
                      path: true
                   }
                },
-               storage: true,
+               storageType: true,
                _count: {
                   select: {
-                     jsons: true
+                     json: true
                   }
                }
             }
@@ -73,21 +73,21 @@ export default new Hono().get(
                id: asset.id,
                name: asset.name,
                position: asset.position,
-               size: asset.storage?.size,
+               size: asset.storageType?.size,
                rackId: asset.storageId,
                data: asset.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
+                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.jsons[0]?.id,
-                  text: asset.jsons[0]?.rawJson
+                  id: asset.json[0]?.id,
+                  text: asset.json[0]?.rawJson
                },
                pagination: {
                   position: 0,
-                  total: asset._count.jsons
+                  total: asset._count.json
                }
             })),
             200

@@ -41,7 +41,7 @@ export default new Hono().get(
             },
             include: {
                server: true,
-               jsons: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -50,7 +50,7 @@ export default new Hono().get(
                paths: true,
                _count: {
                   select: {
-                     jsons: true
+                     json: true
                   }
                }
             }
@@ -72,13 +72,13 @@ export default new Hono().get(
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
+                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.jsons[0]?.id,
-                  text: asset.jsons[0]?.rawJson,
+                  id: asset.json[0]?.id,
+                  text: asset.json[0]?.rawJson,
                   position: 0,
-                  total: asset._count.jsons
+                  total: asset._count.json
                }
             },
             200

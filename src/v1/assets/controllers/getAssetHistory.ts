@@ -39,7 +39,7 @@ export default new Hono().get(
                }
             },
             include: {
-               jsons: {
+               json: {
                   orderBy: {
                      uploadDate: 'desc'
                   }
@@ -53,7 +53,7 @@ export default new Hono().get(
          }
 
          return c.json(
-            asset.jsons.map((json) => ({
+            asset.json.map((json) => ({
                id: json.id,
                text: json.rawJson
             })),

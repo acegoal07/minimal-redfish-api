@@ -116,7 +116,7 @@ export default new Hono().post(
                      data: paths
                   }
                },
-               jsons: {
+               json: {
                   create: {
                      rawJson: json.text
                   }
@@ -125,7 +125,7 @@ export default new Hono().post(
             include: {
                server: true,
                paths: true,
-               jsons: true,
+               json: true,
                storage: true
             }
          });
@@ -142,13 +142,13 @@ export default new Hono().post(
                   name: path.name,
                   path: path.path,
                   value: getValueFromJson<String>(
-                     JSON.parse(result.jsons[0].rawJson ?? {}),
+                     JSON.parse(result.json[0].rawJson ?? {}),
                      path.path
                   )
                })),
                json: {
-                  id: result.jsons[0].id,
-                  text: result.jsons[0].rawJson,
+                  id: result.json[0].id,
+                  text: result.json[0].rawJson,
                   position: 0,
                   total: 1
                }
