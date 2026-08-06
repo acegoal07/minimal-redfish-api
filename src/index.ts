@@ -60,12 +60,8 @@ app.use('/api/*', async (c, next) => {
          role: {
             include: {
                permissions: {
-                  include: {
-                     permission: {
-                        select: {
-                           name: true
-                        }
-                     }
+                  select: {
+                     name: true
                   }
 
                }

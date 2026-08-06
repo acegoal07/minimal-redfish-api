@@ -11,7 +11,7 @@ model Role {
   name String @unique @db.VarChar(255)
 
   users       User[]
-  permissions RolePermission[]
+  permissions Permission[] @relation("RolePermissions")
 
   @@map("Roles")
 }
@@ -20,20 +20,9 @@ model Permission {
   id   Int    @id @default(autoincrement())
   name String @unique @db.VarChar(255)
 
-  roles RolePermission[]
+  roles Role[] @relation("RolePermissions")
 
   @@map("Permissions")
-}
-
-model RolePermission {
-  permissionId Int @map("A")
-  roleId       Int @map("B")
-
-  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-
-  @@id([permissionId, roleId])
-  @@map("_RolePermissions")
 }
 
 model User {
