@@ -63,7 +63,6 @@ app.use('/api/*', async (c, next) => {
                   select: {
                      name: true
                   }
-
                }
             }
          }
@@ -74,7 +73,7 @@ app.use('/api/*', async (c, next) => {
       return notFoundError(c);
    }
 
-   console.log(user.role.permissions);
+   console.log(user.);
 
    c.set('user', user);
 
