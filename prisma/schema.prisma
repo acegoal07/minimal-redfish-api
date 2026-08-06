@@ -11,7 +11,7 @@ model Role {
   name String @unique @db.VarChar(255)
 
   users       User[]
-  permissions Permission[] @relation("RolePermissions")
+  permissions Permission[]
 
   @@map("Roles")
 }
@@ -20,7 +20,7 @@ model Permission {
   id   Int    @id @default(autoincrement())
   name String @unique @db.VarChar(255)
 
-  roles Role[] @relation("RolePermissions")
+  roles Role[]
 
   @@map("Permissions")
 }

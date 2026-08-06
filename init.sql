@@ -9,7 +9,6 @@ USE redfish;
 -- ===========================================================
 -- Roles & Permissions
 -- ===========================================================
-<<<<<<< HEAD
 CREATE TABLE Roles (
    id INT AUTO_INCREMENT PRIMARY KEY,
    name VARCHAR(255) NOT NULL UNIQUE
@@ -18,38 +17,11 @@ CREATE TABLE Permissions (
    id INT AUTO_INCREMENT PRIMARY KEY,
    name VARCHAR(255) NOT NULL UNIQUE
 );
-CREATE TABLE _PermissionToRoles (
+CREATE TABLE _PermissionToRole (
    A INT NOT NULL,
    B INT NOT NULL,
-   PRIMARY KEY (A, B),
-   INDEX idx_permission_role (B),
-   CONSTRAINT fk_permission_role_permission FOREIGN KEY (A) REFERENCES Permissions (id) ON DELETE CASCADE,
-   CONSTRAINT fk_permission_role_role FOREIGN KEY (B) REFERENCES Roles (id) ON DELETE CASCADE
+   PRIMARY KEY (A, B)
 );
-=======
-CREATE TABLE
-   Roles (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL UNIQUE
-   );
-
-CREATE TABLE
-   Permissions (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL UNIQUE
-   );
-
-CREATE TABLE
-   _RolePermissions (
-      A INT NOT NULL,
-      B INT NOT NULL,
-      PRIMARY KEY (A, B),
-      INDEX B (B),
-      CONSTRAINT fk_role_permissions_role FOREIGN KEY (A) REFERENCES Roles (id) ON DELETE CASCADE,
-      CONSTRAINT fk_role_permissions_permission FOREIGN KEY (B) REFERENCES Permissions (id) ON DELETE CASCADE
-   );
-
->>>>>>> 055c8d4a2609b8eff7fdc2a39bbe6f7003e73446
 -- ===========================================================
 -- Users
 -- ===========================================================
@@ -198,26 +170,12 @@ VALUES ('admin');
 -- ===========================================================
 -- Give admin every permission
 -- ===========================================================
-<<<<<<< HEAD
-INSERT IGNORE INTO _PermissionToRoles (A, B)
+INSERT INTO _PermissionToRole (A, B)
 SELECT p.id,
    r.id
-FROM Permissions p
-   CROSS JOIN Roles r
-WHERE r.name = 'admin';
-=======
-INSERT INTO
-   _RolePermissions (A, B)
-SELECT
-   r.id,
-   p.id
-FROM
-   Roles r
+FROM Roles r
    CROSS JOIN Permissions p
-WHERE
-   r.name = 'admin';
-
->>>>>>> 055c8d4a2609b8eff7fdc2a39bbe6f7003e73446
+WHERE r.name = 'admin';
 -- ===========================================================
 -- Default admin user
 -- password: admin
