@@ -56,18 +56,21 @@ type Permission =
    | 'template.read'
    | 'template.write'
    | 'template.delete'
-   | 'rack.read'
-   | 'rack.write'
-   | 'rack.delete'
-   | 'asset.read'
-   | 'asset.write'
-   | 'asset.delete'
    | 'user.create'
    | 'user.update'
    | 'user.delete'
    | 'role.create'
    | 'role.update'
-   | 'role.delete';
+   | 'role.delete'
+   | 'tag.create'
+   | 'tag.update'
+   | 'tag.delete'
+   | 'group.create'
+   | 'group.update'
+   | 'group.delete'
+   | 'asset.create'
+   | 'asset.update'
+   | 'asset.delete';
 
 /**
  * Checks whether the user has the required permissions
