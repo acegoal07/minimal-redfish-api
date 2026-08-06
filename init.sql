@@ -26,7 +26,7 @@ CREATE TABLE
    );
 
 CREATE TABLE
-   _RolePermission (
+   _RolePermissions (
       A INT NOT NULL,
       B INT NOT NULL,
       PRIMARY KEY (A, B),
@@ -219,7 +219,7 @@ VALUES
 -- ===========================================================
 -- Give admin every permission
 -- ===========================================================
-INSERT IGNORE INTO _RolePermission (A, B)
+INSERT IGNORE INTO _RolePermissions (A, B)
 SELECT
    r.id,
    p.id
