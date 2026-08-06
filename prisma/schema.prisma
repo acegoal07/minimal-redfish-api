@@ -4,101 +4,156 @@ generator client {
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
-model Rack {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique @db.VarChar(255)
-  size  Int?
-  notes String? @db.VarChar(255)
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique @db.VarChar(255)
+
+  users       User[]
+  permissions Permission[] @relation("RolePermissions")
+
+  @@map("Roles")
+}
+
+model Permission {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(255)
+
+  roles Role[] @relation("RolePermissions")
+
+  @@map("Permissions")
+}
+
+model User {
+  id           Int                @id @default(autoincrement())
+  username     String             @unique @db.VarChar(255)
+  passwordHash String             @db.Char(64)
+
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  refreshToken UserRefreshToken?
+
+  @@map("Users")
+}
+
+model UserRefreshToken {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  tokenHash  String   @db.Char(64)
+  expiresAt  DateTime @db.DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("UserRefreshTokens")
+}
+
+model Group {
+  id   Int    @id @default(autoincrement())
+  name String? @db.VarChar(255)
 
   assets Asset[]
 
-  @@map("Rack")
+  @@map("Groups")
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String? @db.VarChar(255)
+
+  assets Asset[]
+
+  @@map("Tags")
 }
 
 model Asset {
-  id       Int    @id @default(autoincrement())
-  rackId   Int
-  name     String @unique @db.VarChar(255)
-  size     Int?
+  id       Int      @id @default(autoincrement())
+  name     String?  @db.VarChar(255)
+  notes    String?  @db.Text
   position Int?
 
-  rack Rack @relation(fields: [rackId], references: [id], onDelete: Cascade)
+  groupId   Int?
+  storageId Int?
 
+  group   Group?   @relation(fields: [groupId], references: [id])
+  storage Storage?
+
+  tags  Tag[]
   paths AssetPath[]
-  json  AssetJson[]
+  jsons AssetJson[]
 
-  @@index([rackId])
-  @@map("Asset")
+  server Server?
+  ups    UninterruptiblePowerSupply?
+  pdu    PowerDistributionUnit?
+
+  @@map("Assets")
+}
+
+model Storage {
+  id Int @id
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  assets Asset[]
+
+  @@map("Storages")
+}
+
+model Server {
+  id    Int
+  model String? @db.VarChar(255)
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@id([id])
+
+  @@map("Servers")
+}
+
+model UninterruptiblePowerSupply {
+  id       Int
+  capacity Float?
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@id([id])
+
+  @@map("UninterruptiblePowerSupplies")
+}
+
+model PowerDistributionUnit {
+  id          Int
+  outletCount Int?
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@id([id])
+
+  @@map("PowerDistributionUnits")
 }
 
 model AssetPath {
-  id      Int     @id @default(autoincrement())
-  path    String  @db.Text
+  id      Int    @id @default(autoincrement())
+  path    String @db.Text
   name    String? @db.VarChar(255)
+
   assetId Int
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
-  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
-  @@index([assetId])
-  @@map("AssetPath")
+  @@map("AssetPaths")
 }
 
 model AssetJson {
   id         Int      @id @default(autoincrement())
   rawJson    String   @db.LongText
-  uploadDate DateTime @default(now())
-  filename   String?  @db.VarChar(255)
-  assetId    Int
+  uploadDate DateTime @default(now()) @db.DateTime
 
-  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId Int
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
-  @@index([assetId])
   @@map("AssetJson")
-}
-
-model Role {
-  id   Int    @id @default(autoincrement())
-  name String @unique @db.VarChar(255)
-
-  permissions Permission[]
-  users       User[]
-
-  @@map("Role")
-}
-
-model Permission {
-  id   Int    @id @default(autoincrement())
-  name String @unique @db.VarChar(255)
-
-  roles Role[]
-
-  @@map("Permission")
-}
-
-model User {
-  id           Int    @id @default(autoincrement())
-  username     String @unique @db.VarChar(255)
-  passwordHash String @db.Char(64)
-  roleId       Int
-
-  role         Role              @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  refreshToken UserRefreshToken?
-
-  @@index([roleId])
-  @@map("Users")
-}
-
-model UserRefreshToken {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  tokenHash String   @unique @db.Char(64)
-  expiresAt DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("UserRefreshTokens")
 }
 
 model Template {
@@ -107,17 +162,16 @@ model Template {
 
   paths TemplatePath[]
 
-  @@map("Template")
+  @@map("Templates")
 }
 
 model TemplatePath {
-  id         Int     @id @default(autoincrement())
-  path       String  @db.Text
-  name       String? @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  path String @db.Text
+  name String? @db.VarChar(255)
+
   templateId Int
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
-  template Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
-
-  @@index([templateId])
-  @@map("TemplatePath")
+  @@map("TemplatePaths")
 }
