@@ -34,14 +34,23 @@ export default new Hono().get(
          const rack = await prisma.asset.findFirst({
             where: {
                id,
-               storage: {
+               storageType: {
                   isNot: null
                }
             },
             include: {
-               storage: true
+               storageType: true
             }
          });
+
+         const test = await prisma.storage.findUnique({
+            where: {
+               id: id
+            }
+         });
+
+         console.log(rack);
+         console.log(test);
 
          // Check if the rack exists
          if (!rack) {
@@ -52,7 +61,7 @@ export default new Hono().get(
             {
                name: rack.name,
                id: rack.id,
-               size: rack.storage?.size,
+               size: rack.storageType?.size,
                notes: rack.notes
             },
             200

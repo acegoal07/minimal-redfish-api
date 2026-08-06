@@ -7,18 +7,18 @@ datasource db {
 }
 
 model Role {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(255)
-  users            User[]
-  PermissionToRole PermissionToRole[]
+  id          Int          @id @default(autoincrement())
+  name        String       @unique(map: "name") @db.VarChar(255)
+  users       User[]
+  permissions Permission[]
 
   @@map("Roles")
 }
 
 model Permission {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(255)
-  PermissionToRole PermissionToRole[]
+  id    Int    @id @default(autoincrement())
+  name  String @unique(map: "name") @db.VarChar(255)
+  roles Role[]
 
   @@map("Permissions")
 }
@@ -54,8 +54,9 @@ model Group {
 }
 
 model Tag {
-  id   Int    @id @default(autoincrement())
-  name String @unique(map: "name") @db.VarChar(255)
+  id     Int     @id @default(autoincrement())
+  name   String  @unique(map: "name") @db.VarChar(255)
+  assets Asset[]
 
   @@map("Tags")
 }
@@ -75,6 +76,7 @@ model Asset {
   server      Server?
   storageType Storage?                    @relation("StorageAsset")
   ups         UninterruptiblePowerSupply?
+  tags        Tag[]
 
   @@index([groupId], map: "idx_assets_group")
   @@index([storageId], map: "idx_assets_storage")
@@ -155,23 +157,4 @@ model TemplatePath {
 
   @@index([templateId], map: "fk_templatepath_template")
   @@map("TemplatePaths")
-}
-
-model AssetToTag {
-  A Int
-  B Int
-
-  @@id([A, B])
-  @@map("_AssetToTag")
-}
-
-model PermissionToRole {
-  A           Int
-  B           Int
-  Permissions Permission @relation(fields: [A], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_permission_to_role_permission")
-  Roles       Role       @relation(fields: [B], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_permission_to_role_role")
-
-  @@id([A, B])
-  @@index([B], map: "idx_permission_to_role_role")
-  @@map("_PermissionToRole")
 }
