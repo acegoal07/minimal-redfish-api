@@ -48,7 +48,7 @@ export default new Hono().post(
             return existingResourceError(c);
          }
 
-         // Add the new server to the database
+         // Add the new storage to the database
          const newStorage = await prisma.asset.create({
             data: {
                ...buildBaseAssetSchema(body),

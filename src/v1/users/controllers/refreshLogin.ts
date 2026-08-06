@@ -28,7 +28,7 @@ export default new Hono().post(
       const refreshTokenHash = createHash('sha256').update(refresh).digest('hex').toLowerCase();
 
       // Try and find the refresh token in the database
-      const userRefresh = await prisma.userRefreshToken.findUnique({
+      const userRefresh = await prisma.userRefreshToken.findFirst({
          where: {
             tokenHash: refreshTokenHash,
             expiresAt: {
