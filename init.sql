@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS Permissions (
    name VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS _RolePermissions (
+CREATE TABLE IF NOT EXISTS _PermissionToRole (
    A INT NOT NULL,
    B INT NOT NULL,
    PRIMARY KEY (A, B),
-   INDEX idx_role_permissions_permission (B),
-   CONSTRAINT fk_role_permissions_role FOREIGN KEY (A) REFERENCES Roles (id) ON DELETE CASCADE,
-   CONSTRAINT fk_role_permissions_permission FOREIGN KEY (B) REFERENCES Permissions (id) ON DELETE CASCADE
+   INDEX idx_permission_to_role_role (B),
+   CONSTRAINT fk_permission_to_role_permission FOREIGN KEY (A) REFERENCES Permissions (id) ON DELETE CASCADE,
+   CONSTRAINT fk_permission_to_role_role FOREIGN KEY (B) REFERENCES Roles (id) ON DELETE CASCADE
 );
 -- ===========================================================
 -- Users
@@ -175,11 +175,11 @@ VALUES ('admin');
 -- ===========================================================
 -- Give admin every permission
 -- ===========================================================
-INSERT IGNORE INTO _RolePermissions (A, B)
-SELECT r.id,
-   p.id
-FROM Roles r
-   CROSS JOIN Permissions p
+INSERT IGNORE INTO _PermissionToRole (A, B)
+SELECT p.id,
+   r.id
+FROM Permissions p
+   CROSS JOIN Roles r
 WHERE r.name = 'admin';
 -- ===========================================================
 -- Default admin user
