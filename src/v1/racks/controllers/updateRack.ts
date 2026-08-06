@@ -81,10 +81,7 @@ export default new Hono().patch(
          // Update the rack in the database
          const updatedRack = await prisma.asset.update({
             where: {
-               id,
-               storage: {
-                  isNot: null
-               }
+               id
             },
             data: {
                name: body.name ?? rack.name,

@@ -42,11 +42,6 @@ export default new Hono().get(
                   orderBy: {
                      uploadDate: 'desc'
                   },
-                  select: {
-                     id: true,
-                     filename: true,
-                     rawJson: true
-                  },
                   take: 1
                },
                paths: {
@@ -85,8 +80,7 @@ export default new Hono().get(
                })),
                json: {
                   id: asset.jsons[0]?.id,
-                  text: asset.jsons[0]?.rawJson,
-                  filename: asset.jsons[0]?.filename
+                  text: asset.jsons[0]?.rawJson
                },
                pagination: {
                   position: 0,

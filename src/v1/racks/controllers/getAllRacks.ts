@@ -3,8 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
-import { validatePermissions } from '../../../lib/util';
+import { internalServerError } from '../../../lib/errorMessages';
 
 export default new Hono().get(
    '/',
@@ -30,9 +29,14 @@ export default new Hono().get(
 
          // Get all the racks
          const [racks, total] = await prisma.$transaction([
-            prisma.storage.findMany({
+            prisma.asset.findMany({
+               where: {
+                  storage: {
+                     isNot: null
+                  }
+               },
                include: {
-                  asset: true
+                  storage: true
                },
                skip: (page - 1) * limit,
                take: limit
@@ -48,9 +52,9 @@ export default new Hono().get(
                totalPage: Math.ceil(total / limit),
                racks: racks.map((rack) => ({
                   id: rack.id,
-                  name: rack.asset.name,
-                  size: rack.size,
-                  notes: rack.asset.notes
+                  name: rack.name,
+                  size: rack.storage?.size,
+                  notes: rack.notes
                }))
             },
             200

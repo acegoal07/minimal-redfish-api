@@ -78,7 +78,6 @@ CREATE TABLE Servers (
    id INT PRIMARY KEY,
    model VARCHAR(255),
    size INT,
-   position INT,
    CONSTRAINT fk_server_asset FOREIGN KEY (id) REFERENCES Assets (id) ON DELETE CASCADE
 );
 CREATE TABLE UninterruptiblePowerSupplies (

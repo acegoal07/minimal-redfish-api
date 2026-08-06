@@ -105,10 +105,10 @@ export default new Hono().post(
          const result = await prisma.asset.create({
             data: {
                name: rest.name,
+               position: rest.position,
                server: {
                   create: {
-                     size: rest.size,
-                     position: rest.position
+                     size: rest.size
                   }
                },
                paths: {
@@ -135,7 +135,7 @@ export default new Hono().post(
                id: result.id,
                rackId: result.storageId,
                name: result.name,
-               position: result.server?.position,
+               position: result.position,
                size: result.server?.size,
                data: result.paths.map((path) => ({
                   id: path.id,

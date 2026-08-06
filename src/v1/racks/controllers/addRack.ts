@@ -65,7 +65,7 @@ export default new Hono().post(
             data: {
                name: body.name,
                notes: body.notes,
-               storageType: {
+               storage: {
                   create: {
                      size: body.size
                   }

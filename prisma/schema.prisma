@@ -106,7 +106,6 @@ model Server {
   id       Int     @id
   model    String? @db.VarChar(255)
   size     Int?
-  position Int?
 
   asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
 
