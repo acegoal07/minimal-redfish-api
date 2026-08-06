@@ -73,6 +73,8 @@ app.use('/api/*', async (c, next) => {
       return notFoundError(c);
    }
 
+   console.log(user);
+
    c.set('user', user);
 
    await next();
