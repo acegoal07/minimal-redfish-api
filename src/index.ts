@@ -7,7 +7,7 @@ import { compress } from 'hono/compress';
 import { trimTrailingSlash } from 'hono/trailing-slash';
 import { jwt } from 'hono/jwt';
 
-import { internalServerError, unauthorisedError } from './lib/errorMessages';
+import { internalServerError, notFoundError, unauthorisedError } from './lib/errorMessages';
 import { prisma } from './lib/prisma';
 
 // import v1 from './v1';
@@ -70,7 +70,7 @@ app.use('/api/*', async (c, next) => {
    });
 
    if (!user) {
-      return c.json({ error: 'User not found' }, 404);
+      return notFoundError(c);
    }
 
    c.set('user', user);

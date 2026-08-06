@@ -5,7 +5,11 @@ type AuthUser = Prisma.UserGetPayload<{
    include: {
       role: {
          include: {
-            permissions: true;
+            permissions: {
+               select: {
+                  name: true;
+               };
+            };
          };
       };
    };
