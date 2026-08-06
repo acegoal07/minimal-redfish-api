@@ -73,7 +73,7 @@ app.use('/api/*', async (c, next) => {
       return notFoundError(c);
    }
 
-   console.log(user);
+   console.log(user.role.permissions);
 
    c.set('user', user);
 
