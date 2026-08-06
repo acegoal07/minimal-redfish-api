@@ -10,7 +10,8 @@ import { jwt } from 'hono/jwt';
 import { internalServerError, unauthorisedError } from './lib/errorMessages';
 import { prisma } from './lib/prisma';
 
-import v1 from './v1';
+// import v1 from './v1';
+import v2 from './v2';
 
 const app = new Hono();
 
@@ -98,7 +99,8 @@ app.onError((err, c) => {
 });
 
 // Load endpoints
-app.route('/api/v1', v1);
+// app.route('/api/v1', v1);
+app.route('/api/v2', v2);
 
 // Start listening to port
 serve({

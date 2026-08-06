@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model Role {
@@ -27,9 +26,9 @@ model Permission {
 }
 
 model User {
-  id           Int                @id @default(autoincrement())
-  username     String             @unique @db.VarChar(255)
-  passwordHash String             @db.Char(64)
+  id           Int    @id @default(autoincrement())
+  username     String @unique @db.VarChar(255)
+  passwordHash String @db.Char(64)
 
   roleId Int
   role   Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
@@ -51,7 +50,7 @@ model UserRefreshToken {
 }
 
 model Group {
-  id   Int    @id @default(autoincrement())
+  id   Int     @id @default(autoincrement())
   name String? @db.VarChar(255)
 
   assets Asset[]
@@ -60,7 +59,7 @@ model Group {
 }
 
 model Tag {
-  id   Int    @id @default(autoincrement())
+  id   Int     @id @default(autoincrement())
   name String? @db.VarChar(255)
 
   assets Asset[]
@@ -69,24 +68,28 @@ model Tag {
 }
 
 model Asset {
-  id       Int      @id @default(autoincrement())
-  name     String?  @db.VarChar(255)
-  notes    String?  @db.Text
+  id       Int     @id @default(autoincrement())
+  name     String? @db.VarChar(255)
+  notes    String? @db.Text
   position Int?
 
   groupId   Int?
   storageId Int?
 
-  group   Group?   @relation(fields: [groupId], references: [id])
-  storage Storage?
+  group Group? @relation(fields: [groupId], references: [id])
+
+  /// Storage containing this asset
+  storage Storage? @relation("StorageContents", fields: [storageId], references: [id])
 
   tags  Tag[]
   paths AssetPath[]
   jsons AssetJson[]
 
-  server Server?
-  ups    UninterruptiblePowerSupply?
-  pdu    PowerDistributionUnit?
+  /// Asset subtype relations
+  storageType Storage? @relation("StorageAsset")
+  server      Server?
+  ups         UninterruptiblePowerSupply?
+  pdu         PowerDistributionUnit?
 
   @@map("Assets")
 }
@@ -94,50 +97,46 @@ model Asset {
 model Storage {
   id Int @id
 
-  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
+  /// This storage is itself an Asset
+  asset Asset @relation("StorageAsset", fields: [id], references: [id], onDelete: Cascade)
 
-  assets Asset[]
+  /// Assets stored inside this storage
+  assets Asset[] @relation("StorageContents")
 
   @@map("Storages")
 }
 
 model Server {
-  id    Int
+  id    Int     @id
   model String? @db.VarChar(255)
 
   asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
-
-  @@id([id])
 
   @@map("Servers")
 }
 
 model UninterruptiblePowerSupply {
-  id       Int
+  id       Int    @id
   capacity Float?
 
   asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
-
-  @@id([id])
 
   @@map("UninterruptiblePowerSupplies")
 }
 
 model PowerDistributionUnit {
-  id          Int
+  id          Int @id
   outletCount Int?
 
   asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
-
-  @@id([id])
 
   @@map("PowerDistributionUnits")
 }
 
 model AssetPath {
-  id      Int    @id @default(autoincrement())
-  path    String @db.Text
-  name    String? @db.VarChar(255)
+  id   Int     @id @default(autoincrement())
+  path String  @db.Text
+  name String? @db.VarChar(255)
 
   assetId Int
   asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
@@ -166,8 +165,8 @@ model Template {
 }
 
 model TemplatePath {
-  id   Int    @id @default(autoincrement())
-  path String @db.Text
+  id   Int     @id @default(autoincrement())
+  path String  @db.Text
   name String? @db.VarChar(255)
 
   templateId Int
