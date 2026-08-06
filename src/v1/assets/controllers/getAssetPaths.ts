@@ -3,9 +3,8 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson, validatePermissions } from '../../../lib/util';
+import { getValueFromJson } from '../../../lib/util';
 import {
-   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
@@ -29,21 +28,19 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
-         // Check users permissions
-         if (!validatePermissions(['asset.read'], c)) {
-            return forbiddenError(c);
-         }
-
          // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id
+               id,
+               server: {
+                  isNot: null
+               }
             },
             include: {
-               json: {
+               jsons: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -52,13 +49,7 @@ export default new Hono().get(
                   },
                   take: 1
                },
-               paths: {
-                  select: {
-                     id: true,
-                     name: true,
-                     path: true
-                  }
-               }
+               paths: true
             }
          });
 
@@ -72,7 +63,7 @@ export default new Hono().get(
                id: path.id,
                name: path.name,
                path: path.path,
-               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+               value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
             })),
             200
          );

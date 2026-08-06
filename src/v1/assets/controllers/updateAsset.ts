@@ -65,7 +65,7 @@ export default new Hono().patch(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+         if (!validatePermissions(['asset.update'], c)) {
             return forbiddenError(c);
          }
 
@@ -76,30 +76,23 @@ export default new Hono().patch(
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id
+               id,
+               server: {
+                  isNot: null
+               }
             },
             include: {
-               json: {
+               jsons: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
-                  select: {
-                     id: true,
-                     rawJson: true,
-                     filename: true
-                  },
                   take: 1
                },
-               paths: {
-                  select: {
-                     id: true,
-                     name: true,
-                     path: true
-                  }
-               },
+               paths: true,
+               server: true,
                _count: {
                   select: {
-                     json: true
+                     jsons: true
                   }
                }
             }
@@ -112,9 +105,12 @@ export default new Hono().patch(
 
          // Try and get the new rack
          if (body.rackId) {
-            const rack = await prisma.rack.findUnique({
+            const rack = await prisma.asset.findUnique({
                where: {
-                  id: body.rackId
+                  id: body.rackId,
+                  storage: {
+                     isNot: null
+                  }
                }
             });
 
@@ -128,12 +124,18 @@ export default new Hono().patch(
          const updatedAsset = await prisma.asset.update({
             data: {
                name: body.name ?? asset.name,
-               rackId: body.rackId ?? asset.rackId,
-               size: body.size ?? asset.size,
+               rackId: body.rackId ?? asset.storageId,
+               size: body.size ?? asset.server?.size,
                position: body.position ?? asset.position
             },
             where: {
-               id
+               id,
+               server: {
+                  isNot: null
+               }
+            },
+            include: {
+               server: true
             }
          });
 
@@ -142,20 +144,19 @@ export default new Hono().patch(
                id: updatedAsset.id,
                name: updatedAsset.name,
                position: updatedAsset.position,
-               size: updatedAsset.size,
-               rackId: updatedAsset.rackId,
+               size: updatedAsset.server?.size,
+               rackId: updatedAsset.storageId,
                data: asset.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+                  value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.json[0]?.id,
-                  text: asset.json[0]?.rawJson,
-                  filename: asset.json[0]?.filename,
+                  id: asset.jsons[0]?.id,
+                  text: asset.jsons[0]?.rawJson,
                   position: 0,
-                  total: asset._count.json
+                  total: asset._count.jsons
                }
             },
             200
