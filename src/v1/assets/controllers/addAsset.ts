@@ -136,12 +136,15 @@ export default new Hono().post(
                rackId: result.storageId,
                name: result.name,
                position: result.server?.position,
-               size: result.storage?.size,
+               size: result.server?.size,
                data: result.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<String>(JSON.parse(result.jsons[0].rawJson), path.path)
+                  value: getValueFromJson<String>(
+                     JSON.parse(result.jsons[0].rawJson ?? {}),
+                     path.path
+                  )
                })),
                json: {
                   id: result.jsons[0].id,

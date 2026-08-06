@@ -36,11 +36,7 @@ export default new Hono().post(
             text: z
                .string({ error: 'Text must be a string' })
                .trim()
-               .min(1, { error: 'Text cannot be empty' }),
-            filename: z
-               .string({ error: 'Filename must be a string' })
-               .trim()
-               .min(1, { error: 'Filename cannot be empty' })
+               .min(1, { error: 'Text cannot be empty' })
          })
       }),
       (result, c) => {
@@ -52,7 +48,7 @@ export default new Hono().post(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+         if (!validatePermissions(['asset.update'], c)) {
             return forbiddenError(c);
          }
 
@@ -68,19 +64,17 @@ export default new Hono().post(
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id: id
+               id: id,
+               server: {
+                  isNot: null
+               }
             },
             include: {
-               paths: {
-                  select: {
-                     id: true,
-                     name: true,
-                     path: true
-                  }
-               },
+               server: true,
+               paths: true,
                _count: {
                   select: {
-                     json: true
+                     jsons: true
                   }
                }
             }
@@ -95,8 +89,7 @@ export default new Hono().post(
          const newJson = await prisma.assetJson.create({
             data: {
                assetId: id,
-               rawJson: JSON.stringify(JSON.parse(json.text)),
-               filename: json.filename
+               rawJson: JSON.stringify(JSON.parse(json.text))
             }
          });
 
@@ -105,8 +98,8 @@ export default new Hono().post(
                id: asset.id,
                name: asset.name,
                position: asset.position,
-               size: asset.size,
-               rackId: asset.rackId,
+               size: asset.server?.size,
+               rackId: asset.storageId,
                data: asset.paths.map((path) => {
                   return {
                      id: path.id,
@@ -118,9 +111,8 @@ export default new Hono().post(
                json: {
                   id: newJson.id,
                   text: newJson.rawJson,
-                  filename: newJson.filename,
                   position: 0,
-                  total: asset._count.json + 1
+                  total: asset._count.jsons + 1
                }
             },
             200

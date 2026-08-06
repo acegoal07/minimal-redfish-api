@@ -51,7 +51,7 @@ export default new Hono().patch(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+         if (!validatePermissions(['asset.update'], c)) {
             return forbiddenError(c);
          }
 
@@ -62,10 +62,13 @@ export default new Hono().patch(
          // Try and get the asset from the database
          const asset = await prisma.asset.findUnique({
             where: {
-               id: id
+               id: id,
+               server: {
+                  isNot: null
+               }
             },
             include: {
-               json: {
+               jsons: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
@@ -77,10 +80,6 @@ export default new Hono().patch(
                paths: {
                   where: {
                      id: pathId
-                  },
-                  select: {
-                     name: true,
-                     path: true
                   }
                }
             }
@@ -112,7 +111,10 @@ export default new Hono().patch(
                id: updatedPath.id,
                name: updatedPath.name,
                path: updatedPath.path,
-               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), updatedPath.path)
+               value: getValueFromJson<string>(
+                  JSON.parse(asset.jsons[0]?.rawJson),
+                  updatedPath.path
+               )
             },
             200
          );

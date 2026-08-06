@@ -3,8 +3,8 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
-import { getValueFromJson, validatePermissions } from '../../../lib/util';
+import { internalServerError } from '../../../lib/errorMessages';
+import { getValueFromJson } from '../../../lib/util';
 
 export default new Hono().get(
    '/',
@@ -33,11 +33,6 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
-         // Check users permissions
-         if (!validatePermissions(['asset.read'], c)) {
-            return forbiddenError(c);
-         }
-
          // Get request information
          const { query, id, page, limit } = c.req.valid('query');
 
@@ -60,21 +55,17 @@ export default new Hono().get(
                   ]
                },
                include: {
-                  json: {
+                  jsons: {
                      orderBy: {
                         uploadDate: 'desc'
-                     },
-                     select: {
-                        rawJson: true,
-                        id: true,
-                        filename: true
                      },
                      take: 1
                   },
                   paths: true,
+                  server: true,
                   _count: {
                      select: {
-                        json: true
+                        jsons: true
                      }
                   }
                },
@@ -91,7 +82,10 @@ export default new Hono().get(
                            contains: query
                         }
                      }
-                  ]
+                  ],
+                  server: {
+                     isNot: null
+                  }
                }
             })
          ]);
@@ -106,20 +100,19 @@ export default new Hono().get(
                   id: asset.id,
                   name: asset.name,
                   position: asset.position,
-                  size: asset.size,
-                  rackId: asset.rackId,
+                  size: asset.server?.size,
+                  rackId: asset.storageId,
                   data: asset.paths.map((path) => ({
                      id: path.id,
                      name: path.name,
                      path: path.path,
-                     value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+                     value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
                   })),
                   json: {
-                     id: asset.json[0]?.id,
-                     text: asset.json[0]?.rawJson,
-                     filename: asset.json[0]?.filename,
+                     id: asset.jsons[0]?.id,
+                     text: asset.jsons[0]?.rawJson,
                      position: 0,
-                     total: asset._count.json
+                     total: asset._count.jsons
                   }
                }))
             },

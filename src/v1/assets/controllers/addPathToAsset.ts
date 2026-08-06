@@ -57,7 +57,7 @@ export default new Hono().post(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+         if (!validatePermissions(['asset.update'], c)) {
             return forbiddenError(c);
          }
 
@@ -92,24 +92,35 @@ export default new Hono().post(
          }
 
          // Add all the new paths to the asset
-         const newPaths = await prisma.$transaction(
-            body.paths.map((path) =>
-               prisma.assetPath.create({
-                  data: {
-                     name: path.name,
-                     path: path.path,
-                     assetId: id
+         const newPaths = await prisma.asset.update({
+            where: {
+               id,
+               server: {
+                  isNot: null
+               }
+            },
+            data: {
+               paths: {
+                  createMany: {
+                     data: body.paths.map((path) => ({
+                        assetId: id,
+                        name: path.name,
+                        path: path.path
+                     }))
                   }
-               })
-            )
-         );
+               }
+            },
+            include: {
+               paths: true
+            }
+         });
 
          return c.json(
-            newPaths.map((path) => ({
+            newPaths.paths.map((path) => ({
                id: path.id,
                path: path.path,
                name: path.name,
-               value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+               value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson ?? {}), path.path)
             })),
             201
          );
