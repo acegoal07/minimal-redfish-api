@@ -30,25 +30,14 @@ export default new Hono().get(
 
          // Get all the racks
          const [racks, total] = await prisma.$transaction([
-            prisma.asset.findMany({
-               where: {
-                  storage: {
-                     isNot: null
-                  }
-               },
+            prisma.storage.findMany({
                include: {
-                  storage: true
+                  asset: true
                },
                skip: (page - 1) * limit,
                take: limit
             }),
-            prisma.asset.count({
-               where: {
-                  storage: {
-                     isNot: null
-                  }
-               }
-            })
+            prisma.storage.count()
          ]);
 
          return c.json(
@@ -59,9 +48,9 @@ export default new Hono().get(
                totalPage: Math.ceil(total / limit),
                racks: racks.map((rack) => ({
                   id: rack.id,
-                  name: rack.name,
-                  size: rack.storage?.size,
-                  notes: rack.notes
+                  name: rack.asset.name,
+                  size: rack.size,
+                  notes: rack.asset.notes
                }))
             },
             200
