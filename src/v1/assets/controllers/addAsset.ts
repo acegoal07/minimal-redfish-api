@@ -67,25 +67,25 @@ export default new Hono().post(
          // Try and get any existing assets from the database
          const existingAsset = await prisma.asset.findFirst({
             where: {
-               name: rest.name
+               name: rest.name,
+               server: {
+                  isNot: null
+               }
             },
             select: {
                id: true
             }
          });
 
-         // Check if a rack already exists
+         // Check if a asset already exists
          if (existingAsset) {
             return existingResourceError(c);
          }
 
          // Try's to retrieve the rack from the database
-         const rack = await prisma.asset.findFirst({
+         const rack = await prisma.storage.findFirst({
             where: {
-               name: rest.name,
-               server: {
-                  isNot: null
-               }
+               id: rest.rackId
             },
             select: {
                id: true
