@@ -7,47 +7,52 @@ datasource db {
 }
 
 model Role {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(255)
-  users            User[]
-  PermissionToRole PermissionToRole[]
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(255)
+
+  users       User[]
+  permissions Permission[]
 
   @@map("Roles")
 }
 
 model Permission {
-  id               Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(255)
-  PermissionToRole PermissionToRole[]
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(255)
+
+  roles Role[]
 
   @@map("Permissions")
 }
 
 model User {
-  id           Int               @id @default(autoincrement())
-  username     String            @unique(map: "username") @db.VarChar(255)
-  passwordHash String            @db.Char(64)
-  roleId       Int
-  refreshToken UserRefreshToken?
-  role         Role              @relation(fields: [roleId], references: [id], onUpdate: Restrict, map: "fk_users_role")
+  id           Int    @id @default(autoincrement())
+  username     String @unique @db.VarChar(255)
+  passwordHash String @db.Char(64)
 
-  @@index([roleId], map: "fk_users_role")
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  refreshToken UserRefreshToken?
+
   @@map("Users")
 }
 
 model UserRefreshToken {
   id        Int      @id @default(autoincrement())
-  userId    Int      @unique(map: "userId")
+  userId    Int      @unique
   tokenHash String   @db.Char(64)
-  expiresAt DateTime @db.DateTime(0)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_refresh_user")
+  expiresAt DateTime @db.DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("UserRefreshTokens")
 }
 
 model Group {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique(map: "name") @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(255)
+
   assets Asset[]
 
   @@map("Groups")
@@ -55,37 +60,44 @@ model Group {
 
 model Tag {
   id   Int    @id @default(autoincrement())
-  name String @unique(map: "name") @db.VarChar(255)
+  name String @unique @db.VarChar(255)
+
+  assets Asset[]
 
   @@map("Tags")
 }
 
 model Asset {
-  id          Int                         @id @default(autoincrement())
-  groupId     Int?
-  storageId   Int?
-  name        String                      @db.VarChar(255)
-  notes       String?                     @db.Text
-  position    Int                         @default(0)
-  jsons       AssetJson[]
-  paths       AssetPath[]
-  group       Group?                      @relation(fields: [groupId], references: [id], onUpdate: Restrict, map: "fk_assets_group")
-  storage     Storage?                    @relation("StorageContents", fields: [storageId], references: [id], onUpdate: Restrict, map: "fk_assets_storage")
-  pdu         PowerDistributionUnit?
-  server      Server?
-  storageType Storage?                    @relation("StorageAsset")
-  ups         UninterruptiblePowerSupply?
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(255)
+  notes    String? @db.Text
+  position Int?
 
-  @@index([groupId], map: "idx_assets_group")
-  @@index([storageId], map: "idx_assets_storage")
+  groupId   Int?
+  storageId Int?
+
+  group Group? @relation(fields: [groupId], references: [id])
+
+  storage Storage? @relation("StorageContents", fields: [storageId], references: [id])
+
+  tags  Tag[]
+  paths AssetPath[]
+  jsons AssetJson[]
+
+  storageType Storage?                    @relation("StorageAsset")
+  server      Server?
+  ups         UninterruptiblePowerSupply?
+  pdu         PowerDistributionUnit?
+
   @@map("Assets")
 }
 
 model Storage {
-  id     Int     @id
-  size   Int?
+  id   Int  @id
+  size Int?
+
+  asset  Asset   @relation("StorageAsset", fields: [id], references: [id], onDelete: Cascade)
   assets Asset[] @relation("StorageContents")
-  asset  Asset   @relation("StorageAsset", fields: [id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_storage_asset")
 
   @@map("Storages")
 }
@@ -95,83 +107,68 @@ model Server {
   model    String? @db.VarChar(255)
   size     Int?
   position Int?
-  asset    Asset   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_server_asset")
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("Servers")
 }
 
 model UninterruptiblePowerSupply {
   id       Int    @id
-  capacity Float? @db.Float
-  asset    Asset  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_ups_asset")
+  capacity Float?
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("UninterruptiblePowerSupplies")
 }
 
 model PowerDistributionUnit {
-  id          Int   @id
+  id          Int  @id
   outletCount Int?
-  asset       Asset @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_pdu_asset")
+
+  asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("PowerDistributionUnits")
 }
 
 model AssetPath {
-  id      Int     @id @default(autoincrement())
-  path    String  @db.Text
-  name    String? @db.VarChar(255)
-  assetId Int
-  asset   Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_assetpath_asset")
+  id   Int    @id @default(autoincrement())
+  path String @db.Text
+  name String @db.VarChar(255)
 
-  @@index([assetId], map: "idx_assetpaths_asset")
+  assetId Int
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
   @@map("AssetPaths")
 }
 
 model AssetJson {
-  id         Int       @id @default(autoincrement())
-  rawJson    String    @db.LongText
-  uploadDate DateTime? @default(now()) @db.DateTime(0)
-  assetId    Int
-  asset      Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_assetjson_asset")
+  id         Int      @id @default(autoincrement())
+  rawJson    String   @db.LongText
+  uploadDate DateTime @default(now()) @db.DateTime
 
-  @@index([assetId], map: "idx_assetjson_asset")
+  assetId Int
+  asset   Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
   @@map("AssetJson")
 }
 
 model Template {
-  id    Int            @id @default(autoincrement())
-  name  String         @unique(map: "name") @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(255)
+
   paths TemplatePath[]
 
   @@map("Templates")
 }
 
 model TemplatePath {
-  id         Int      @id @default(autoincrement())
-  path       String   @db.Text
-  name       String?  @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  path String @db.Text
+  name String @db.VarChar(255)
+
   templateId Int
-  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_templatepath_template")
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
-  @@index([templateId], map: "fk_templatepath_template")
   @@map("TemplatePaths")
-}
-
-model AssetToTag {
-  A Int
-  B Int
-
-  @@id([A, B])
-  @@map("_AssetToTag")
-}
-
-model PermissionToRole {
-  A           Int
-  B           Int
-  Permissions Permission @relation(fields: [A], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_permission_to_role_permission")
-  Roles       Role       @relation(fields: [B], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_permission_to_role_role")
-
-  @@id([A, B])
-  @@index([B], map: "idx_permission_to_role_role")
-  @@map("_PermissionToRole")
 }
