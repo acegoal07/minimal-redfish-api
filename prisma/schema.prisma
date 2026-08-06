@@ -78,14 +78,12 @@ model Asset {
 
   group Group? @relation(fields: [groupId], references: [id])
 
-  /// Storage containing this asset
   storage Storage? @relation("StorageContents", fields: [storageId], references: [id])
 
   tags  Tag[]
   paths AssetPath[]
   jsons AssetJson[]
 
-  /// Asset subtype relations
   storageType Storage? @relation("StorageAsset")
   server      Server?
   ups         UninterruptiblePowerSupply?
@@ -97,10 +95,7 @@ model Asset {
 model Storage {
   id Int @id
 
-  /// This storage is itself an Asset
   asset Asset @relation("StorageAsset", fields: [id], references: [id], onDelete: Cascade)
-
-  /// Assets stored inside this storage
   assets Asset[] @relation("StorageContents")
 
   @@map("Storages")
