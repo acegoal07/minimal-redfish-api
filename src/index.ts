@@ -64,13 +64,9 @@ app.use('/api/*', async (c, next) => {
       include: {
          role: {
             include: {
-               PermissionToRole: {
+               permissions: {
                   select: {
-                     Permissions: {
-                        select: {
-                           name: true
-                        }
-                     }
+                     name: true
                   }
                }
             }
@@ -82,7 +78,7 @@ app.use('/api/*', async (c, next) => {
       return notFoundError(c);
    }
 
-   console.log(user.role.PermissionToRole);
+   console.log(user.role.permissions);
 
    c.set('user', user);
 
