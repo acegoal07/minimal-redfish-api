@@ -26,13 +26,13 @@ CREATE TABLE
    );
 
 CREATE TABLE
-   _PermissionToRoles (
+   _RoleToPermission (
       A INT NOT NULL,
       B INT NOT NULL,
       PRIMARY KEY (A, B),
-      INDEX idx_permission_role (B),
-      CONSTRAINT fk_permission_role_permission FOREIGN KEY (A) REFERENCES Permissions (id) ON DELETE CASCADE,
-      CONSTRAINT fk_permission_role_role FOREIGN KEY (B) REFERENCES Roles (id) ON DELETE CASCADE
+      INDEX B (B),
+      CONSTRAINT fk_role_permission_role FOREIGN KEY (A) REFERENCES Roles (id) ON DELETE CASCADE,
+      CONSTRAINT fk_role_permission_permission FOREIGN KEY (B) REFERENCES Permissions (id) ON DELETE CASCADE
    );
 
 -- ===========================================================
@@ -219,10 +219,10 @@ VALUES
 -- ===========================================================
 -- Give admin every permission
 -- ===========================================================
-INSERT IGNORE INTO _PermissionToRoles (A, B)
+INSERT IGNORE INTO _RoleToPermission (A, B)
 SELECT
-   p.id,
-   r.id
+   r.id,
+   p.id
 FROM
    Permissions p
    CROSS JOIN Roles r
