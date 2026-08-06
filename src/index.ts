@@ -27,7 +27,12 @@ app.use('*', trimTrailingSlash());
 app.use('*', compress());
 
 // Check JWT token is valid
-const publicRoutes = new Set(['/api/v1/users/login', '/api/v1/users/refresh']);
+const publicRoutes = new Set([
+   '/api/v1/users/login',
+   '/api/v1/users/refresh',
+   '/api/v2/users/login',
+   '/api/v2/users/refresh'
+]);
 
 app.use('/api/*', async (c, next) => {
    if (publicRoutes.has(c.req.path)) {

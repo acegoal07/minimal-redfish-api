@@ -18,7 +18,11 @@ export default new Hono().post(
    zValidator(
       'json',
       assetSchema.extend({
-         model: z.string({ error: 'Model must be a string' }).trim().optional()
+         size: z
+            .number({ error: 'Size must be a number' })
+            .int({ error: 'Size must be an integer' })
+            .positive({ error: 'Size must be greater than 0' })
+            .default(1)
       }),
       (result, c) => {
          if (!result.success) {
@@ -36,37 +40,37 @@ export default new Hono().post(
          // Get request information
          const body = c.req.valid('json');
 
-         // Try and get the tag from the database
-         const existingServer = await assetExists(body.name);
+         // Try and get the storage asset from the database
+         const existingStorage = await assetExists(body.name);
 
          // Check if a tag exists
-         if (existingServer) {
+         if (existingStorage) {
             return existingResourceError(c);
          }
 
          // Add the new server to the database
-         const newServer = await prisma.asset.create({
+         const newStorage = await prisma.asset.create({
             data: {
                ...buildBaseAssetSchema(body),
-               server: {
+               storageType: {
                   create: {
-                     model: body.model
+                     size: body.size
                   }
                }
             },
             include: {
                ...assetInclude,
-               server: {
+               storageType: {
                   select: {
-                     model: true
+                     size: true
                   }
                }
             }
          });
 
          return c.json(
-            serializeAsset(newServer, {
-               model: newServer.server?.model
+            serializeAsset(newStorage, {
+               model: newStorage.storageType?.size
             }),
             201
          );

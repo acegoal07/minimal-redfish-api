@@ -735,14 +735,16 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetCreate"
+                     allOf:
+                        - $ref: "#/components/schemas/AssetCreate"
+                        - $ref: "#/components/schemas/StorageCreate"
          responses:
             "201":
                description: Storage device created.
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/AssetBase"
+                        $ref: "#/components/schemas/StorageAsset"
             "400":
                $ref: "#/components/responses/BadRequest"
             "401":
@@ -767,7 +769,7 @@ paths:
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/AssetBase"
+                        $ref: "#/components/schemas/StorageAsset"
             "401":
                $ref: "#/components/responses/Unauthorised"
             "403":
@@ -788,14 +790,16 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: "#/components/schemas/AssetUpdate"
+                     allOf:
+                        - $ref: "#/components/schemas/AssetUpdate"
+                        - $ref: "#/components/schemas/StorageUpdate"
          responses:
             "200":
                description: Storage device updated.
                content:
                   application/json:
                      schema:
-                        $ref: "#/components/schemas/AssetBase"
+                        $ref: "#/components/schemas/StorageAsset"
             "400":
                $ref: "#/components/responses/BadRequest"
             "401":
@@ -2094,7 +2098,7 @@ components:
             storage:
                type: array
                items:
-                  $ref: "#/components/schemas/AssetBase"
+                  $ref: "#/components/schemas/StorageAsset"
 
       AssetPathsPage:
          type: object
@@ -2386,6 +2390,19 @@ components:
          allOf:
             - $ref: "#/components/schemas/AssetBase"
             - $ref: "#/components/schemas/UpsProperties"
+
+      StorageProperties:
+         type: object
+         properties:
+            size:
+               type: integer
+               format: int32
+               nullable: true
+
+      StorageAsset:
+         allOf:
+            - $ref: "#/components/schemas/AssetBase"
+            - $ref: "#/components/schemas/StorageProperties"
 
       ServerCreate:
          type: object
