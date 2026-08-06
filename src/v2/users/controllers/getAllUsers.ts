@@ -30,7 +30,6 @@ export default new Hono().get(
          // Get all the users
          const [users, total] = await prisma.$transaction([
             prisma.user.findMany({
-
                include: {
                   role: {
                      include: {
