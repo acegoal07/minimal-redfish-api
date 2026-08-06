@@ -7,6 +7,7 @@ import refreshLogin from './controllers/refreshLogin';
 import logoutUser from './controllers/logoutUser';
 import updateUser from './controllers/updateUser';
 import getCurrentUser from './controllers/getCurrentUser';
+import getAllUsers from './controllers/getAllUsers';
 
 export default new Hono()
    .route('/login', loginUser)
@@ -14,5 +15,6 @@ export default new Hono()
    .route('/logout', logoutUser)
    .route('/current', getCurrentUser)
    .route('/:id', updateUser)
+   .route('/', getAllUsers)
    .route('/', createUser)
    .route('/', deleteUser);
