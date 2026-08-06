@@ -219,13 +219,14 @@ VALUES
 -- ===========================================================
 -- Give admin every permission
 -- ===========================================================
-INSERT IGNORE INTO _RolePermissions (A, B)
+INSERT INTO
+   _RolePermissions (A, B)
 SELECT
    r.id,
    p.id
 FROM
-   Permissions p
-   CROSS JOIN Roles r
+   Roles r
+   CROSS JOIN Permissions p
 WHERE
    r.name = 'admin';
 
