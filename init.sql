@@ -31,8 +31,8 @@ CREATE TABLE
       B INT NOT NULL,
       PRIMARY KEY (A, B),
       INDEX B (B),
-      CONSTRAINT fk_role_permission_role FOREIGN KEY (A) REFERENCES Roles (id) ON DELETE CASCADE,
-      CONSTRAINT fk_role_permission_permission FOREIGN KEY (B) REFERENCES Permissions (id) ON DELETE CASCADE
+      CONSTRAINT fk_role_permissions_role FOREIGN KEY (A) REFERENCES Roles (id) ON DELETE CASCADE,
+      CONSTRAINT fk_role_permissions_permission FOREIGN KEY (B) REFERENCES Permissions (id) ON DELETE CASCADE
    );
 
 -- ===========================================================
