@@ -31,7 +31,7 @@ export default new Hono().get(
          const [racks, total] = await prisma.$transaction([
             prisma.asset.findMany({
                where: {
-                  storage: {
+                  storageType: {
                      isNot: null
                   }
                },
@@ -41,7 +41,13 @@ export default new Hono().get(
                skip: (page - 1) * limit,
                take: limit
             }),
-            prisma.storage.count()
+            prisma.asset.count({
+               where: {
+                  storageType: {
+                     isNot: null
+                  }
+               }
+            })
          ]);
 
          return c.json(

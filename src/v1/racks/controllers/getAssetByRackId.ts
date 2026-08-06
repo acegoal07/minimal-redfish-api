@@ -35,7 +35,10 @@ export default new Hono().get(
          // Try and get the rack from the database
          const rack = await prisma.asset.findMany({
             where: {
-               storageId: id
+               storageId: id,
+               storageType: {
+                  isNot: null
+               }
             },
             include: {
                jsons: {
