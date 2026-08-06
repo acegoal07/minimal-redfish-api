@@ -80,7 +80,7 @@ CREATE TABLE
       groupId INT NULL,
       storageId INT NULL,
       name VARCHAR(255) NOT NULL,
-      notes TEXT,
+      notes TEXT NULL,
       position INT NOT NULL DEFAULT 0,
       CONSTRAINT fk_assets_group FOREIGN KEY (groupId) REFERENCES Groups (id) ON DELETE SET NULL
    );
@@ -91,6 +91,7 @@ CREATE TABLE
 CREATE TABLE
    Storages (
       id INT PRIMARY KEY,
+      size INT NULL,
       CONSTRAINT fk_storage_asset FOREIGN KEY (id) REFERENCES Assets (id) ON DELETE CASCADE
    );
 
@@ -100,6 +101,8 @@ CREATE TABLE
    Servers (
       id INT PRIMARY KEY,
       model VARCHAR(255),
+      size INT,
+      position INT,
       CONSTRAINT fk_server_asset FOREIGN KEY (id) REFERENCES Assets (id) ON DELETE CASCADE
    );
 

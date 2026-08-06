@@ -40,16 +40,12 @@ export default new Hono().post(
                   name: z.string({ error: 'Data name must be a string' }).trim()
                })
             )
-            .optional(),
+            .default([]),
          json: z.object({
             text: z
                .string({ error: 'Text must be a string' })
                .trim()
-               .min(1, { error: 'Text is required' }),
-            filename: z
-               .string({ error: 'Filename must be a string' })
-               .trim()
-               .min(1, { error: 'Filename is required' })
+               .min(1, { error: 'Text is required' })
          })
       }),
       (result, c) => {
@@ -61,7 +57,7 @@ export default new Hono().post(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.read', 'asset.write'], c)) {
+         if (!validatePermissions(['asset.create'], c)) {
             return forbiddenError(c);
          }
 
@@ -84,9 +80,12 @@ export default new Hono().post(
          }
 
          // Try's to retrieve the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const rack = await prisma.asset.findFirst({
             where: {
-               id: rest.rackId
+               name: rest.name,
+               server: {
+                  isNot: null
+               }
             },
             select: {
                id: true
@@ -103,64 +102,50 @@ export default new Hono().post(
             return invalidJsonError(c);
          }
 
-         // Handle all the adding to the database in one go
-         const result = await prisma.$transaction(async (tx) => {
-            // Add the asset to the database
-            const asset = await tx.asset.create({
-               data: rest
-            });
-
-            // Add the json to the database
-            const jsonData = await tx.assetJson.create({
-               data: {
-                  assetId: asset.id,
-                  rawJson: JSON.stringify(JSON.parse(json.text)),
-                  filename: json.filename
+         const result = await prisma.asset.create({
+            data: {
+               name: rest.name,
+               server: {
+                  create: {
+                     size: rest.size,
+                     position: rest.position
+                  }
+               },
+               paths: {
+                  createMany: {
+                     data: paths
+                  }
+               },
+               jsons: {
+                  create: {
+                     rawJson: json.text
+                  }
                }
-            });
-
-            // Add the data paths to the database if there are any
-            if (paths && paths?.length > 0) {
-               await tx.assetPath.createMany({
-                  data: paths.map((item) => ({
-                     assetId: asset.id,
-                     path: item.path,
-                     name: item.name
-                  }))
-               });
+            },
+            include: {
+               server: true,
+               paths: true,
+               jsons: true,
+               storage: true
             }
-
-            // Get the ids of all the datafield in the database
-            const assetPaths = await tx.assetPath.findMany({
-               where: {
-                  assetId: asset.id
-               }
-            });
-
-            return {
-               asset,
-               assetPaths,
-               jsonData
-            };
          });
 
          return c.json(
             {
-               id: result.asset.id,
-               rackId: result.asset.rackId,
-               name: result.asset.name,
-               position: result.asset.position,
-               size: result.asset.size,
-               data: result.assetPaths.map((path) => ({
+               id: result.id,
+               rackId: result.storageId,
+               name: result.name,
+               position: result.server?.position,
+               size: result.storage?.size,
+               data: result.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<String>(JSON.parse(result.jsonData.rawJson), path.path)
+                  value: getValueFromJson<String>(JSON.parse(result.jsons[0].rawJson), path.path)
                })),
                json: {
-                  id: result.jsonData.id,
-                  text: result.jsonData.rawJson,
-                  filename: result.jsonData.filename,
+                  id: result.jsons[0].id,
+                  text: result.jsons[0].rawJson,
                   position: 0,
                   total: 1
                }

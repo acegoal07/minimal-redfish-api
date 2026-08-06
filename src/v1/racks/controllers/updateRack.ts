@@ -52,7 +52,7 @@ export default new Hono().patch(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['rack.read', 'rack.write'], c)) {
+         if (!validatePermissions(['asset.update'], c)) {
             return forbiddenError(c);
          }
 
@@ -61,14 +61,15 @@ export default new Hono().patch(
          const body = c.req.valid('json');
 
          // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const rack = await prisma.asset.findFirst({
             where: {
-               id
+               id,
+               storage: {
+                  isNot: null
+               }
             },
-            select: {
-               name: true,
-               size: true,
-               notes: true
+            include: {
+               storage: true
             }
          });
 
@@ -78,14 +79,24 @@ export default new Hono().patch(
          }
 
          // Update the rack in the database
-         const updatedRack = await prisma.rack.update({
+         const updatedRack = await prisma.asset.update({
+            where: {
+               id,
+               storage: {
+                  isNot: null
+               }
+            },
             data: {
                name: body.name ?? rack.name,
-               size: body.size ?? rack.size,
-               notes: body.notes ?? rack.notes
+               notes: body.notes ?? rack.notes,
+               storage: {
+                  update: {
+                     size: body.size ?? rack.storage?.size
+                  }
+               }
             },
-            where: {
-               id
+            include: {
+               storage: true
             }
          });
 
@@ -94,7 +105,7 @@ export default new Hono().patch(
                id: updatedRack.id,
                name: updatedRack.name,
                notes: updatedRack.notes,
-               size: updatedRack.size
+               size: updatedRack.storage?.size
             },
             200
          );

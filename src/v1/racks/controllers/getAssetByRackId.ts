@@ -4,9 +4,8 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { getValueFromJson, validatePermissions } from '../../../lib/util';
+import { getValueFromJson } from '../../../lib/util';
 import {
-   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
@@ -30,45 +29,37 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
-         // Check users permissions
-         if (!validatePermissions(['rack.read'], c)) {
-            return forbiddenError(c);
-         }
-
          // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const rack = await prisma.asset.findMany({
             where: {
-               id
+               storageId: id
             },
             include: {
-               assets: {
-                  include: {
-                     json: {
-                        orderBy: {
-                           uploadDate: 'desc'
-                        },
-                        select: {
-                           id: true,
-                           filename: true,
-                           rawJson: true
-                        },
-                        take: 1
-                     },
-                     paths: {
-                        select: {
-                           id: true,
-                           name: true,
-                           path: true
-                        }
-                     },
-                     _count: {
-                        select: {
-                           json: true
-                        }
-                     }
+               jsons: {
+                  orderBy: {
+                     uploadDate: 'desc'
+                  },
+                  select: {
+                     id: true,
+                     filename: true,
+                     rawJson: true
+                  },
+                  take: 1
+               },
+               paths: {
+                  select: {
+                     id: true,
+                     name: true,
+                     path: true
+                  }
+               },
+               storage: true,
+               _count: {
+                  select: {
+                     jsons: true
                   }
                }
             }
@@ -80,26 +71,26 @@ export default new Hono().get(
          }
 
          return c.json(
-            rack.assets.map((asset) => ({
+            rack.map((asset) => ({
                id: asset.id,
                name: asset.name,
                position: asset.position,
-               size: asset.size,
-               rackId: asset.rackId,
+               size: asset.storage?.size,
+               rackId: asset.storageId,
                data: asset.paths.map((path) => ({
                   id: path.id,
                   name: path.name,
                   path: path.path,
-                  value: getValueFromJson<string>(JSON.parse(asset.json[0]?.rawJson), path.path)
+                  value: getValueFromJson<string>(JSON.parse(asset.jsons[0]?.rawJson), path.path)
                })),
                json: {
-                  id: asset.json[0]?.id,
-                  text: asset.json[0]?.rawJson,
-                  filename: asset.json[0]?.filename
+                  id: asset.jsons[0]?.id,
+                  text: asset.jsons[0]?.rawJson,
+                  filename: asset.jsons[0]?.filename
                },
                pagination: {
                   position: 0,
-                  total: asset._count.json
+                  total: asset._count.jsons
                }
             })),
             200

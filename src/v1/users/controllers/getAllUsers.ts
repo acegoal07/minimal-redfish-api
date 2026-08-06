@@ -3,8 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
-import { validatePermissions } from '../../../lib/util';
+import { internalServerError } from '../../../lib/errorMessages';
 
 export default new Hono().get(
    '/',
@@ -28,41 +27,38 @@ export default new Hono().get(
          // Get request information
          const { page, limit } = c.req.valid('query');
 
-         // Get all the racks
-         const [racks, total] = await prisma.$transaction([
-            prisma.asset.findMany({
-               where: {
-                  storage: {
-                     isNot: null
-                  }
-               },
+         // Get all the users
+         const [users, total] = await prisma.$transaction([
+            prisma.user.findMany({
                include: {
-                  storage: true
+                  role: {
+                     include: {
+                        permissions: true
+                     }
+                  }
                },
                skip: (page - 1) * limit,
                take: limit
             }),
-            prisma.asset.count({
-               where: {
-                  storage: {
-                     isNot: null
-                  }
-               }
-            })
+
+            prisma.user.count()
          ]);
 
          return c.json(
             {
+               users: users.map((user) => ({
+                  id: user.id,
+                  roleId: user.roleId,
+                  username: user.username,
+                  permissions: user.role.permissions.map((permission) => ({
+                     id: permission.id,
+                     name: permission.name
+                  }))
+               })),
                page,
                limit,
                total,
-               totalPage: Math.ceil(total / limit),
-               racks: racks.map((rack) => ({
-                  id: rack.id,
-                  name: rack.name,
-                  size: rack.storage?.size,
-                  notes: rack.notes
-               }))
+               totalPage: Math.ceil(total / limit)
             },
             200
          );

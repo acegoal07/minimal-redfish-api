@@ -3,8 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
-import { validatePermissions } from '../../../lib/util';
+import { internalServerError } from '../../../lib/errorMessages';
 
 export default new Hono().get(
    '/',
@@ -33,11 +32,6 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
-         // Check users permissions
-         if (!validatePermissions(['rack.read'], c)) {
-            return forbiddenError(c);
-         }
-
          // Get request information
          const { query, id, page, limit } = c.req.valid('query');
 
@@ -48,7 +42,7 @@ export default new Hono().get(
 
          // Search for racks
          const [racks, total] = await prisma.$transaction([
-            prisma.rack.findMany({
+            prisma.asset.findMany({
                where: {
                   OR: [
                      ...(Number.isInteger(id) ? [{ id }] : []),
@@ -57,18 +51,25 @@ export default new Hono().get(
                            contains: query
                         }
                      }
-                  ]
+                  ],
+                  storage: {
+                     isNot: null
+                  }
                },
-               select: {
-                  id: true,
-                  name: true,
-                  size: true,
-                  notes: true
+               include: {
+                  storage: true
                },
                skip: (page - 1) * limit,
                take: limit
             }),
-            prisma.rack.count()
+
+            prisma.asset.count({
+               where: {
+                  storage: {
+                     isNot: null
+                  }
+               }
+            })
          ]);
 
          return c.json(
@@ -80,7 +81,7 @@ export default new Hono().get(
                racks: racks.map((rack) => ({
                   id: rack.id,
                   name: rack.name,
-                  size: rack.size,
+                  size: rack.storage?.size,
                   notes: rack.notes
                }))
             },

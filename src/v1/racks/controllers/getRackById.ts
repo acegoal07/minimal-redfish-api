@@ -4,12 +4,10 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
-   forbiddenError,
    internalServerError,
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
-import { validatePermissions } from '../../../lib/util';
 
 export default new Hono().get(
    '/',
@@ -29,24 +27,19 @@ export default new Hono().get(
    ),
    async (c) => {
       try {
-         // Check users permissions
-         if (!validatePermissions(['rack.read'], c)) {
-            return forbiddenError(c);
-         }
-
          // Get request information
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const rack = await prisma.asset.findFirst({
             where: {
-               id
+               id,
+               storage: {
+                  isNot: null
+               }
             },
-            select: {
-               id: true,
-               name: true,
-               size: true,
-               notes: true
+            include: {
+               storage: true
             }
          });
 
@@ -59,7 +52,7 @@ export default new Hono().get(
             {
                name: rack.name,
                id: rack.id,
-               size: rack.size,
+               size: rack.storage?.size,
                notes: rack.notes
             },
             200

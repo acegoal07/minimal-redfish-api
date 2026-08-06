@@ -35,7 +35,7 @@ export default new Hono().post(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['rack.read', 'rack.write'], c)) {
+         if (!validatePermissions(['asset.create'], c)) {
             return forbiddenError(c);
          }
 
@@ -43,9 +43,12 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get a rack with the same name
-         const existingRack = await prisma.rack.findFirst({
+         const existingRack = await prisma.asset.findFirst({
             where: {
-               name: body.name
+               name: body.name,
+               storage: {
+                  isNot: null
+               }
             },
             select: {
                id: true
@@ -58,11 +61,22 @@ export default new Hono().post(
          }
 
          // Create the rack in the database
-         const rack = await prisma.rack.create({
+         const rack = await prisma.asset.create({
             data: {
                name: body.name,
                notes: body.notes,
-               size: body.size
+               storageType: {
+                  create: {
+                     size: body.size
+                  }
+               }
+            },
+            include: {
+               storage: {
+                  select: {
+                     size: true
+                  }
+               }
             }
          });
 
@@ -71,7 +85,7 @@ export default new Hono().post(
                id: rack.id,
                name: rack.name,
                notes: rack.notes,
-               size: rack.size
+               size: rack.storage?.size
             },
             201
          );

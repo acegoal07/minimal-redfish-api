@@ -93,7 +93,8 @@ model Asset {
 }
 
 model Storage {
-  id Int @id
+  id   Int  @id
+  size Int?
 
   asset  Asset   @relation("StorageAsset", fields: [id], references: [id], onDelete: Cascade)
   assets Asset[] @relation("StorageContents")
@@ -102,8 +103,10 @@ model Storage {
 }
 
 model Server {
-  id    Int     @id
-  model String? @db.VarChar(255)
+  id       Int     @id
+  model    String? @db.VarChar(255)
+  size     Int?
+  position Int?
 
   asset Asset @relation(fields: [id], references: [id], onDelete: Cascade)
 

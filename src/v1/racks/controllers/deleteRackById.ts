@@ -30,7 +30,7 @@ export default new Hono().delete(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['rack.read', 'rack.delete'], c)) {
+         if (!validatePermissions(['asset.delete'], c)) {
             return forbiddenError(c);
          }
 
@@ -38,9 +38,12 @@ export default new Hono().delete(
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database
-         const rack = await prisma.rack.findUnique({
+         const rack = await prisma.asset.findFirst({
             where: {
-               id
+               id,
+               storage: {
+                  isNot: null
+               }
             },
             select: {
                id: true
@@ -53,7 +56,7 @@ export default new Hono().delete(
          }
 
          // Delete the rack from the database
-         await prisma.rack.delete({
+         await prisma.asset.delete({
             where: {
                id
             }

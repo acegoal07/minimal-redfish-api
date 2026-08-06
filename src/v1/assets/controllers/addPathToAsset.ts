@@ -66,12 +66,15 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get the asset from the database
-         const asset = await prisma.asset.findUnique({
+         const asset = await prisma.asset.findFirst({
             where: {
-               id: id
+               id,
+               server: {
+                  isNot: null
+               }
             },
             include: {
-               json: {
+               jsons: {
                   orderBy: {
                      uploadDate: 'desc'
                   },
