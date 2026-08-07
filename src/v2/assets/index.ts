@@ -12,4 +12,5 @@ export default new Hono()
    .route('/:id', deleteAsset)
    .route('/servers', createServerAsset)
    .route('/storages', createStorageAsset)
+   .route('/', deleteAsset)
    .route('/', getAllAssets);
