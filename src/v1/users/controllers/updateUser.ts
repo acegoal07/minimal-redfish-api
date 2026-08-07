@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
-   existingResourceError,
    forbiddenError,
    internalServerError,
    notFoundError
@@ -48,8 +47,8 @@ export default new Hono().patch(
          });
 
          // Check if a user already exists
-         if (existingUser) {
-            return existingResourceError(c);
+         if (!existingUser) {
+            return notFoundError(c);
          }
 
          // Try and get the role from the database
