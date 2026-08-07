@@ -21,6 +21,7 @@ import getServerAssetById from './controllers/servers/getServerAssetById';
 import updateServerAsset from './controllers/servers/updateServerAsset';
 import updateStorageAssets from './controllers/storages/updateStorageAssets';
 import updateAsset from './controllers/updateAsset';
+import createAsset from './controllers/createAsset';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -50,4 +51,5 @@ export default new Hono()
    .route('/:id', deleteAsset)
    .route('/:id', updateAsset)
    .route('/', deleteAsset)
-   .route('/', getAllAssets);
+   .route('/', getAllAssets)
+   .route('/', createAsset);

@@ -29,7 +29,7 @@ export default new Hono().post(
          // Get request information
          const body = c.req.valid('json');
 
-         // Try and get the tag from the database
+         // Try and get the server asset from the database
          const existingServer = await prisma.asset.findFirst({
             where: {
                name: body.name,
@@ -42,7 +42,7 @@ export default new Hono().post(
             }
          });
 
-         // Check if a tag exists
+         // Check if a server exists
          if (existingServer) {
             return existingResourceError(c);
          }
