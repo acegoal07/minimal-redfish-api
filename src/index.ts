@@ -114,7 +114,7 @@ app.notFound((c) =>
 
 // Handle uncaught errors
 app.onError((err, c) => {
-   if (err.res?.status === 401) {
+   if (c.res?.status === 401) {
       return unauthorisedError(c);
    }
 
