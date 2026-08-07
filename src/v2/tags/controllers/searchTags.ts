@@ -14,7 +14,7 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
          return c.json([], 200);
       }
 
-      // Search for templates
+      // Search for tags
       const [tags, total] = await prisma.$transaction([
          prisma.tag.findMany({
             where: {
