@@ -1,15 +1,14 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { internalServerError } from '../../../lib/errorMessages';
-import { serializeAsset } from '../lib/util';
+import { assetInclude, serializeAsset } from '../lib/util';
+import { queryValidator } from '../../../lib/validators';
 
 export default new Hono().get(
    '/',
-   zValidator(
-      'query',
+   queryValidator(
       z.object({
          page: z.coerce
             .number({ error: 'Page must be a number' })
@@ -32,12 +31,6 @@ export default new Hono().get(
          const [assets, total] = await prisma.$transaction([
             prisma.asset.findMany({
                include: {
-                  group: {
-                     select: {
-                        id: true,
-                        name: true
-                     }
-                  },
                   storage: {
                      include: {
                         asset: {
@@ -47,14 +40,7 @@ export default new Hono().get(
                         }
                      }
                   },
-                  tags: true,
-                  paths: true,
-                  json: {
-                     take: 1,
-                     select: {
-                        rawJson: true
-                     }
-                  }
+                  ...assetInclude
                },
                skip: (page - 1) * limit,
                take: limit
@@ -65,7 +51,7 @@ export default new Hono().get(
 
          return c.json(
             {
-               assets: assets.map((asset) => serializeAsset(asset)),
+               assets: assets.map((asset) => serializeAsset({ ...asset, jsonPosition: 0 })),
                page,
                limit,
                total,

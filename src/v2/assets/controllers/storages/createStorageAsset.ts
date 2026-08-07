@@ -1,34 +1,27 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
-import { size, z } from 'zod';
+import { z } from 'zod';
 
 import { prisma } from '../../../../lib/prisma';
 import {
    existingResourceError,
    forbiddenError,
-   internalServerError,
-   invalidBodyError
+   internalServerError
 } from '../../../../lib/errorMessages';
 import { validatePermissions } from '../../../../lib/util';
 import { assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
 import { assetSchema } from '../../lib/validator';
+import { bodyValidator } from '../../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'json',
+   bodyValidator(
       assetSchema.extend({
          size: z
             .number({ error: 'Size must be a number' })
             .int({ error: 'Size must be an integer' })
             .positive({ error: 'Size must be greater than 0' })
             .default(1)
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {
@@ -80,9 +73,12 @@ export default new Hono().post(
          });
 
          return c.json(
-            serializeAsset(newStorage, {
-               size: newStorage.storageType?.size
-            }),
+            serializeAsset(
+               { ...newStorage, jsonPosition: 0 },
+               {
+                  size: newStorage.storageType?.size
+               }
+            ),
             201
          );
       } catch (err) {

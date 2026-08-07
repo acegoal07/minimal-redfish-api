@@ -76,9 +76,12 @@ export default new Hono().post(
          });
 
          return c.json(
-            serializeAsset(newServer, {
-               model: newServer.server?.model
-            }),
+            serializeAsset(
+               { ...newServer, jsonPosition: 0 },
+               {
+                  model: newServer.server?.model
+               }
+            ),
             201
          );
       } catch (err) {

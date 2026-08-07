@@ -7,29 +7,15 @@ import {
    forbiddenError,
    internalServerError,
    invalidBodyError,
-   invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
+import { bodyValidator, idParamValidator } from '../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'param',
-      z.object({
-         id: z.coerce
-            .number({ error: 'ID must be a number' })
-            .int({ error: 'ID must be a whole number' })
-            .positive({ error: 'ID must be greater than 0' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidParametersError(c, result);
-         }
-      }
-   ),
-   zValidator(
-      'json',
+   idParamValidator(),
+   bodyValidator(
       z.object({
          permissions: z
             .array(
@@ -42,12 +28,7 @@ export default new Hono().post(
             .min(1, {
                error: 'At least one permission is required'
             })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {
