@@ -46,11 +46,12 @@ export default new Hono().post(
             }
          });
 
-         // Check if a tag exists
+         // Check if a storage exists
          if (existingStorage) {
             return existingResourceError(c);
          }
 
+         // Add the new storage to the database
          const newStorage = await prisma.asset.create({
             data: {
                ...buildBaseAssetSchema(body),
