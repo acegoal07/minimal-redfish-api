@@ -6,10 +6,18 @@ function buildBaseAssetSchema(body: {
    group?: number;
    tags: number[];
    paths: { name: string; path: string }[];
+   json?: string | null;
 }) {
    return {
       name: body.name,
       groupId: body.group,
+      ...(body.json != null && {
+         json: {
+            create: {
+               rawJson: body.json
+            }
+         }
+      }),
       tags: {
          connect: body.tags.map((id) => ({ id }))
       },
