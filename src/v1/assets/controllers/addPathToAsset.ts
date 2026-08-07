@@ -103,7 +103,6 @@ export default new Hono().post(
                paths: {
                   createMany: {
                      data: body.paths.map((path) => ({
-                        assetId: id,
                         name: path.name,
                         path: path.path
                      }))
