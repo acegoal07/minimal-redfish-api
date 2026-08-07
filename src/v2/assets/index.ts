@@ -9,6 +9,8 @@ import getAssetPaths from './controllers/paths/getAssetPaths';
 import updateAssetPath from './controllers/paths/updateAssetPath';
 import searchAssets from './controllers/searchAssets';
 import getAssetHistory from './controllers/history/getAssetHistory';
+import addAssetHistory from './controllers/history/addAssetHistory';
+import deleteAssetHistory from './controllers/history/deleteAssetHistory';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -18,6 +20,8 @@ export default new Hono()
    .route('/:id/paths', addPathToAsset)
    .route('/:id/paths', getAssetPaths)
    .route('/:id/paths', updateAssetPath)
+   .route('/:id/history/:historyId', deleteAssetHistory)
+   .route('/:id/history', addAssetHistory)
    .route('/:id/history', getAssetHistory)
    .route('/:id', deleteAsset)
    .route('/', deleteAsset)
