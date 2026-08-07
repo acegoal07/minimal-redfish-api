@@ -30,9 +30,9 @@ app.use('*', async (c, next) => {
 
    const duration = Date.now() - start;
 
-   const user = c.get('user');
+   const user = c.get('user') || 'Guest';
 
-   console.log(`${user}: ${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms`);
+   console.log(`${user.username}: ${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms`);
 });
 
 app.use('*', trimTrailingSlash());
