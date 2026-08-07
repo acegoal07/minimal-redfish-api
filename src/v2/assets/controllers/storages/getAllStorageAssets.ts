@@ -24,6 +24,15 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
                   select: {
                      size: true
                   }
+               },
+               storage: {
+                  include: {
+                     asset: {
+                        select: {
+                           name: true
+                        }
+                     }
+                  }
                }
             }
          }),
