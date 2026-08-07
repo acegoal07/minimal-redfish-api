@@ -66,6 +66,15 @@ export default new Hono().post(
                   select: {
                      size: true
                   }
+               },
+               storage: {
+                  include: {
+                     asset: {
+                        select: {
+                           name: true
+                        }
+                     }
+                  }
                }
             }
          });

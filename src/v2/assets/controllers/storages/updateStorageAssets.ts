@@ -45,17 +45,7 @@ export default new Hono().patch(
                }
             },
             include: {
-               ...assetInclude,
-               storage: {
-                  include: {
-                     asset: {
-                        select: {
-                           name: true
-                        }
-                     }
-                  }
-               },
-               storageType: true
+               ...assetInclude
             }
          });
 
@@ -91,7 +81,16 @@ export default new Hono().patch(
                groupId: body.groupId ?? existingStorage.groupId
             },
             include: {
-               ...assetInclude
+               ...assetInclude,
+               storage: {
+                  include: {
+                     asset: {
+                        select: {
+                           name: true
+                        }
+                     }
+                  }
+               }
             }
          });
 

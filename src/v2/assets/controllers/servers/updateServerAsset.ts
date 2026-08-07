@@ -47,15 +47,6 @@ export default new Hono().patch(
             },
             include: {
                ...assetInclude,
-               storage: {
-                  include: {
-                     asset: {
-                        select: {
-                           name: true
-                        }
-                     }
-                  }
-               },
                server: true
             }
          });
@@ -97,7 +88,16 @@ export default new Hono().patch(
                }
             },
             include: {
-               ...assetInclude
+               ...assetInclude,
+               storage: {
+                  include: {
+                     asset: {
+                        select: {
+                           name: true
+                        }
+                     }
+                  }
+               }
             }
          });
 
