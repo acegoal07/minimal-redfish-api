@@ -1,22 +1,20 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { getValueFromJson, isValidJson, validatePermissions } from '../../../lib/util';
 import {
    internalServerError,
-   invalidBodyError,
    notFoundError,
    invalidJsonError,
    existingResourceError,
    forbiddenError
 } from '../../../lib/errorMessages';
+import { bodyValidator } from '../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'json',
+   bodyValidator(
       z.object({
          rackId: z
             .number({ error: 'Rack ID must be a number' })
@@ -47,12 +45,7 @@ export default new Hono().post(
                .trim()
                .min(1, { error: 'Text is required' })
          })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {

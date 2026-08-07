@@ -8,53 +8,37 @@ import {
    invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { idParamValidator } from '../../../lib/validators';
 
-export default new Hono().get(
-   '/',
-   zValidator(
-      'param',
-      z.object({
-         id: z.coerce
-            .number({ error: 'ID must be a number' })
-            .int({ error: 'ID must be a whole number' })
-            .positive({ error: 'ID must be greater than 0' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidParametersError(c, result);
+export default new Hono().get('/', idParamValidator({}), async (c) => {
+   try {
+      // Get request information
+      const { id } = c.req.valid('param');
+
+      // Get the role from the database
+      const role = await prisma.role.findUnique({
+         where: {
+            id
+         },
+         include: {
+            permissions: true
          }
+      });
+
+      // Check if the role exists
+      if (!role) {
+         return notFoundError(c);
       }
-   ),
-   async (c) => {
-      try {
-         // Get request information
-         const { id } = c.req.valid('param');
 
-         // Get the role from the database
-         const role = await prisma.role.findUnique({
-            where: {
-               id
-            },
-            include: {
-               permissions: true
-            }
-         });
-
-         // Check if the role exists
-         if (!role) {
-            return notFoundError(c);
-         }
-
-         return c.json(
-            {
-               id: role.id,
-               name: role.name,
-               permissions: role.permissions.map((name) => name)
-            },
-            200
-         );
-      } catch (err) {
-         return internalServerError(c, err);
-      }
+      return c.json(
+         {
+            id: role.id,
+            name: role.name,
+            permissions: role.permissions.map((name) => name)
+         },
+         200
+      );
+   } catch (err) {
+      return internalServerError(c, err);
    }
-);
+});

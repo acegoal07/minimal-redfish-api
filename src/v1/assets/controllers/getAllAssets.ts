@@ -1,15 +1,14 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { getValueFromJson } from '../../../lib/util';
 import { internalServerError } from '../../../lib/errorMessages';
+import { queryValidator } from '../../../lib/validators';
 
 export default new Hono().get(
    '/',
-   zValidator(
-      'query',
+   queryValidator(
       z.object({
          page: z.coerce
             .number({ error: 'Page must be a number' })

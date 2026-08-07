@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
@@ -7,30 +6,15 @@ import { getValueFromJson, isValidJson, validatePermissions } from '../../../lib
 import {
    forbiddenError,
    internalServerError,
-   invalidBodyError,
    invalidJsonError,
-   invalidParametersError,
    notFoundError
 } from '../../../lib/errorMessages';
+import { bodyValidator, idParamValidator } from '../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'param',
-      z.object({
-         id: z.coerce
-            .number({ error: 'ID must be a number' })
-            .int({ error: 'ID must be a whole number' })
-            .positive({ error: 'ID must be greater than 0' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidParametersError(c, result);
-         }
-      }
-   ),
-   zValidator(
-      'json',
+   idParamValidator({}),
+   bodyValidator(
       z.object({
          json: z.object({
             text: z
@@ -38,12 +22,7 @@ export default new Hono().post(
                .trim()
                .min(1, { error: 'Text cannot be empty' })
          })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {

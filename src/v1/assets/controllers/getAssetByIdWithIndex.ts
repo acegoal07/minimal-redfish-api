@@ -1,32 +1,16 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { getValueFromJson } from '../../../lib/util';
-import {
-   internalServerError,
-   invalidParametersError,
-   notFoundError
-} from '../../../lib/errorMessages';
+import { internalServerError, notFoundError } from '../../../lib/errorMessages';
+import { idParamValidator } from '../../../lib/validators';
 
 export default new Hono().get(
    '/',
-   zValidator(
-      'param',
-      z.object({
-         id: z.coerce
-            .number({ error: 'ID must be a number' })
-            .int({ error: 'ID must be a whole number' })
-            .positive({ error: 'ID must be greater than 0' }),
-         offset: z.coerce.number({ error: 'Offset must be a number' }).optional().default(0)
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidParametersError(c, result);
-         }
-      }
-   ),
+   idParamValidator({
+      offset: z.coerce.number({ error: 'Offset must be a number' }).optional().default(0)
+   }),
    async (c) => {
       try {
          // Get request information
