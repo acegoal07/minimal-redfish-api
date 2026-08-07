@@ -50,7 +50,10 @@ export default new Hono().get(
                   tags: true,
                   paths: true,
                   json: {
-                     take: 1
+                     take: 1,
+                     select: {
+                        rawJson: true
+                     }
                   }
                },
                skip: (page - 1) * limit,
