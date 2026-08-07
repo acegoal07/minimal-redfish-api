@@ -61,7 +61,7 @@ export default new Hono().patch(
             data: {
                name: body.name ?? rack.name,
                notes: body.notes ?? rack.notes,
-               storage: {
+               storageType: {
                   update: {
                      size: body.size ?? rack.storageType?.size
                   }

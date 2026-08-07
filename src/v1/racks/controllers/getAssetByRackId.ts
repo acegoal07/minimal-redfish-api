@@ -15,7 +15,7 @@ export default new Hono().get('/', idParamValidator({}), async (c) => {
          where: {
             storageId: id,
             storageType: {
-               isNot: null
+               is: null
             }
          },
          include: {

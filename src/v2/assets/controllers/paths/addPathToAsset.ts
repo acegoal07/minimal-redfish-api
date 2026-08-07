@@ -37,9 +37,11 @@ export default new Hono().post(
             return forbiddenError(c);
          }
 
+         // Get information from request
          const { id } = c.req.valid('param');
          const body = c.req.valid('json');
 
+         // Try and get the asset from the database
          const asset = await prisma.asset.findFirst({
             where: {
                id,
