@@ -27,6 +27,10 @@ import getUpsAssetById from './controllers/ups/getUpsAssetById';
 import updateUpsAsset from './controllers/ups/updateUpsAsset';
 import createUpsAsset from './controllers/ups/createUpsAsset';
 import getAllUpsAssets from './controllers/ups/getAllUpsAssets';
+import getPduAssetById from './controllers/pdu/getPduAssetById';
+import updatePduAsset from './controllers/pdu/updatePduAsset';
+import createPduAsset from './controllers/pdu/createPduAsset';
+import getAllPduAssets from './controllers/pdu/getAllPduAssets';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -45,6 +49,11 @@ export default new Hono()
    .route('/ups/:id', updateUpsAsset)
    .route('/ups', createUpsAsset)
    .route('/ups', getAllUpsAssets)
+
+   .route('/pdu/:id', getPduAssetById)
+   .route('/pdu/:id', updatePduAsset)
+   .route('/pdu', createPduAsset)
+   .route('/pdu', getAllPduAssets)
 
    .route('/:id/paths/:pathId', deleteAssetPath)
    .route('/:id/paths', addPathToAsset)

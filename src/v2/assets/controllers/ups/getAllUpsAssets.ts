@@ -44,7 +44,7 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
             page,
             limit,
             total,
-            totalPage: Math.ceil(total / limit)
+            totalPages: Math.ceil(total / limit)
          },
          200
       );

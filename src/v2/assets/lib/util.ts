@@ -107,8 +107,9 @@ const assetInclude = {
          rawJson: true
       },
       orderBy: {
-         uploadDate: 'desc'
-      }
+         uploadDate: 'desc' as const
+      },
+      take: 1
    },
    storage: {
       include: {

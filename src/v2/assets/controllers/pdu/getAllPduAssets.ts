@@ -11,18 +11,18 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
       const { page, limit } = c.req.valid('query');
 
       // Get all the storages
-      const [storages, total] = await prisma.$transaction([
+      const [pdus, total] = await prisma.$transaction([
          prisma.asset.findMany({
             where: {
-               storageType: {
+               pdu: {
                   isNot: null
                }
             },
             include: {
                ...assetInclude,
-               storageType: {
+               pdu: {
                   select: {
-                     size: true
+                     outletCount: true
                   }
                }
             }
@@ -33,11 +33,11 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
 
       return c.json(
          {
-            storages: storages.map((storage) => ({
+            pdus: pdus.map((pdu) => ({
                ...serializeAsset(
-                  { ...storage, jsonPosition: 0 },
+                  { ...pdu, jsonPosition: 0 },
                   {
-                     size: storage.storageType?.size
+                     capacity: pdu.pdu?.outletCount
                   }
                )
             })),
