@@ -12,6 +12,7 @@ import {
    notFoundError
 } from '../../../../lib/errorMessages';
 import { idParamValidator } from '../../../../lib/validators';
+import { serializePath } from '../../lib/util';
 
 export default new Hono().post(
    '/',
@@ -100,15 +101,9 @@ export default new Hono().post(
          });
 
          return c.json(
-            newPaths.paths.map((path) => ({
-               id: path.id,
-               path: path.path,
-               name: path.name,
-               value: getValueFromJson<string>(
-                  JSON.parse(asset.json[0]?.rawJson ?? '{}'),
-                  path.path
-               )
-            })),
+            newPaths.paths.map((path) => {
+               return serializePath(path, asset.json[0]?.rawJson);
+            }),
             201
          );
       } catch (err) {

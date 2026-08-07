@@ -34,7 +34,7 @@ export default new Hono().delete(
    async (c) => {
       try {
          // Check users permissions
-         if (!validatePermissions(['asset.update'], c)) {
+         if (!validatePermissions(['asset.delete'], c)) {
             return forbiddenError(c);
          }
 

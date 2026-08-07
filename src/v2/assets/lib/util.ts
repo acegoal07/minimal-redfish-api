@@ -28,7 +28,7 @@ function serializeAsset(
       group: { id: number; name: string } | null;
       tags: { id: number; name: string }[];
       paths: { id: number; name: string; path: string }[];
-      json: { rawJson: unknown }[];
+      json: { rawJson: string | null }[];
    },
    extra: Record<string, unknown> = {}
 ) {
@@ -47,15 +47,28 @@ function serializeAsset(
          id: tag.id,
          navigation: tag.name
       })),
-      paths: asset.paths.map((path) => ({
-         id: path.id,
-         name: path.name,
-         path: path.path,
-         value: getValueFromJson(asset.json[0]?.rawJson ?? {}, path.path)
-      })),
+      paths: asset.paths.map((path) => {
+         return serializePath(path, asset.json[0]?.rawJson);
+      }),
       json: {
          rawJson: asset.json[0]?.rawJson
       }
+   };
+}
+
+function serializePath(
+   path: {
+      id: number;
+      name: string;
+      path: string;
+   },
+   json: string | null
+) {
+   return {
+      id: path.id,
+      name: path.name,
+      path: path.path,
+      value: getValueFromJson(json ?? '{}', path.path)
    };
 }
 
@@ -70,4 +83,4 @@ const assetInclude = {
    }
 };
 
-export { buildBaseAssetSchema, assetInclude, serializeAsset };
+export { buildBaseAssetSchema, assetInclude, serializeAsset, serializePath };
