@@ -29,10 +29,16 @@ app.use('*', async (c, next) => {
    await next();
 
    const duration = Date.now() - start;
+   const user = c.get('user') || { username: 'Guest' };
 
-   const user = c.get('user') || 'Guest';
+   const time = new Date().toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+   });
 
-   console.log(`${user.username}: ${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms`);
+   console.log(
+      `${time} - ${user.username}: ${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms`
+   );
 });
 
 app.use('*', trimTrailingSlash());
