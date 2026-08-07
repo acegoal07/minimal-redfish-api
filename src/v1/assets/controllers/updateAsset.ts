@@ -108,7 +108,7 @@ export default new Hono().patch(
             const rack = await prisma.asset.findUnique({
                where: {
                   id: body.rackId,
-                  storage: {
+                  storageType: {
                      isNot: null
                   }
                }
@@ -124,7 +124,7 @@ export default new Hono().patch(
          const updatedAsset = await prisma.asset.update({
             data: {
                name: body.name ?? asset.name,
-               rackId: body.rackId ?? asset.storageId,
+               storageId: body.rackId ?? asset.storageId,
                size: body.size ?? asset.server?.size,
                position: body.position ?? asset.position
             },
