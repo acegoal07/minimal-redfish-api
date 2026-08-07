@@ -30,9 +30,9 @@ app.use('*', async (c, next) => {
 
    const duration = Date.now() - start;
 
-   const ip = c.req.header('X-Forwarded-For')?.split(',')[0].trim() || c.req.header('X-Real-IP');
+   const user = c.get('user');
 
-   console.log(`${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms - ${ip}`);
+   console.log(`${user}: ${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms`);
 });
 
 app.use('*', trimTrailingSlash());
