@@ -23,6 +23,18 @@ app.use(
    })
 );
 
+app.use('*', async (c, next) => {
+   const start = Date.now();
+
+   await next();
+
+   const duration = Date.now() - start;
+
+   const ip = c.req.header('X-Forwarded-For')?.split(',')[0].trim() || c.req.header('X-Real-IP');
+
+   console.log(`${c.req.method} ${c.req.path} ${c.res.status} - ${duration}ms - ${ip}`);
+});
+
 app.use('*', trimTrailingSlash());
 app.use('*', compress());
 

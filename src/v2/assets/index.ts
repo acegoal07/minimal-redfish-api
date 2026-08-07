@@ -38,6 +38,7 @@ export default new Hono()
    .route('/:id/history/:historyId', deleteAssetHistory)
    .route('/:id/history', addAssetHistory)
    .route('/:id/history', getAssetHistory)
+
    .route('/:id/tags/add', addTagsToAsset)
 
    .route('/:id', getAssetById)
