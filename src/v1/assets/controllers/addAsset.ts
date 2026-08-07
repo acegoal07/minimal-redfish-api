@@ -106,6 +106,7 @@ export default new Hono().post(
             data: {
                name: rest.name,
                position: rest.position,
+               storageId: rest.rackId,
                server: {
                   create: {
                      size: rest.size
