@@ -3,20 +3,22 @@ import { z } from 'zod';
 
 import { prisma } from '../../../../lib/prisma';
 import { internalServerError, notFoundError } from '../../../../lib/errorMessages';
-import { idParamValidator, queryValidator } from '../../../../lib/validators';
+import {
+   idParamValidator,
+   paginationQueryValidator,
+   queryValidator
+} from '../../../../lib/validators';
 
 export default new Hono().get(
    '/',
-   idParamValidator({
-      jsonId: z.coerce
-         .number({ error: 'Json ID must be a number' })
-         .int({ error: 'Json ID must be a whole number' })
-         .positive({ error: 'Json ID must be greater than 0' })
-   }),
+   idParamValidator({}),
+   paginationQueryValidator({}),
    async (c) => {
       try {
          // Get request information
-         const { id, jsonId } = c.req.valid('param');
+         const { id } = c.req.valid('param');
+
+         const { page, limit } = c.req.valid('query');
 
          const asset = await prisma.asset.findUnique({
             where: {
@@ -40,27 +42,32 @@ export default new Hono().get(
             return notFoundError(c);
          }
 
-         const jsonHistory = await prisma.assetJson.findFirst({
-            where: {
-               id: jsonId,
-               assetId: id
+         const [jsons, total] = await prisma.$transaction([
+            prisma.assetJson.findMany({
+               where: {
+                  assetId: id
+               },
+               select: {
+                  id: true,
+                  rawJson: true
+               }
+            }),
+
+            prisma.server.count()
+         ]);
+         return c.json(
+            {
+               page,
+               limit,
+               total,
+               totalPage: Math.ceil(total / limit),
+               history: jsons.map((json) => ({
+                  id: json.id,
+                  rawJson: json.rawJson
+               }))
             },
-            select: {
-               id: true
-            }
-         });
-
-         if (!jsonHistory) {
-            return notFoundError(c);
-         }
-
-         await prisma.assetJson.delete({
-            where: {
-               id: jsonId
-            }
-         });
-
-         return c.json(204);
+            200
+         );
       } catch (err) {
          return internalServerError(c, err);
       }
