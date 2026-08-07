@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 
-import { prisma } from '../../../../lib/prisma';
-import { internalServerError, notFoundError } from '../../../../lib/errorMessages';
-import { assetInclude, serializeAsset } from '../../lib/util';
-import { bodyValidator, idParamValidator } from '../../../../lib/validators';
+import { prisma } from '../../../lib/prisma';
+import { internalServerError, notFoundError } from '../../../lib/errorMessages';
+import { assetInclude, serializeAsset } from '../lib/util';
+import { bodyValidator, idParamValidator } from '../../../lib/validators';
 import { z } from 'zod';
 
 export default new Hono().patch(
@@ -43,10 +43,7 @@ export default new Hono().patch(
          // Try and get the server from the asset from
          const existingStorage = await prisma.asset.findUnique({
             where: {
-               id,
-               storageType: {
-                  isNot: null
-               }
+               id
             },
             include: {
                ...assetInclude
