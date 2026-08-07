@@ -4,7 +4,7 @@ import { prisma } from '../../../../lib/prisma';
 import { internalServerError, notFoundError } from '../../../../lib/errorMessages';
 import { assetInclude, serializeAsset } from '../../lib/util';
 import { bodyValidator, idParamValidator } from '../../../../lib/validators';
-import { z } from 'zod';
+import { size, z } from 'zod';
 
 export default new Hono().patch(
    '/',
@@ -28,6 +28,11 @@ export default new Hono().patch(
                .number({ error: 'Group ID must be a number' })
                .int({ error: 'Group ID must be an integer' })
                .positive({ error: 'Group ID must be greater than 0' })
+               .optional(),
+            size: z
+               .number({ error: 'Size must be a number' })
+               .int({ error: 'Size must be an integer' })
+               .positive({ error: 'Size must be greater than 0' })
                .optional()
          })
          .refine((data) => Object.keys(data).length > 0, {
@@ -49,7 +54,12 @@ export default new Hono().patch(
                }
             },
             include: {
-               ...assetInclude
+               ...assetInclude,
+               storageType: {
+                  select: {
+                     size: true
+                  }
+               }
             }
          });
 
@@ -82,23 +92,27 @@ export default new Hono().patch(
                notes: body.notes ?? existingStorage.notes,
                storageId: body.storageId ?? existingStorage.storageId,
                position: body.position ?? existingStorage.position,
-               groupId: body.groupId ?? existingStorage.groupId
-            },
-            include: {
-               ...assetInclude,
-               storage: {
-                  include: {
-                     asset: {
-                        select: {
-                           name: true
-                        }
+               groupId: body.groupId ?? existingStorage.groupId,
+               storageType: {
+                  update: {
+                     data: {
+                        size: body.size ?? existingStorage.storageType?.size
                      }
                   }
                }
+            },
+            include: {
+               ...assetInclude
             }
          });
 
-         return c.json(serializeAsset({ ...updatedStorage, jsonPosition: 0 }), 200);
+         return c.json(
+            serializeAsset(
+               { ...updatedStorage, jsonPosition: 0 },
+               { size: existingStorage.storageType?.size }
+            ),
+            200
+         );
       } catch (err) {
          return internalServerError(c, err);
       }

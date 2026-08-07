@@ -19,15 +19,6 @@ export default new Hono().get('/', idParamValidator({}), async (c) => {
             }
          },
          include: {
-            storage: {
-               include: {
-                  asset: {
-                     select: {
-                        name: true
-                     }
-                  }
-               }
-            },
             ...assetInclude
          }
       });
