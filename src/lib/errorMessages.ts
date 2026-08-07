@@ -55,6 +55,24 @@ function invalidBodyError(c: Context, result: { error: { issues: unknown[] } }) 
 }
 
 /**
+ * Responds with an invalid query error message populated with the issues from
+ * the validator
+ * @param c
+ * @param result
+ * @returns
+ */
+function invalidQueryError(c: Context, result: { error: { issues: unknown[] } }) {
+   return c.json(
+      {
+         error: 'INVALID_QUERY',
+         message: 'One or more of the queries is invalid.',
+         details: result.error.issues
+      },
+      400
+   );
+}
+
+/**
  * Responds with a not found error message
  * @param c
  * @returns
@@ -133,6 +151,7 @@ export {
    internalServerError,
    invalidParametersError,
    invalidBodyError,
+   invalidQueryError,
    notFoundError,
    invalidJsonError,
    existingResourceError,

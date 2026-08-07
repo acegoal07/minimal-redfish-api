@@ -1,24 +1,16 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../../lib/prisma';
-import { getValueFromJson, validatePermissions } from '../../../../lib/util';
-import {
-   forbiddenError,
-   internalServerError,
-   invalidBodyError,
-   invalidParametersError,
-   notFoundError
-} from '../../../../lib/errorMessages';
-import { idParamValidator } from '../../../../lib/validators';
+import { validatePermissions } from '../../../../lib/util';
+import { forbiddenError, internalServerError, notFoundError } from '../../../../lib/errorMessages';
 import { serializePath } from '../../lib/util';
+import { bodyValidator, idParamValidator } from '../../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   idParamValidator,
-   zValidator(
-      'json',
+   idParamValidator({}),
+   bodyValidator(
       z.object({
          paths: z
             .array(
@@ -36,12 +28,7 @@ export default new Hono().post(
             .min(1, {
                error: 'At least one path is required'
             })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {

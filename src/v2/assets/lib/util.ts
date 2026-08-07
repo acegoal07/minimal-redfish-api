@@ -1,3 +1,4 @@
+import { json, positive } from 'zod';
 import { getValueFromJson } from '../../../lib/util';
 
 function buildBaseAssetSchema(body: {
@@ -28,7 +29,9 @@ function serializeAsset(
       group: { id: number; name: string } | null;
       tags: { id: number; name: string }[];
       paths: { id: number; name: string; path: string }[];
-      json: { rawJson: string | null }[];
+      json: { rawJson: string; id: number }[];
+      jsonPosition: number | null;
+      _count: { json: number };
    },
    extra: Record<string, unknown> = {}
 ) {
@@ -51,7 +54,10 @@ function serializeAsset(
          return serializePath(path, asset.json[0]?.rawJson);
       }),
       json: {
-         rawJson: asset.json[0]?.rawJson
+         id: asset.json[0].id,
+         rawJson: asset.json[0]?.rawJson,
+         position: asset.jsonPosition,
+         total: asset._count.json
       }
    };
 }
@@ -78,7 +84,13 @@ const assetInclude = {
    paths: true,
    json: {
       select: {
+         id: true,
          rawJson: true
+      }
+   },
+   _count: {
+      select: {
+         json: true
       }
    }
 };

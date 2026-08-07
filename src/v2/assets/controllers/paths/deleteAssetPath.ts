@@ -6,7 +6,6 @@ import { prisma } from '../../../../lib/prisma';
 import {
    forbiddenError,
    internalServerError,
-   invalidParametersError,
    notFoundError
 } from '../../../../lib/errorMessages';
 import { validatePermissions } from '../../../../lib/util';
@@ -14,24 +13,12 @@ import { idParamValidator } from '../../../../lib/validators';
 
 export default new Hono().delete(
    '/',
-   zValidator(
-      'param',
-      z.object({
-         id: z.coerce
-            .number({ error: 'Asset ID must be a number' })
-            .int({ error: 'Asset ID must be a whole number' })
-            .positive({ error: 'Asset ID must be greater than 0' }),
-         pathId: z.coerce
-            .number({ error: 'Path ID must be a number' })
-            .int({ error: 'Path ID must be a whole number' })
-            .positive({ error: 'Path ID must be greater than 0' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidParametersError(c, result);
-         }
-      }
-   ),
+   idParamValidator({
+      pathId: z.coerce
+         .number({ error: 'Path ID must be a number' })
+         .int({ error: 'Path ID must be a whole number' })
+         .positive({ error: 'Path ID must be greater than 0' })
+   }),
    async (c) => {
       try {
          if (!validatePermissions(['asset.delete'], c)) {
