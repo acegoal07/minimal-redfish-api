@@ -105,6 +105,9 @@ const assetInclude = {
       select: {
          id: true,
          rawJson: true
+      },
+      orderBy: {
+         uploadDate: 'desc'
       }
    },
    _count: {
