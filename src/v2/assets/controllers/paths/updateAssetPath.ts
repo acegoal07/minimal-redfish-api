@@ -67,7 +67,7 @@ export default new Hono().patch(
          }
 
          // Check that the path exists
-         if (!asset.paths) {
+         if (!asset.paths[0]) {
             return notFoundError(c);
          }
 
