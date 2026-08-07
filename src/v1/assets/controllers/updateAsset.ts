@@ -99,7 +99,7 @@ export default new Hono().patch(
          const updatedAsset = await prisma.asset.update({
             data: {
                name: body.name ?? asset.name,
-               storageId: body.rackId ?? asset.storageId,
+               storage: body.rackId !== undefined ? { connect: { id: body.rackId } } : undefined,
                size: body.size ?? asset.server?.size,
                position: body.position ?? asset.position
             },
