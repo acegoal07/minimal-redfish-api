@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { xid, z } from 'zod';
-import { createHash } from 'node:crypto';
+import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {

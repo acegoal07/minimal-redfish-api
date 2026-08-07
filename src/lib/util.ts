@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import type { Context } from 'hono';
 
 /**
  * Retrieves the data from a JSON object using a path

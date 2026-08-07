@@ -1,4 +1,3 @@
-import { json, positive } from 'zod';
 import { getValueFromJson } from '../../../lib/util';
 
 function buildBaseAssetSchema(body: {

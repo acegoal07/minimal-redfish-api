@@ -1,14 +1,8 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import {
-   forbiddenError,
-   internalServerError,
-   invalidBodyError,
-   notFoundError
-} from '../../../lib/errorMessages';
+import { forbiddenError, internalServerError, notFoundError } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
 import { bodyValidator, idParamValidator } from '../../../lib/validators';
 
