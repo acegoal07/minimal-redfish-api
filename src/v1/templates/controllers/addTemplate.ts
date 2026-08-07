@@ -52,11 +52,15 @@ export default new Hono().post(
          const { name, paths } = c.req.valid('json');
 
          // Try and get a template with the name
-         const existingTemplate = await prisma.template.findUnique({
-            where: {
-               name
-            }
-         });
+         const existingTemplate =
+            (await prisma.template.findUnique({
+               where: {
+                  name
+               },
+               select: {
+                  id: true
+               }
+            })) !== null;
 
          // Check if a template exists
          if (existingTemplate) {
@@ -64,7 +68,7 @@ export default new Hono().post(
          }
 
          // Create the new template
-         const template = await prisma.template.create({
+         const newTemplate = await prisma.template.create({
             data: {
                name
             },
@@ -81,7 +85,7 @@ export default new Hono().post(
                   data: {
                      name: path.name,
                      path: path.path,
-                     templateId: template.id
+                     templateId: newTemplate.id
                   }
                })
             )
@@ -89,8 +93,8 @@ export default new Hono().post(
 
          return c.json(
             {
-               id: template.id,
-               name: template.id,
+               id: newTemplate.id,
+               name: newTemplate.name,
                paths: addedPaths.map((path) => ({
                   id: path.id,
                   name: path.name,

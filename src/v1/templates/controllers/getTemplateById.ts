@@ -55,7 +55,7 @@ export default new Hono().get(
          return c.json(
             {
                id: template.id,
-               name: template.id,
+               name: template.name,
                paths: template.paths.map((path) => ({
                   id: path.id,
                   name: path.name,

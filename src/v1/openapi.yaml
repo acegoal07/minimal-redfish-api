@@ -1715,7 +1715,6 @@ components:
          description: JSON payload associated with an asset.
          required:
             - text
-            - filename
          properties:
             id:
                type: integer
@@ -1723,9 +1722,6 @@ components:
             text:
                type: string
                description: JSON content.
-            filename:
-               type: string
-               description: Original filename.
             position:
                type: integer
                format: int32
