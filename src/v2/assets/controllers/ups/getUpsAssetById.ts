@@ -10,36 +10,31 @@ export default new Hono().get('/', idParamValidator({}), async (c) => {
       // Get request information
       const { id } = c.req.valid('param');
 
-      // Try and get the storage from the asset from
-      const storage = await prisma.asset.findUnique({
+      // Try and get the ups from the asset from
+      const ups = await prisma.asset.findUnique({
          where: {
             id,
-            storageType: {
+            ups: {
                isNot: null
             }
          },
          include: {
             ...assetInclude,
-            storageType: {
+            ups: {
                select: {
-                  size: true
+                  capacity: true
                }
             }
          }
       });
 
       // Check if the storage exists
-      if (!storage) {
+      if (!ups) {
          return notFoundError(c);
       }
 
       return c.json(
-         serializeAsset(
-            { ...storage, jsonPosition: 0 },
-            {
-               size: storage.storageType?.size
-            }
-         ),
+         serializeAsset({ ...ups, jsonPosition: 0 }, { capacity: ups.ups?.capacity }),
          200
       );
    } catch (err) {
