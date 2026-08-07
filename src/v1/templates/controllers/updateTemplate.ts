@@ -54,17 +54,17 @@ export default new Hono().patch(
          const body = c.req.valid('json');
 
          // Try and get the rack from the database
-         const template = await prisma.template.findUnique({
+         const existingTemplate = await prisma.template.findUnique({
             where: {
                id
             },
             select: {
-               id: true
+               name: true
             }
          });
 
          // Check if the rack exists
-         if (!template) {
+         if (!existingTemplate) {
             return notFoundError(c);
          }
 
@@ -74,7 +74,7 @@ export default new Hono().patch(
                id
             },
             data: {
-               name: body.name
+               name: body.name ?? existingTemplate.name
             },
             include: {
                paths: true

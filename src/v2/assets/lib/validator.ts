@@ -5,7 +5,6 @@ export const assetSchema = z.object({
       .string({ error: 'Name must be a string' })
       .trim()
       .min(1, { error: 'Name cannot be empty' }),
-
    paths: z
       .array(
          z.object({
@@ -20,13 +19,11 @@ export const assetSchema = z.object({
          })
       )
       .default([]),
-
    group: z
       .number({ error: 'Group ID must be a number' })
       .int({ error: 'Group ID must be an integer' })
       .positive({ error: 'Group ID must be greater than 0' })
       .optional(),
-
    tags: z
       .array(
          z

@@ -20,8 +20,6 @@ function buildBaseAssetSchema(body: {
    };
 }
 
-// asset.serializer.ts
-
 function serializeAsset(
    asset: {
       id: number;
@@ -54,7 +52,10 @@ function serializeAsset(
          name: path.name,
          path: path.path,
          value: getValueFromJson(asset.json[0]?.rawJson ?? {}, path.path)
-      }))
+      })),
+      json: {
+         rawJson: asset.json[0]?.rawJson
+      }
    };
 }
 
