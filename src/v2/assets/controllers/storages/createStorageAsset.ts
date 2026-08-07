@@ -53,15 +53,19 @@ export default new Hono().post(
          }
 
          // Add the new storage to the database
-         const newStorage = await prisma.asset.create({
-            data: {
-               ...buildBaseAssetSchema(body),
-               storageType: {
-                  create: {
-                     size: body.size
-                  }
+         const data = {
+            ...buildBaseAssetSchema(body),
+            storageType: {
+               create: {
+                  size: body.size
                }
-            },
+            }
+         };
+
+         console.log(JSON.stringify(data, null, 2));
+
+         const newStorage = await prisma.asset.create({
+            data,
             include: {
                ...assetInclude,
                storageType: {
@@ -71,6 +75,8 @@ export default new Hono().post(
                }
             }
          });
+
+         console.log('GOTHERE');
 
          return c.json(
             serializeAsset(

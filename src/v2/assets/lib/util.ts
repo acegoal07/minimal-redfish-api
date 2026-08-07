@@ -9,7 +9,9 @@ function buildBaseAssetSchema(body: {
 }) {
    return {
       name: body.name,
-      groupId: body.group,
+      ...(body.group !== undefined && {
+         groupId: body.group
+      }),
       ...(body.json != null && {
          json: {
             create: {
@@ -17,9 +19,11 @@ function buildBaseAssetSchema(body: {
             }
          }
       }),
-      tags: {
-         connect: body.tags.map((id) => ({ id }))
-      },
+      ...(body.tags.length > 0 && {
+         tags: {
+            connect: body.tags.map((id) => ({ id }))
+         }
+      }),
       paths: {
          createMany: {
             data: body.paths
@@ -60,12 +64,14 @@ function serializeAsset(
       paths: asset.paths.map((path) => {
          return serializePath(path, asset.json[0]?.rawJson);
       }),
-      json: {
-         id: asset.json[0].id,
-         rawJson: asset.json[0]?.rawJson,
-         position: asset.jsonPosition,
-         total: asset._count.json
-      }
+      json: asset.json[0]
+         ? {
+              id: asset.json[0].id,
+              rawJson: asset.json[0].rawJson,
+              position: asset.jsonPosition,
+              total: asset._count.json
+           }
+         : null
    };
 }
 

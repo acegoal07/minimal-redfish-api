@@ -6,6 +6,7 @@ export const assetSchema = z.object({
       .trim()
       .min(1, { error: 'Name cannot be empty' }),
    json: z.string({ error: 'Name must be a string' }).trim().optional(),
+   notes: z.string({ error: 'Notes must be a string' }).trim().optional(),
    paths: z
       .array(
          z.object({
