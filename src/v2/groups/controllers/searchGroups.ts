@@ -1,17 +1,11 @@
 import { Hono } from 'hono';
 
 import { prisma } from '../../../lib/prisma';
-import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
-import { validatePermissions } from '../../../lib/util';
+import { internalServerError } from '../../../lib/errorMessages';
 import { searchQueryValidator } from '../../../lib/validators';
 
 export default new Hono().get('/', searchQueryValidator({}), async (c) => {
    try {
-      // Check users permissions
-      if (!validatePermissions(['template.read'], c)) {
-         return forbiddenError(c);
-      }
-
       // Get request information
       const { query, page, limit } = c.req.valid('query');
 
@@ -21,8 +15,8 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
       }
 
       // Search for templates
-      const [templates, total] = await prisma.$transaction([
-         prisma.template.findMany({
+      const [groups, total] = await prisma.$transaction([
+         prisma.group.findMany({
             where: {
                OR: [
                   ...(Number.isInteger(Number(query)) ? [{ id: Number(query) }] : []),
@@ -34,13 +28,10 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
                ]
             },
             skip: (page - 1) * limit,
-            take: limit,
-            include: {
-               paths: true
-            }
+            take: limit
          }),
 
-         prisma.template.count({
+         prisma.group.count({
             where: {
                OR: [
                   ...(Number.isInteger(Number(query)) ? [{ id: Number(query) }] : []),
@@ -56,14 +47,9 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
 
       return c.json(
          {
-            templates: templates.map((template) => ({
-               id: template.id,
-               name: template.name,
-               paths: template.paths.map((path) => ({
-                  id: path.id,
-                  name: path.name,
-                  path: path.path
-               }))
+            groups: groups.map((group) => ({
+               id: group.id,
+               name: group.name
             })),
             page,
             limit,
