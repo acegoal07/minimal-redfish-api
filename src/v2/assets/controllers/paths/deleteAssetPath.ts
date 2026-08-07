@@ -16,10 +16,12 @@ export default new Hono().delete(
    }),
    async (c) => {
       try {
+         // Check user permissions
          if (!validatePermissions(['asset.delete'], c)) {
             return forbiddenError(c);
          }
 
+         // Get request information
          const { id, pathId } = c.req.valid('param');
 
          // Get the path checking that in matches the asset id and the path id
