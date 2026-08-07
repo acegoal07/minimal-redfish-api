@@ -15,6 +15,7 @@ export default new Hono()
    .route('/logout', logoutUser)
    .route('/current', getCurrentUser)
    .route('/:id', updateUser)
+   .route('/:id', deleteUser)
    .route('/', getAllUsers)
    .route('/', createUser)
    .route('/', deleteUser);

@@ -23,6 +23,10 @@ import updateStorageAssets from './controllers/storages/updateStorageAssets';
 import updateAsset from './controllers/updateAsset';
 import createAsset from './controllers/createAsset';
 import removeTagsFromAsset from './controllers/tags/removeTagsFromAsset';
+import getUpsAssetById from './controllers/ups/getUpsAssetById';
+import updateUpsAsset from './controllers/ups/updateUpsAsset';
+import createUpsAsset from './controllers/ups/createUpsAsset';
+import getAllUpsAssets from './controllers/ups/getAllUpsAssets';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -36,6 +40,11 @@ export default new Hono()
    .route('/storages/:id', updateStorageAssets)
    .route('/storages', createStorageAsset)
    .route('/storages', getAllStorageAssets)
+
+   .route('/ups/:id', getUpsAssetById)
+   .route('/ups/:id', updateUpsAsset)
+   .route('/ups', createUpsAsset)
+   .route('/ups', getAllUpsAssets)
 
    .route('/:id/paths/:pathId', deleteAssetPath)
    .route('/:id/paths', addPathToAsset)

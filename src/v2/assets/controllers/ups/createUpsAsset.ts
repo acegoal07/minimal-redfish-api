@@ -16,10 +16,9 @@ export default new Hono().post(
    '/',
    bodyValidator(
       assetSchema.extend({
-         size: z
-            .number({ error: 'Size must be a number' })
-            .int({ error: 'Size must be an integer' })
-            .positive({ error: 'Size must be greater than 0' })
+         capacity: z
+            .number({ error: 'Capacity must be a number' })
+            .positive({ error: 'Capacity must be greater than 0' })
             .default(1)
       })
    ),
@@ -33,11 +32,11 @@ export default new Hono().post(
          // Get request information
          const body = c.req.valid('json');
 
-         // Try and get the storage asset from the database
-         const existingStorage = await prisma.asset.findFirst({
+         // Try and get the ups asset from the database
+         const existingUps = await prisma.asset.findFirst({
             where: {
                name: body.name,
-               storageType: {
+               ups: {
                   isNot: null
                }
             },
@@ -46,26 +45,26 @@ export default new Hono().post(
             }
          });
 
-         // Check if a storage exists
-         if (existingStorage) {
+         // Check if a ups exists
+         if (existingUps) {
             return existingResourceError(c);
          }
 
-         // Add the new storage to the database
-         const newStorage = await prisma.asset.create({
+         // Add the new ups to the database
+         const newUps = await prisma.asset.create({
             data: {
                ...buildBaseAssetSchema(body),
-               storageType: {
+               ups: {
                   create: {
-                     size: body.size
+                     capacity: body.capacity
                   }
                }
             },
             include: {
                ...assetInclude,
-               storageType: {
+               ups: {
                   select: {
-                     size: true
+                     capacity: true
                   }
                }
             }
@@ -73,9 +72,9 @@ export default new Hono().post(
 
          return c.json(
             serializeAsset(
-               { ...newStorage, jsonPosition: 0 },
+               { ...newUps, jsonPosition: 0 },
                {
-                  size: newStorage.storageType?.size
+                  capacity: newUps.ups?.capacity
                }
             ),
             201

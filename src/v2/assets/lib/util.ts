@@ -110,6 +110,15 @@ const assetInclude = {
          uploadDate: 'desc'
       }
    },
+   storage: {
+      include: {
+         asset: {
+            select: {
+               name: true
+            }
+         }
+      }
+   },
    _count: {
       select: {
          json: true
