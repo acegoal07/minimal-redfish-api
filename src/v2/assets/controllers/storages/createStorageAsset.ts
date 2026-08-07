@@ -34,18 +34,17 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get the storage asset from the database
-         const existingStorage =
-            (await prisma.asset.findFirst({
-               where: {
-                  name: body.name,
-                  storageType: {
-                     isNot: null
-                  }
-               },
-               select: {
-                  id: true
+         const existingStorage = await prisma.asset.findFirst({
+            where: {
+               name: body.name,
+               storageType: {
+                  isNot: null
                }
-            })) !== null;
+            },
+            select: {
+               id: true
+            }
+         });
 
          // Check if a tag exists
          if (existingStorage) {

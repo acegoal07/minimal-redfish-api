@@ -23,6 +23,24 @@ const queryValidator = <T extends z.ZodTypeAny>(validator: T) =>
       }
    });
 
+const paginationQueryValidator = <T extends z.ZodRawShape>(extra: T = {} as T) => {
+   return queryValidator(
+      z.object({
+         page: z.coerce
+            .number({ error: 'Page must be a number' })
+            .int({ error: 'Page must be an integer' })
+            .positive({ error: 'Page must be 1 or greater' })
+            .default(1),
+         limit: z.coerce
+            .number({ error: 'Limit must be a number' })
+            .int({ error: 'Limit must be an integer' })
+            .positive({ error: 'Limit must be greater than 0' })
+            .default(25),
+         ...extra
+      })
+   );
+};
+
 const idParamValidator = <T extends z.ZodRawShape>(extra: T = {} as T) => {
    return paramValidator(
       z.object({
@@ -35,4 +53,10 @@ const idParamValidator = <T extends z.ZodRawShape>(extra: T = {} as T) => {
    );
 };
 
-export { paramValidator, bodyValidator, queryValidator, idParamValidator };
+export {
+   paramValidator,
+   bodyValidator,
+   queryValidator,
+   paginationQueryValidator,
+   idParamValidator
+};

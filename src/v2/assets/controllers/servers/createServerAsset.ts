@@ -30,18 +30,17 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get the tag from the database
-         const existingServer =
-            (await prisma.asset.findFirst({
-               where: {
-                  name: body.name,
-                  server: {
-                     isNot: null
-                  }
-               },
-               select: {
-                  id: true
+         const existingServer = await prisma.asset.findFirst({
+            where: {
+               name: body.name,
+               server: {
+                  isNot: null
                }
-            })) !== null;
+            },
+            select: {
+               id: true
+            }
+         });
 
          // Check if a tag exists
          if (existingServer) {
