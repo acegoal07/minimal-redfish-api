@@ -38,14 +38,15 @@ export default new Hono().delete(
          const { id } = c.req.valid('param');
 
          // Try and get the asset from the database
-         const existingAsset = await prisma.asset.findUnique({
-            where: {
-               id
-            },
-            select: {
-               id: true
-            }
-         });
+         const existingAsset =
+            (await prisma.asset.findUnique({
+               where: {
+                  id
+               },
+               select: {
+                  id: true
+               }
+            })) !== null;
 
          // Check if the asset exists
          if (!existingAsset) {

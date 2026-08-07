@@ -54,17 +54,17 @@ export default new Hono().patch(
          const body = c.req.valid('json');
 
          // try and get the role from the database
-         const role = await prisma.role.findUnique({
+         const existingRole = await prisma.role.findUnique({
             where: {
                id
             },
             select: {
-               id: true
+               name: true
             }
          });
 
          // Check if the role exists
-         if (!role) {
+         if (!existingRole) {
             return notFoundError(c);
          }
 
@@ -74,7 +74,7 @@ export default new Hono().patch(
                id
             },
             data: {
-               name: body.name
+               name: body.name ?? existingRole.name
             },
             include: {
                permissions: true

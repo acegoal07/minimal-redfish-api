@@ -38,14 +38,15 @@ export default new Hono().delete(
          const { id } = c.req.valid('param');
 
          // Try and get the rack from the database
-         const template = await prisma.template.findUnique({
-            where: {
-               id
-            },
-            include: {
-               paths: true
-            }
-         });
+         const template =
+            (await prisma.template.findUnique({
+               where: {
+                  id
+               },
+               select: {
+                  id: true
+               }
+            })) !== null;
 
          // Check if the rack exists
          if (!template) {

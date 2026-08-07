@@ -119,11 +119,11 @@ model PowerDistributionUnit {
 }
 
 model AssetPath {
-  id      Int     @id @default(autoincrement())
-  path    String  @db.Text
-  name    String? @db.VarChar(255)
+  id      Int    @id @default(autoincrement())
+  path    String @db.Text
+  name    String @db.VarChar(255)
   assetId Int
-  asset   Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_assetpath_asset")
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_assetpath_asset")
 
   @@index([assetId], map: "idx_assetpaths_asset")
   @@map("AssetPaths")

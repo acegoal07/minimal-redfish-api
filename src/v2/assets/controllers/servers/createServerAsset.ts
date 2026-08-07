@@ -10,7 +10,7 @@ import {
    invalidBodyError
 } from '../../../../lib/errorMessages';
 import { validatePermissions } from '../../../../lib/util';
-import { assetExists, assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
+import { assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
 import { assetSchema } from '../../lib/validator';
 
 export default new Hono().post(
@@ -37,7 +37,18 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get the tag from the database
-         const existingServer = await assetExists(body.name);
+         const existingServer =
+            (await prisma.asset.findFirst({
+               where: {
+                  name: body.name,
+                  server: {
+                     isNot: null
+                  }
+               },
+               select: {
+                  id: true
+               }
+            })) !== null;
 
          // Check if a tag exists
          if (existingServer) {

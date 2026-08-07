@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { size, z } from 'zod';
 
 import { prisma } from '../../../../lib/prisma';
 import {
@@ -10,7 +10,7 @@ import {
    invalidBodyError
 } from '../../../../lib/errorMessages';
 import { validatePermissions } from '../../../../lib/util';
-import { assetExists, assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
+import { assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
 import { assetSchema } from '../../lib/validator';
 
 export default new Hono().post(
@@ -41,7 +41,18 @@ export default new Hono().post(
          const body = c.req.valid('json');
 
          // Try and get the storage asset from the database
-         const existingStorage = await assetExists(body.name);
+         const existingStorage =
+            (await prisma.asset.findFirst({
+               where: {
+                  name: body.name,
+                  storageType: {
+                     isNot: null
+                  }
+               },
+               select: {
+                  id: true
+               }
+            })) !== null;
 
          // Check if a tag exists
          if (existingStorage) {
@@ -70,7 +81,7 @@ export default new Hono().post(
 
          return c.json(
             serializeAsset(newStorage, {
-               model: newStorage.storageType?.size
+               size: newStorage.storageType?.size
             }),
             201
          );

@@ -1,11 +1,9 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { xid, z } from 'zod';
-import { createHash } from 'node:crypto';
+import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import {
-   existingResourceError,
    forbiddenError,
    internalServerError,
    invalidBodyError,
@@ -34,7 +32,7 @@ export default new Hono().patch(
       'json',
       z
          .object({
-            roleId: z.coerce
+            roleId: z
                .number({ error: 'Role ID must be a number' })
                .int({ error: 'Role ID must be a whole number' })
                .positive({ error: 'Role ID must be greater than 0' })
@@ -65,28 +63,31 @@ export default new Hono().patch(
                id
             },
             select: {
-               id: true
+               roleId: true
             }
          });
 
          // Check if a user already exists
-         if (existingUser) {
-            return existingResourceError(c);
+         if (!existingUser) {
+            return notFoundError(c);
          }
 
-         // Try and get the role from the database
-         const role = await prisma.role.findUnique({
-            where: {
-               id: body.roleId
-            },
-            select: {
-               id: true
-            }
-         });
+         // Check over the new role id if one was provided
+         if (body.roleId) {
+            // Try and get the role from the database
+            const role = await prisma.role.findUnique({
+               where: {
+                  id: body.roleId
+               },
+               select: {
+                  id: true
+               }
+            });
 
-         // Check if role exists
-         if (!role) {
-            return notFoundError(c);
+            // Check if role exists
+            if (!role) {
+               return notFoundError(c);
+            }
          }
 
          // Update the user in the database
@@ -95,7 +96,7 @@ export default new Hono().patch(
                id
             },
             data: {
-               roleId: body.roleId
+               roleId: body.roleId ?? existingUser.roleId
             },
             select: {
                id: true

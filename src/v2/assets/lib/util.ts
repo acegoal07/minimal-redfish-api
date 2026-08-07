@@ -1,21 +1,4 @@
-import { prisma } from '../../../lib/prisma';
 import { getValueFromJson } from '../../../lib/util';
-
-async function assetExists(name: string): Promise<boolean> {
-   const asset = await prisma.asset.findFirst({
-      where: {
-         name: name,
-         server: {
-            isNot: null
-         }
-      },
-      select: {
-         id: true
-      }
-   });
-
-   return asset !== null;
-}
 
 function buildBaseAssetSchema(body: {
    name: string;
@@ -47,7 +30,7 @@ function serializeAsset(
       group: { id: number; name: string } | null;
       tags: { id: number; name: string }[];
       paths: { id: number; name: string; path: string }[];
-      jsons: { rawJson: unknown }[];
+      json: { rawJson: unknown }[];
    },
    extra: Record<string, unknown> = {}
 ) {
@@ -70,7 +53,7 @@ function serializeAsset(
          id: path.id,
          name: path.name,
          path: path.path,
-         value: getValueFromJson(asset.jsons[0]?.rawJson ?? {}, path.path)
+         value: getValueFromJson(asset.json[0]?.rawJson ?? {}, path.path)
       }))
    };
 }
@@ -79,11 +62,11 @@ const assetInclude = {
    group: true,
    tags: true,
    paths: true,
-   jsons: {
+   json: {
       select: {
          rawJson: true
       }
    }
 };
 
-export { assetExists, buildBaseAssetSchema, assetInclude, serializeAsset };
+export { buildBaseAssetSchema, assetInclude, serializeAsset };

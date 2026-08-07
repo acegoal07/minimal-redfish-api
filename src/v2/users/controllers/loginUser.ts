@@ -38,8 +38,7 @@ export default new Hono().post(
             passwordHash
          },
          select: {
-            id: true,
-            roleId: true
+            id: true
          }
       });
 

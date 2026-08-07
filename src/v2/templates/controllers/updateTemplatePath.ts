@@ -60,7 +60,7 @@ export default new Hono().patch(
          const body = c.req.valid('json');
 
          // Try and get the path from the database
-         const path = await prisma.templatePath.findUnique({
+         const existingPath = await prisma.templatePath.findUnique({
             where: {
                id: pathId,
                templateId: id
@@ -72,15 +72,15 @@ export default new Hono().patch(
          });
 
          // Check if the rack exists
-         if (!path) {
+         if (!existingPath) {
             return notFoundError(c);
          }
 
          // Update path in the database
          const updatedPath = await prisma.templatePath.update({
             data: {
-               name: body.name ?? path.name,
-               path: body.path ?? path.path
+               name: body.name ?? existingPath.name,
+               path: body.path ?? existingPath.path
             },
             where: {
                id: pathId,
