@@ -40,7 +40,7 @@ export default new Hono().patch(
          const { id } = c.req.valid('param');
          const body = c.req.valid('json');
 
-         // Try and get the server from the asset from
+         // Try and get the server from the database
          const existingStorage = await prisma.asset.findUnique({
             where: {
                id,

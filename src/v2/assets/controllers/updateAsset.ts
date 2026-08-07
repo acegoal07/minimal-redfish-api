@@ -40,8 +40,8 @@ export default new Hono().patch(
          const { id } = c.req.valid('param');
          const body = c.req.valid('json');
 
-         // Try and get the server from the asset from
-         const existingStorage = await prisma.asset.findUnique({
+         // Try and get the asset from the database
+         const existingAsset = await prisma.asset.findUnique({
             where: {
                id
             },
@@ -50,8 +50,8 @@ export default new Hono().patch(
             }
          });
 
-         // Check if the server exists
-         if (!existingStorage) {
+         // Check if the asset exists
+         if (!existingAsset) {
             return notFoundError(c);
          }
 
@@ -69,17 +69,17 @@ export default new Hono().patch(
             }
          }
 
-         // Update the server in the database
-         const updatedStorage = await prisma.asset.update({
+         // Update the asset in the database
+         const updatedAsset = await prisma.asset.update({
             where: {
                id
             },
             data: {
-               name: body.name ?? existingStorage.name,
-               notes: body.notes ?? existingStorage.notes,
-               storageId: body.storageId ?? existingStorage.storageId,
-               position: body.position ?? existingStorage.position,
-               groupId: body.groupId ?? existingStorage.groupId
+               name: body.name ?? existingAsset.name,
+               notes: body.notes ?? existingAsset.notes,
+               storageId: body.storageId ?? existingAsset.storageId,
+               position: body.position ?? existingAsset.position,
+               groupId: body.groupId ?? existingAsset.groupId
             },
             include: {
                ...assetInclude,
@@ -95,7 +95,7 @@ export default new Hono().patch(
             }
          });
 
-         return c.json(serializeAsset({ ...updatedStorage, jsonPosition: 0 }), 200);
+         return c.json(serializeAsset({ ...updatedAsset, jsonPosition: 0 }), 200);
       } catch (err) {
          return internalServerError(c, err);
       }
