@@ -18,15 +18,19 @@ import getAssetById from './controllers/getAssetById';
 import addTagsToAsset from './controllers/tags/addTagsToAsset';
 import getStorageAssetById from './controllers/storages/getStorageAssetById';
 import getServerAssetById from './controllers/servers/getServerAssetById';
+import updateServerAsset from './controllers/servers/updateServerAsset';
+import updateStorageAssets from './controllers/storages/updateStorageAssets';
 
 export default new Hono()
    .route('/search', searchAssets)
 
    .route('/servers/:id', getServerAssetById)
+   .route('/servers/:id', updateServerAsset)
    .route('/servers', createServerAsset)
    .route('/servers', getAllServerAssets)
 
    .route('/storages/:id', getStorageAssetById)
+   .route('/storages/:id', updateStorageAssets)
    .route('/storages', createStorageAsset)
    .route('/storages', getAllStorageAssets)
 
