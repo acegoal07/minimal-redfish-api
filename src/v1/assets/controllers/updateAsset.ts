@@ -100,8 +100,15 @@ export default new Hono().patch(
             data: {
                name: body.name ?? asset.name,
                storage: body.rackId !== undefined ? { connect: { id: body.rackId } } : undefined,
-               size: body.size ?? asset.server?.size,
-               position: body.position ?? asset.position
+               position: body.position ?? asset.position,
+               server:
+                  body.size !== undefined
+                     ? {
+                          update: {
+                             size: body.size
+                          }
+                       }
+                     : undefined
             },
             where: {
                id,
