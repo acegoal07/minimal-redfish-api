@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
@@ -9,7 +8,7 @@ import { bodyValidator, idParamValidator } from '../../../lib/validators';
 
 export default new Hono().patch(
    '/',
-   idParamValidator(),
+   idParamValidator({}),
    bodyValidator(
       z.object({
          name: z

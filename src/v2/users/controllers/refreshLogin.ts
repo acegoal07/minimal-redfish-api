@@ -1,27 +1,21 @@
 import { createHash } from 'node:crypto';
-import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { sign } from 'hono/jwt';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
-import { invalidBodyError, unauthorisedError } from '../../../lib/errorMessages';
+import { unauthorisedError } from '../../../lib/errorMessages';
+import { bodyValidator } from '../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'json',
+   bodyValidator(
       z.object({
          refresh: z
             .string({ error: 'Refresh Token must be a string' })
             .trim()
             .min(1, { error: 'Refresh Token cannot be empty' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       const { refresh } = c.req.valid('json');

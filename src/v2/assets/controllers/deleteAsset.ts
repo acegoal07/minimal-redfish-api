@@ -5,7 +5,7 @@ import { forbiddenError, internalServerError, notFoundError } from '../../../lib
 import { validatePermissions } from '../../../lib/util';
 import { idParamValidator } from '../../../lib/validators';
 
-export default new Hono().delete('/', idParamValidator(), async (c) => {
+export default new Hono().delete('/', idParamValidator({}), async (c) => {
    try {
       // Check user permissions
       if (!validatePermissions(['asset.delete'], c)) {

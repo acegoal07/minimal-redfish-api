@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
 
@@ -8,15 +7,14 @@ import {
    existingResourceError,
    forbiddenError,
    internalServerError,
-   invalidBodyError,
    notFoundError
 } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
+import { bodyValidator } from '../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'json',
+   bodyValidator(
       z.object({
          username: z
             .string({ error: 'Username must be a string' })
@@ -30,12 +28,7 @@ export default new Hono().post(
             .number({ error: 'Role ID must be a number' })
             .int({ error: 'Role ID must be a whole number' })
             .positive({ error: 'Role ID must be greater than 0' })
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {

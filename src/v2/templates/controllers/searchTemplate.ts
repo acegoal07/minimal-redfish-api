@@ -1,15 +1,14 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../lib/prisma';
 import { forbiddenError, internalServerError } from '../../../lib/errorMessages';
 import { validatePermissions } from '../../../lib/util';
+import { queryValidator } from '../../../lib/validators';
 
 export default new Hono().get(
    '/',
-   zValidator(
-      'query',
+   queryValidator(
       z
          .object({
             query: z.string().trim().optional()

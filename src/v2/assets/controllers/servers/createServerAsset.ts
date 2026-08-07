@@ -1,30 +1,23 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { prisma } from '../../../../lib/prisma';
 import {
    existingResourceError,
    forbiddenError,
-   internalServerError,
-   invalidBodyError
+   internalServerError
 } from '../../../../lib/errorMessages';
 import { validatePermissions } from '../../../../lib/util';
 import { assetInclude, buildBaseAssetSchema, serializeAsset } from '../../lib/util';
 import { assetSchema } from '../../lib/validator';
+import { bodyValidator } from '../../../../lib/validators';
 
 export default new Hono().post(
    '/',
-   zValidator(
-      'json',
+   bodyValidator(
       assetSchema.extend({
          model: z.string({ error: 'Model must be a string' }).trim().optional()
-      }),
-      (result, c) => {
-         if (!result.success) {
-            return invalidBodyError(c, result);
-         }
-      }
+      })
    ),
    async (c) => {
       try {

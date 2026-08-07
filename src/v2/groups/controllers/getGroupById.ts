@@ -4,7 +4,7 @@ import { prisma } from '../../../lib/prisma';
 import { internalServerError, notFoundError } from '../../../lib/errorMessages';
 import { idParamValidator } from '../../../lib/validators';
 
-export default new Hono().delete('/', idParamValidator(), async (c) => {
+export default new Hono().delete('/', idParamValidator({}), async (c) => {
    try {
       // Get request information
       const { id } = c.req.valid('param');
