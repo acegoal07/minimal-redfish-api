@@ -75,8 +75,6 @@ export default new Hono().post(
             }
          });
 
-         console.log('GOTHERE');
-
          return c.json(
             serializeAsset(
                { ...newStorage, jsonPosition: 0 },
