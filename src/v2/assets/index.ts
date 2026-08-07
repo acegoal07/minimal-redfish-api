@@ -22,6 +22,7 @@ import updateServerAsset from './controllers/servers/updateServerAsset';
 import updateStorageAssets from './controllers/storages/updateStorageAssets';
 import updateAsset from './controllers/updateAsset';
 import createAsset from './controllers/createAsset';
+import removeTagsFromAsset from './controllers/tags/removeTagsFromAsset';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -46,6 +47,7 @@ export default new Hono()
    .route('/:id/history', getAssetHistory)
 
    .route('/:id/tags/add', addTagsToAsset)
+   .route('/:id/tags/remove', removeTagsFromAsset)
 
    .route('/:id', getAssetById)
    .route('/:id', deleteAsset)
