@@ -20,7 +20,7 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
             },
             include: {
                ...assetInclude,
-               storage: {
+               storageType: {
                   select: {
                      size: true
                   }
@@ -37,7 +37,7 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
                ...serializeAsset(
                   { ...storage, jsonPosition: 0 },
                   {
-                     size: storage.storage?.size
+                     size: storage.storageType?.size
                   }
                )
             })),
