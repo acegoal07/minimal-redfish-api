@@ -14,6 +14,7 @@ import getAllServerAssets from './controllers/servers/getAllServerAssets';
 import getAllStorageAssets from './controllers/storages/getAllStorageAssets';
 import addAssetHistory from './controllers/history/addAssetHistory';
 import deleteAssetHistory from './controllers/history/deleteAssetHistory';
+import getAssetById from './controllers/getAssetById';
 
 export default new Hono()
    .route('/search', searchAssets)
@@ -28,6 +29,7 @@ export default new Hono()
    .route('/:id/history/:historyId', deleteAssetHistory)
    .route('/:id/history', addAssetHistory)
    .route('/:id/history', getAssetHistory)
+   .route('/:id', getAssetById)
    .route('/:id', deleteAsset)
    .route('/', deleteAsset)
    .route('/', getAllAssets);

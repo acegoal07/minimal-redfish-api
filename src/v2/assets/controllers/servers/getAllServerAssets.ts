@@ -11,7 +11,7 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
       // Get information from the request
       const { page, limit } = c.req.valid('query');
 
-      // Get all the servers 
+      // Get all the servers
       const [servers, total] = await prisma.$transaction([
          prisma.asset.findMany({
             where: {
