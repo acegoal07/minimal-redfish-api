@@ -29,15 +29,6 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
                ]
             },
             include: {
-               storage: {
-                  include: {
-                     asset: {
-                        select: {
-                           name: true
-                        }
-                     }
-                  }
-               },
                ...assetInclude
             },
             skip: (page - 1) * limit,

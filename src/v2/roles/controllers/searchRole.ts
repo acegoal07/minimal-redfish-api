@@ -51,15 +51,15 @@ export default new Hono().get('/', searchQueryValidator({}), async (c) => {
 
       return c.json(
          {
-            page,
-            limit,
-            total,
-            totalPage: Math.ceil(total / limit),
             roles: roles.map((role) => ({
                id: role.id,
                name: role.name,
                permissions: role.permissions.map((name) => name)
-            }))
+            })),
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
          },
          200
       );

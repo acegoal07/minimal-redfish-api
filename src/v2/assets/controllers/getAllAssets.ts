@@ -14,15 +14,6 @@ export default new Hono().get('/', paginationQueryValidator({}), async (c) => {
       const [assets, total] = await prisma.$transaction([
          prisma.asset.findMany({
             include: {
-               storage: {
-                  include: {
-                     asset: {
-                        select: {
-                           name: true
-                        }
-                     }
-                  }
-               },
                ...assetInclude
             },
             skip: (page - 1) * limit,
