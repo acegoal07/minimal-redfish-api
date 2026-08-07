@@ -101,6 +101,7 @@ const assetInclude = {
    group: true,
    tags: true,
    paths: true,
+   notes: true,
    json: {
       select: {
          id: true,
