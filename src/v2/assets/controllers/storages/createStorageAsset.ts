@@ -51,20 +51,15 @@ export default new Hono().post(
             return existingResourceError(c);
          }
 
-         // Add the new storage to the database
-         const data = {
-            ...buildBaseAssetSchema(body),
-            storageType: {
-               create: {
-                  size: body.size
-               }
-            }
-         };
-
-         console.log(JSON.stringify(data, null, 2));
-
          const newStorage = await prisma.asset.create({
-            data,
+            data: {
+               ...buildBaseAssetSchema(body),
+               storageType: {
+                  create: {
+                     size: body.size
+                  }
+               }
+            },
             include: {
                ...assetInclude,
                storageType: {

@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+
 import deleteAsset from './controllers/deleteAsset';
 import addPathToAsset from './controllers/paths/addPathToAsset';
 import createServerAsset from './controllers/servers/createServerAsset';
@@ -9,11 +10,15 @@ import getAssetPaths from './controllers/paths/getAssetPaths';
 import updateAssetPath from './controllers/paths/updateAssetPath';
 import searchAssets from './controllers/searchAssets';
 import getAssetHistory from './controllers/history/getAssetHistory';
+import getAllServerAssets from './controllers/servers/getAllServerAssets';
+import getAllStorageAssets from './controllers/storages/getAllStorageAssets';
 
 export default new Hono()
    .route('/search', searchAssets)
    .route('/servers', createServerAsset)
+   .route('/servers', getAllServerAssets)
    .route('/storages', createStorageAsset)
+   .route('/storages', getAllStorageAssets)
    .route('/:id/paths/:pathId', deleteAssetPath)
    .route('/:id/paths', addPathToAsset)
    .route('/:id/paths', getAssetPaths)
